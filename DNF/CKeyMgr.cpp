@@ -95,6 +95,9 @@ UINT key_value[(int)Keyboard::Keyboard_end] =
     VK_NUMPAD8,
     VK_NUMPAD9,
 
+    VK_LBUTTON,
+    VK_RBUTTON
+
     // Keyboard_end
 };
 

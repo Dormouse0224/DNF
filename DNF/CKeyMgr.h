@@ -95,6 +95,9 @@ enum class Keyboard
     NUMPAD_8,
     NUMPAD_9,
 
+    MOUSE_LBTN,
+    MOUSE_RBTN,
+
     Keyboard_end
 };
 

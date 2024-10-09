@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "CEngine.h"
+
 #include "CKeyMgr.h"
 #include "CLevelMgr.h"
 #include "CTimeMgr.h"
 #include "CTaskMgr.h"
+#include "CTextMgr.h"
+
 #include "CSelectGDI.h"
 #include "CDbgRender.h"
 #include "resource.h"
@@ -74,6 +77,7 @@ int CEngine::Init(HINSTANCE _hInst)
 	CKeyMgr::GetInst()->Init();
 	CLevelMgr::GetInst()->Init();
 	CTimeMgr::GetInst()->Init();
+	CTextMgr::GetInst()->Init();
 
 
 	return S_OK;
@@ -90,12 +94,17 @@ void CEngine::Progress()
 
 
 
-	// 백버퍼에 화면 지우고 레벨 렌더링
+	// 백버퍼 화면 초기화
 	{
 		SELECT_BRUSH(BRUSH_TYPE::GRAY);
 		Rectangle(m_hSubDC, -1, -1, (int)m_Resolution.x + 1, (int)m_Resolution.y + 1);
 	}
+
+	// 레벨 렌더링
 	CLevelMgr::GetInst()->Render();
+
+	// 텍스트 렌더링
+	CTextMgr::GetInst()->Render();
 
 	// 디버그 렌더링
 	CDbgRender::GetInst()->Render();
@@ -115,10 +124,9 @@ void CEngine::Progress()
 void CEngine::CreateDoubleBuffer()
 {
 	// 더블버퍼링용 DC 와 비트맵 생성, 기존 비트맵 삭제
-
 	m_hSubBitmap = CreateCompatibleBitmap(m_hMainDC, (int)m_Resolution.x, (int)m_Resolution.y);
 	m_hSubDC = CreateCompatibleDC(m_hMainDC);
-
+	SetBkMode(m_hSubDC, TRANSPARENT);
 	
 	DeleteObject(SelectObject(m_hSubDC, m_hSubBitmap));
 }

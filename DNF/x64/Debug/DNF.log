@@ -1,4 +1,8 @@
 ﻿  CEngine.cpp
-D:\repos\DNF\DNF\CEngine.cpp(152,64): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\repos\DNF\DNF\CEngine.cpp(152,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\repos\DNF\DNF\CEngine.cpp(160,64): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\repos\DNF\DNF\CEngine.cpp(160,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  CLevel_Start.cpp
+  CTextMgr.cpp
+D:\repos\DNF\DNF\CTextMgr.cpp(39,67): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
   DNF.vcxproj -> D:\repos\DNF\Output\DNF_Debug.exe

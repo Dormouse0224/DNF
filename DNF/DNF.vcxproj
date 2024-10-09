@@ -151,6 +151,7 @@
     <ClInclude Include="CResource.h" />
     <ClInclude Include="CSelectGDI.h" />
     <ClInclude Include="CTaskMgr.h" />
+    <ClInclude Include="CTextMgr.h" />
     <ClInclude Include="CTexture.h" />
     <ClInclude Include="CTextureMgr.h" />
     <ClInclude Include="DDSTextureLoader11.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="CResource.cpp" />
     <ClCompile Include="CSelectGDI.cpp" />
     <ClCompile Include="CTaskMgr.cpp" />
+    <ClCompile Include="CTextMgr.cpp" />
     <ClCompile Include="CTexture.cpp" />
     <ClCompile Include="CTextureMgr.cpp" />
     <ClCompile Include="DDSTextureLoader11.cpp" />

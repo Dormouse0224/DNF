@@ -2,7 +2,6 @@
 #include "assert.h"
 
 
-
 struct Vec2D
 {
 public:
@@ -129,3 +128,13 @@ public:
 	float Scale;
 };
 #pragma pack(pop)
+
+struct TextInfo
+{
+	int Height;
+	int Weight;
+	UINT x;
+	UINT y;
+	wstring Text;
+	COLORREF Color;
+};

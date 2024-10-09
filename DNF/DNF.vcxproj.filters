@@ -80,6 +80,9 @@
     <Filter Include="main\04. Level\Level_Edit">
       <UniqueIdentifier>{0d7a481b-a3cb-4580-830a-f071db914693}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\03. Manager\10. Text">
+      <UniqueIdentifier>{11cfdcdb-9297-4145-b4ff-67ff097e586a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -187,6 +190,9 @@
     <ClInclude Include="CLevel_Edit.h">
       <Filter>main\04. Level\Level_Edit</Filter>
     </ClInclude>
+    <ClInclude Include="CTextMgr.h">
+      <Filter>main\03. Manager\10. Text</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -264,6 +270,9 @@
     </ClCompile>
     <ClCompile Include="CLevel_Edit.cpp">
       <Filter>main\04. Level\Level_Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="CTextMgr.cpp">
+      <Filter>main\03. Manager\10. Text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

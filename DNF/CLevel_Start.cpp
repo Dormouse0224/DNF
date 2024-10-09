@@ -2,6 +2,7 @@
 #include "CLevel_Start.h"
 #include "CBackground.h"
 #include "CAlbumPlayer.h"
+#include "CTextMgr.h"
 
 CLevel_Start::CLevel_Start()
 	:CLevel(L"Level_Start")
@@ -23,6 +24,7 @@ void CLevel_Start::Begin()
 	albumplayer->SetPlayInfo(0, 0, true, 0);
 	AddObject(pStartBackground, LayerType::Background);
 
+	CTextMgr::GetInst()->WriteText(100, FW_DONTCARE, 10, 10, L"스타트 레벨", RGB(255, 255, 255));
 
 	CLevel::Begin();
 }
