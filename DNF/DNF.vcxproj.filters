@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="default">
+      <UniqueIdentifier>{b26cbef0-e3c2-4882-a114-984fc159cba5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="main\01. Header">
+      <UniqueIdentifier>{1c093566-b263-454a-8d91-ccafa48c2b94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\02. Engine">
+      <UniqueIdentifier>{db506830-53b6-4ad8-b20c-794f6dd488aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager">
+      <UniqueIdentifier>{7e709794-957b-48c3-96c9-e5927bf03c24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object">
+      <UniqueIdentifier>{99829692-3adb-4040-a687-f15938c8a80e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level">
+      <UniqueIdentifier>{8107c8e6-a7e7-47f5-b72f-ec6b4cf7a6ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\Module">
+      <UniqueIdentifier>{b56faab1-898d-4a79-83bb-9188de4fd5c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\06. Component">
+      <UniqueIdentifier>{f30697ce-5340-4abe-8c1b-165cf4ead87d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\06. Component\01. Collider">
+      <UniqueIdentifier>{05ff1ef6-2c70-4c35-902a-0c75cbd20a97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\01. Key">
+      <UniqueIdentifier>{9bb7e88f-fb80-42e3-b985-07584a885b01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\02. Level">
+      <UniqueIdentifier>{b795da64-bf36-45d4-bca4-167a53dcee1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\03. Task">
+      <UniqueIdentifier>{0a62d11d-997d-4147-a700-f84c0ee673e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\04. Time">
+      <UniqueIdentifier>{ebe4cf26-bab7-478c-88f1-c518b5e61e13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\05. DebugRender">
+      <UniqueIdentifier>{582b1b49-b243-4e51-b533-2a0b00c06093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\06. Collision">
+      <UniqueIdentifier>{a2882b15-697a-45d7-a519-0d1e42cc9d88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\07. Resource">
+      <UniqueIdentifier>{2f1bee8b-c0e5-4a0b-aca9-99ea76dcca20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\07. Resource\01. Texture">
+      <UniqueIdentifier>{90a242ce-144b-4dee-b0f3-d26b5c612fe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\01. Background">
+      <UniqueIdentifier>{44a341d7-f39d-4089-af09-4080a8204086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\07. NPK">
+      <UniqueIdentifier>{87569e12-132a-4635-929b-1f20e519654e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\07. Resource\02. Album">
+      <UniqueIdentifier>{2676dd6e-9ce1-4ea6-8c4c-bf5c7f02f0c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\06. Component\02. AlbumPlayer">
+      <UniqueIdentifier>{d852777c-8866-4baa-bf57-b04875d8c6ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\08. Texture">
+      <UniqueIdentifier>{1fdac56f-b2e1-4842-bc13-a67713d02db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\09.DirectXTex">
+      <UniqueIdentifier>{29e222fc-1f2d-4689-9618-8a3eaf4d07ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Level_Start">
+      <UniqueIdentifier>{9d4bdd6c-6e5e-4e1f-ab89-6ed179b1922c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Level_Edit">
+      <UniqueIdentifier>{0d7a481b-a3cb-4580-830a-f071db914693}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>default</Filter>
+    </ClInclude>
+    <ClInclude Include="DNF.h">
+      <Filter>default</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>default</Filter>
+    </ClInclude>
+    <ClInclude Include="global.h">
+      <Filter>main\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>main\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="enum.h">
+      <Filter>main\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="struct.h">
+      <Filter>main\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="CEngine.h">
+      <Filter>main\02. Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CKeyMgr.h">
+      <Filter>main\03. Manager\01. Key</Filter>
+    </ClInclude>
+    <ClInclude Include="CLevelMgr.h">
+      <Filter>main\03. Manager\02. Level</Filter>
+    </ClInclude>
+    <ClInclude Include="CTimeMgr.h">
+      <Filter>main\03. Manager\04. Time</Filter>
+    </ClInclude>
+    <ClInclude Include="CBase.h">
+      <Filter>main\Module</Filter>
+    </ClInclude>
+    <ClInclude Include="CObj.h">
+      <Filter>main\05. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="CLevel.h">
+      <Filter>main\04. Level</Filter>
+    </ClInclude>
+    <ClInclude Include="CTaskMgr.h">
+      <Filter>main\03. Manager\03. Task</Filter>
+    </ClInclude>
+    <ClInclude Include="function.h">
+      <Filter>main\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="CComponent.h">
+      <Filter>main\06. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="CCollider.h">
+      <Filter>main\06. Component\01. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="CDbgRender.h">
+      <Filter>main\03. Manager\05. DebugRender</Filter>
+    </ClInclude>
+    <ClInclude Include="CSelectGDI.h">
+      <Filter>main\Module</Filter>
+    </ClInclude>
+    <ClInclude Include="CCollisionMgr.h">
+      <Filter>main\03. Manager\06. Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="CResource.h">
+      <Filter>main\07. Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="CTexture.h">
+      <Filter>main\07. Resource\01. Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="CBackground.h">
+      <Filter>main\05. Object\01. Background</Filter>
+    </ClInclude>
+    <ClInclude Include="CAlbum.h">
+      <Filter>main\07. Resource\02. Album</Filter>
+    </ClInclude>
+    <ClInclude Include="CAlbumPlayer.h">
+      <Filter>main\06. Component\02. AlbumPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="function_template.h">
+      <Filter>main\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="CNpkMgr.h">
+      <Filter>main\03. Manager\07. NPK</Filter>
+    </ClInclude>
+    <ClInclude Include="CTextureMgr.h">
+      <Filter>main\03. Manager\08. Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader11.h">
+      <Filter>main\03. Manager\09.DirectXTex</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXTex.h">
+      <Filter>main\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="CLevel_Start.h">
+      <Filter>main\04. Level\Level_Start</Filter>
+    </ClInclude>
+    <ClInclude Include="CLevel_Edit.h">
+      <Filter>main\04. Level\Level_Edit</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>default</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="CEngine.cpp">
+      <Filter>main\02. Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CKeyMgr.cpp">
+      <Filter>main\03. Manager\01. Key</Filter>
+    </ClCompile>
+    <ClCompile Include="CLevelMgr.cpp">
+      <Filter>main\03. Manager\02. Level</Filter>
+    </ClCompile>
+    <ClCompile Include="CTimeMgr.cpp">
+      <Filter>main\03. Manager\04. Time</Filter>
+    </ClCompile>
+    <ClCompile Include="CBase.cpp">
+      <Filter>main\Module</Filter>
+    </ClCompile>
+    <ClCompile Include="CObj.cpp">
+      <Filter>main\05. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="CLevel.cpp">
+      <Filter>main\04. Level</Filter>
+    </ClCompile>
+    <ClCompile Include="CTaskMgr.cpp">
+      <Filter>main\03. Manager\03. Task</Filter>
+    </ClCompile>
+    <ClCompile Include="function.cpp">
+      <Filter>main\01. Header</Filter>
+    </ClCompile>
+    <ClCompile Include="CComponent.cpp">
+      <Filter>main\06. Component</Filter>
+    </ClCompile>
+    <ClCompile Include="CCollider.cpp">
+      <Filter>main\06. Component\01. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="CDbgRender.cpp">
+      <Filter>main\03. Manager\05. DebugRender</Filter>
+    </ClCompile>
+    <ClCompile Include="CSelectGDI.cpp">
+      <Filter>main\Module</Filter>
+    </ClCompile>
+    <ClCompile Include="CCollisionMgr.cpp">
+      <Filter>main\03. Manager\06. Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="CResource.cpp">
+      <Filter>main\07. Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="CTexture.cpp">
+      <Filter>main\07. Resource\01. Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="CBackground.cpp">
+      <Filter>main\05. Object\01. Background</Filter>
+    </ClCompile>
+    <ClCompile Include="CAlbum.cpp">
+      <Filter>main\07. Resource\02. Album</Filter>
+    </ClCompile>
+    <ClCompile Include="CAlbumPlayer.cpp">
+      <Filter>main\06. Component\02. AlbumPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="CNpkMgr.cpp">
+      <Filter>main\03. Manager\07. NPK</Filter>
+    </ClCompile>
+    <ClCompile Include="CTextureMgr.cpp">
+      <Filter>main\03. Manager\08. Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader11.cpp">
+      <Filter>main\03. Manager\09.DirectXTex</Filter>
+    </ClCompile>
+    <ClCompile Include="CLevel_Start.cpp">
+      <Filter>main\04. Level\Level_Start</Filter>
+    </ClCompile>
+    <ClCompile Include="CLevel_Edit.cpp">
+      <Filter>main\04. Level\Level_Edit</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="DNF.ico">
+      <Filter>default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DNF.rc">
+      <Filter>default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
