@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CKeyMgr.h"
+#include "CEngine.h"
 
 UINT key_value[(int)Keyboard::Keyboard_end] = 
 {
@@ -123,38 +124,84 @@ void CKeyMgr::Init()
 
 void CKeyMgr::Tick()
 {
-	// 키보드 상태 업데이트
-	for (int i = 0; i < (int)Keyboard::Keyboard_end; ++i)
-	{
-        // 키보드가 이전에 눌렸었음
-        if (m_keyboardInfo[i].isPrevPressed)
+    if (GetFocus() == CEngine::GetInst()->GetMainWnd())
+    {
+        // 키보드 상태 업데이트
+        for (int i = 0; i < (int)Keyboard::Keyboard_end; ++i)
         {
-            // 현재도 눌린 상태임
-            if (GetAsyncKeyState(key_value[i]) & 0x8001)
+            // 키보드가 이전에 눌렸었음
+            if (m_keyboardInfo[i].isPrevPressed)
             {
-                m_keyboardInfo[i].state = Key_state::PRESSED;
+                // 현재도 눌린 상태임
+                if (GetAsyncKeyState(key_value[i]) & 0x8001)
+                {
+                    m_keyboardInfo[i].state = Key_state::PRESSED;
+                }
+                // 현재는 떼어짐
+                else
+                {
+                    m_keyboardInfo[i].state = Key_state::RELEASE;
+                    m_keyboardInfo[i].isPrevPressed = false;
+                }
             }
-            // 현재는 떼어짐
+            // 이전에 눌린 적 없음
             else
             {
-                m_keyboardInfo[i].state = Key_state::RELEASE;
-                m_keyboardInfo[i].isPrevPressed = false;
+                // 현재는 눌린 상태임
+                if (GetAsyncKeyState(key_value[i]) & 0x8001)
+                {
+                    m_keyboardInfo[i].state = Key_state::TAP;
+                    m_keyboardInfo[i].isPrevPressed = true;
+                }
+                // 계속 안눌려있었음
+                else
+                {
+                    m_keyboardInfo[i].state = Key_state::NONE;
+                }
             }
         }
-        // 이전에 눌린 적 없음
-        else
+
+        // 마우스 상태 업데이트
+        POINT point;
+        GetCursorPos(&point);
+        ScreenToClient(CEngine::GetInst()->GetMainWnd(), &point);
+        m_MousePos = Vec2D(point.x, point.y);
+    }
+    else
+    {
+        for (size_t i = 0; i < m_keyboardInfo.size(); ++i)
         {
-            // 현재는 눌린 상태임
-            if (GetAsyncKeyState(key_value[i]) & 0x8001)
+            if (Key_state::TAP == m_keyboardInfo[i].state
+                || Key_state::PRESSED == m_keyboardInfo[i].state)
             {
-                m_keyboardInfo[i].state = Key_state::TAP;
-                m_keyboardInfo[i].isPrevPressed = true;
+                m_keyboardInfo[i].state = Key_state::RELEASE;
             }
-            // 계속 안눌려있었음
-            else
+
+            else if (Key_state::RELEASE == m_keyboardInfo[i].state)
             {
                 m_keyboardInfo[i].state = Key_state::NONE;
             }
+
+            m_keyboardInfo[i].isPrevPressed = false;
         }
-	}
+
+        // 마우스 좌표 갱신
+        *((int*)&m_MousePos.x) = 0xffffffff;
+        *((int*)&m_MousePos.y) = 0xffffffff;
+    }
+}
+
+bool CKeyMgr::IsMouseOffScreen()
+{
+    Vec2D vResolution = CEngine::GetInst()->GetResolution();
+
+    if (vResolution.x <= m_MousePos.x || vResolution.y <= m_MousePos.y
+        || m_MousePos.x < 0 || m_MousePos.y < 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

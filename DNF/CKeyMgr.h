@@ -123,12 +123,16 @@ class CKeyMgr
 
 private:
     vector<key_info> m_keyboardInfo;
+    Vec2D m_MousePos;
 
 public:
     Key_state GetKeyState(const Keyboard& _key) { return m_keyboardInfo[(int)_key].state; }
+    Vec2D GetMousePos() { return m_MousePos; }
 
     void Init();
     void Tick();
+
+    bool IsMouseOffScreen();
 
 };
 
