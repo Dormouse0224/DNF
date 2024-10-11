@@ -3,6 +3,7 @@
 #include "resource.h"
 #include "CLevel_Edit.h"
 #include "CLevelMgr.h"
+#include "CTextMgr.h"
 
 CLevel_Edit::CLevel_Edit()
 	:CLevel(L"Level_Edit")
@@ -15,6 +16,8 @@ CLevel_Edit::~CLevel_Edit()
 
 void CLevel_Edit::Begin()
 {
+	CTextMgr::GetInst()->WriteText(10, 10, L"에디터 레벨", RGB(0, 0, 0));
+
 	CLevel::Begin();
 }
 

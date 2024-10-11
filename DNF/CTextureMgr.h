@@ -7,8 +7,12 @@ class CTextureMgr
 
 private:
 	map<string, CAlbum*> m_Albums;
+	CAlbum* m_TempAlbum;			// 기본 임시 앨범
+	CAlbum* m_SysReservedAlbum;		// 프로그램에서 사용되는 텍스처를 저장해두는 앨범
 
 public:
+	void Init();
+
 	void CreateFromNpk(ifstream& _file, CAlbum* _Album);
 	Bitmap* ConvertToBitmap(CTexture* _pTexture);
 	Bytef* UncompressZlib(const char* _data, int size, int _dataSize);
@@ -16,6 +20,7 @@ public:
 	byte* ReadColor(const char* _data, ColorBits _bits);
 	void WriteColor(char* _dest, const char* _src, ColorBits _bits);
 	CAlbum* LoadAlbum(string _AlbumPath, wstring _NpkPath);
+	HDC CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color);
 
 private:
 

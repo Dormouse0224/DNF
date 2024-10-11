@@ -34,7 +34,7 @@ public:
 public:
 	int Init(HINSTANCE _hInst);
 	void Progress();
-	void CreateDoubleBuffer();
+	void CreateBackBuffer();
 
 	void CreateGDIObject();
 
@@ -43,4 +43,5 @@ public:
 
 	HDC GetSubDC() { return m_hSubDC; }
 	HDC GetMainDC() { return m_hMainDC; }
+	HBITMAP	GetSubBitmap() { return m_hSubBitmap; }
 };

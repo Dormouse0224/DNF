@@ -9,6 +9,8 @@
 #pragma comment(lib, "d3d11.lib")
 
 CTextureMgr::CTextureMgr()
+	: m_TempAlbum(nullptr)
+	, m_SysReservedAlbum(nullptr)
 {
 
 }
@@ -16,6 +18,19 @@ CTextureMgr::CTextureMgr()
 CTextureMgr::~CTextureMgr()
 {
 	Delete_Map(m_Albums);
+}
+
+void CTextureMgr::Init()
+{
+	CAlbum* pAlbum1 = new CAlbum(L"__TempNPK__");
+	pAlbum1->Path = "__TempAlbum__";
+	m_TempAlbum = pAlbum1;
+	m_Albums.insert(make_pair("__TempAlbum__", pAlbum1));
+
+	CAlbum* pAlbum2 = new CAlbum(L"__SysReservedNPK__");
+	pAlbum2->Path = "__SysReservedAlbum__";
+	m_SysReservedAlbum = pAlbum2;
+	m_Albums.insert(make_pair("__SysReservedAlbum__", pAlbum2));
 }
 
 void CTextureMgr::CreateFromNpk(ifstream& _file, CAlbum* _Album)
@@ -445,30 +460,32 @@ void CTextureMgr::WriteColor(char* _dest, const char* _src, ColorBits _bits)
 
 CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 {
+	// 앨범 데이터 가져왔는지 검사
 	map<string, CAlbum*>::iterator iter = m_Albums.find(_AlbumPath);
-	if (iter != m_Albums.end())
-	{
-		return iter->second;
-	}
-	else
+	// 앨범을 가져온 적 없는 경우 - 앨범이 속한 NPK 파일 로드 후 앨범 데이터 저장
+	if (iter == m_Albums.end())
 	{
 		ifstream readfile;
 		readfile.open(_NpkPath, ios::binary);
 		assert(readfile.is_open());	// 파일 읽기 오류
+		// NPK 파일 읽어서 앨범 저장
 		vector<CAlbum*> AlbumList = CNpkMgr::GetInst()->ReadNpk(readfile, _NpkPath);
 		readfile.close();
 		for (CAlbum* _album : AlbumList)
 		{
 			m_Albums.insert(make_pair(_album->GetPath(), _album));
-
-			for (int i = 0; i < _album->GetSceneCount(); ++i)
-			{
-				_album->GetScene(i)->Load();
-			}
 		}
-
-		return m_Albums.find(_AlbumPath)->second;
+		// 재검색
+		iter = m_Albums.find(_AlbumPath);
 	}
+	// 메모리에 앨범 이미지 로드
+	for (int i = 0; i < iter->second->GetSceneCount(); ++i)
+	{
+		iter->second->GetScene(i)->Load();
+	}
+
+	return iter->second;
+	
 }
 
 vector<Color> CTextureMgr::ReadPalette(ifstream& _file, int count)
@@ -627,4 +644,25 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	delete[] textureData;
 
 	return pBitmap;
+}
+
+HDC CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color)
+{
+	// 같은 이름의 텍스쳐가 시스템 예약 앨범 또는 임시 앨범에 없어야함
+	assert(m_SysReservedAlbum->GetScene(_Name) == nullptr);
+	assert(m_TempAlbum->GetScene(_Name) == nullptr);
+
+	CTexture* pTex = new CTexture(_Name, m_SysReservedAlbum);
+	pTex->m_Size = _size;
+	pTex->m_Offset = _offset;
+	pTex->m_Bitmap = new Bitmap(_size.x + _offset.x, _size.y + _offset.y, PixelFormat32bppARGB);
+
+	Graphics graphics(pTex->m_Bitmap);
+	graphics.Clear(Color(0, 0, 0, 0));
+	Pen pen(_color);
+	graphics.DrawRectangle(&pen, _offset.x, _offset.y, _size.x, _size.y);
+
+	pTex->m_DC = graphics.GetHDC();
+
+	return pTex->m_DC;
 }

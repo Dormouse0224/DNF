@@ -4,7 +4,19 @@
 #include "CTimeMgr.h"
 
 CAlbum::CAlbum(wstring _NpkPath)
-	: CResource(_NpkPath, ResourceType::Animation)
+	: CResource(_NpkPath, ResourceType::Album)
+	, m_Owner(nullptr)
+	, m_SceneVector{}
+	, Offset(0)
+	, Length(0)
+	, Path{}
+	, IndexLength(0)
+	, Version(ImgVersion::Other)
+	, Count(0)
+	, m_OwnerNpk{}
+	, m_PaletteVector{}
+	, AtlasVec{}
+	, m_Map{}
 {
 }
 
@@ -16,18 +28,22 @@ CAlbum::~CAlbum()
 
 int CAlbum::Load()
 {
-	// 로딩할 텍스쳐 리소스 경로 설정
-	//wstring path = CBase::GetName() + L"\\";
-
-	//for (int i = 0; i < m_SceneCount; ++i)
-	//{
-	//	//wstring filepath = path + std::to_wstring(i) + L".png";
-	//	//CTexture* ptexture = new CTexture(filepath, (CObj*)this);
-	//	//ptexture->Load();
-	//	//m_SceneVector.push_back(ptexture);
-	//}
-
 	return S_OK;
+}
+
+CTexture* CAlbum::GetScene(wstring _name)
+{
+	if (!m_SceneVector.empty())
+	{
+		for (vector<CTexture*>::iterator iter = m_SceneVector.begin(); iter != m_SceneVector.end(); ++iter)
+		{
+			if ((*iter)->GetName() == _name)
+			{
+				return *iter;
+			}
+		}
+	}
+	return nullptr;
 }
 
 

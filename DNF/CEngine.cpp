@@ -6,6 +6,7 @@
 #include "CTimeMgr.h"
 #include "CTaskMgr.h"
 #include "CTextMgr.h"
+#include "CTextureMgr.h"
 
 #include "CSelectGDI.h"
 #include "CDbgRender.h"
@@ -43,6 +44,7 @@ int CEngine::Init(HINSTANCE _hInst)
 		info2.Scale = CEngine::GetInst()->GetScreenScale();
 		DataFile2.write((char*)&info2, sizeof(info2));
 		DataFile2.close();
+		DataFile.open("DNF_program.data", ios::binary);
 	}
 	ProgramInfo info;
 	DataFile.read((char*)&info, sizeof(info));
@@ -64,20 +66,21 @@ int CEngine::Init(HINSTANCE _hInst)
 	if (!m_hMainWnd)
 		return E_FAIL;
 
+	// 매니저 객체 생성 및 초기화
+	CKeyMgr::GetInst()->Init();
+	CTextureMgr::GetInst()->Init();
+	CreateBackBuffer();		// 백버퍼 생성
+	CLevelMgr::GetInst()->Init();
+	CTimeMgr::GetInst()->Init();
+	CTextMgr::GetInst()->Init();
+
 	// 메인 DC 생성
 	m_hMainDC = GetDC(m_hMainWnd);
 
-	// 백버퍼 생성
-	CreateDoubleBuffer();
 
 	// GDIObject 생성
 	CreateGDIObject();
 
-	// 매니저 객체 생성 및 초기화
-	CKeyMgr::GetInst()->Init();
-	CLevelMgr::GetInst()->Init();
-	CTimeMgr::GetInst()->Init();
-	CTextMgr::GetInst()->Init();
 
 
 	return S_OK;
@@ -121,14 +124,15 @@ void CEngine::Progress()
 }
 
 
-void CEngine::CreateDoubleBuffer()
+void CEngine::CreateBackBuffer()
 {
 	// 더블버퍼링용 DC 와 비트맵 생성, 기존 비트맵 삭제
-	m_hSubBitmap = CreateCompatibleBitmap(m_hMainDC, (int)m_Resolution.x, (int)m_Resolution.y);
-	m_hSubDC = CreateCompatibleDC(m_hMainDC);
+	//m_hSubBitmap = CreateCompatibleBitmap(m_hMainDC, (int)m_Resolution.x, (int)m_Resolution.y);
+	m_hSubDC = CTextureMgr::GetInst()->CreateRectTexture(L"BackBuffer", m_Resolution, Vec2D(0, 0), Color(255, 0, 0, 0));
 	SetBkMode(m_hSubDC, TRANSPARENT);
+	//m_hSubDC = CreateCompatibleDC(m_hMainDC);
 	
-	DeleteObject(SelectObject(m_hSubDC, m_hSubBitmap));
+	//DeleteObject(SelectObject(m_hSubDC, m_hSubBitmap));
 }
 
 void CEngine::CreateGDIObject()

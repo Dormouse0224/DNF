@@ -20,11 +20,6 @@ CAlbumPlayer::CAlbumPlayer(wstring _Name, string _AlbumPath, wstring _NpkPath)
 
 CAlbumPlayer::~CAlbumPlayer()
 {
-	/*if (m_CurrentAlbum != nullptr)
-	{
-		delete m_CurrentAlbum;
-		m_CurrentAlbum = nullptr;
-	}*/
 
 }
 

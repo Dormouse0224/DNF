@@ -19,9 +19,6 @@ private:
     Vec2D m_Size;
     Vec2D m_Offset;
 
-    // GDI+
-    //GdiplusStartupInput GdiplusStartupInput;
-    //ULONG_PTR GdiplusToken;
 
     // Texture 가 속한 Album 관련 정보
     int Index;
@@ -40,6 +37,7 @@ public:
     HDC GetDC() { return m_DC; }
     void SetSize(float _x, float _y) { m_Size.x = _x; m_Size.y = _y; }
     void SteOffset(float _x, float _y) { m_Offset.x = _x; m_Offset.y = _y; }
+    void SetOwner(CAlbum* _Album) { m_Owner = _Album; }
 
     virtual int Load() override;
     void Render();

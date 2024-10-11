@@ -39,20 +39,9 @@ CTexture::~CTexture()
 
 int CTexture::Load()
 {
-	//// GDI+ 초기화
-	//
-	//GdiplusStartup(&GdiplusToken, &GdiplusStartupInput, nullptr);
-
-	//// 로딩할 텍스쳐 리소스 경로 설정
-	//GetCurrentPath(path)
-	//path = path + L"\\resource\\texture\\" + CBase::GetName();
-
-	//// 이미지 로드
-	//m_Image = new Image(path.c_str());
-
 	m_Bitmap = CTextureMgr::GetInst()->ConvertToBitmap(this);
-
-
+	Graphics graphics(m_Bitmap);
+	m_DC = graphics.GetHDC();
 	return S_OK;
 }
 

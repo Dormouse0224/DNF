@@ -52,7 +52,6 @@ enum class DbgRenderShape
 enum class ResourceType
 {
 	Texture,
-	Animation,
 	Sound,
 	Album,
 

@@ -18,36 +18,26 @@ void CTextMgr::Init()
 {
 	// 폰트를 시스템에 추가
 	AddFontResourceEx(m_FontPath.c_str(), FR_PRIVATE, 0);
+	m_Font = CreateFont(
+		50, 0, 0, 0, 0, FALSE, FALSE, FALSE,
+		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, m_FontName.c_str());
+
+	DeleteObject((HFONT)SelectObject(CEngine::GetInst()->GetSubDC(), m_Font));
 }
 
 void CTextMgr::Render()
 {
-	HFONT defaultFont = nullptr;
-	HDC SubDC = CEngine::GetInst()->GetSubDC();
 	for (TextInfo info : m_VecTextInfo)
 	{
-		HFONT hFont = CreateFont(
-			info.Height, 0, 0, 0, info.Weight, FALSE, FALSE, FALSE,
-			DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-			DEFAULT_PITCH | FF_DONTCARE, m_FontName.c_str());
-
-		SetTextColor(SubDC, info.Color);
-
-		if (defaultFont == nullptr)
-			defaultFont = (HFONT)SelectObject(SubDC, hFont);
-
-		TextOut(SubDC, info.x, info.y, info.Text.c_str(), info.Text.size());
+		SetTextColor(CEngine::GetInst()->GetSubDC(), info.Color);
+		TextOut(CEngine::GetInst()->GetSubDC(), info.x, info.y, info.Text.c_str(), info.Text.size());
 	}
-	if (defaultFont)
-		SelectObject(SubDC, defaultFont);
-	SetTextColor(SubDC, RGB(0, 0, 0));
 }
 
-void CTextMgr::WriteText(int _Height, int _Weight, UINT _x, UINT _y, wstring _Text, COLORREF _Color)
+void CTextMgr::WriteText(UINT _x, UINT _y, wstring _Text, COLORREF _Color)
 {
 	TextInfo info;
-	info.Height = _Height;
-	info.Weight = _Weight;
 	info.x = _x;
 	info.y = _y;
 	info.Text = _Text;
@@ -55,11 +45,28 @@ void CTextMgr::WriteText(int _Height, int _Weight, UINT _x, UINT _y, wstring _Te
 	m_VecTextInfo.push_back(info);
 }
 
+void CTextMgr::WriteText(TextInfo _info)
+{
+	m_VecTextInfo.push_back(_info);
+}
+
 void CTextMgr::DeleteText(UINT _x, UINT _y, wstring _Text)
 {
 	for (vector<TextInfo>::iterator iter = m_VecTextInfo.begin(); iter != m_VecTextInfo.end(); ++iter)
 	{
 		if (iter->x == _x && iter->y == _y && iter->Text == _Text)
+		{
+			m_VecTextInfo.erase(iter);
+			break;
+		}
+	}
+}
+
+void CTextMgr::DeleteText(TextInfo _info)
+{
+	for (vector<TextInfo>::iterator iter = m_VecTextInfo.begin(); iter != m_VecTextInfo.end(); ++iter)
+	{
+		if (iter->x == _info.x && iter->y == _info.y && iter->Text == _info.Text && iter->Color == _info.Color)
 		{
 			m_VecTextInfo.erase(iter);
 			break;

@@ -35,7 +35,8 @@ void CLevelMgr::Init()
 {
 	// 초기 레벨 생성 및 추가
 
-	CLevel* pStartLevel = new CLevel_Start;
+	CLevel_Start* pStartLevel = new CLevel_Start;
+	CLevel_Edit* pEditLevel = new CLevel_Edit;
 	m_CurrentLevel = pStartLevel;
 	m_CurrentLevel->Begin();
 }

@@ -39,6 +39,22 @@ public:
 		return Vec2D(x - _Other.x, y - _Other.y);
 	}
 
+	bool operator >(const Vec2D& _Other)
+	{
+		if (x > _Other.x && y > _Other.y)
+			return true;
+		else
+			return false;
+	}
+
+	bool operator <(const Vec2D& _Other)
+	{
+		if (x < _Other.x && y < _Other.y)
+			return true;
+		else
+			return false;
+	}
+
 	template<typename T>
 	Vec2D operator *(const T& _Other)
 	{
@@ -131,10 +147,17 @@ public:
 
 struct TextInfo
 {
-	int Height;
-	int Weight;
 	UINT x;
 	UINT y;
 	wstring Text;
 	COLORREF Color;
+
+	TextInfo() {}
+	TextInfo(UINT _x, UINT _y, wstring _Text, COLORREF _Color)
+	{
+		x = _x;
+		y = _y;
+		Text = _Text;
+		Color = _Color;
+	}
 };

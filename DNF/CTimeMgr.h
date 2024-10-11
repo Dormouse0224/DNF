@@ -9,6 +9,8 @@ private:
 	LARGE_INTEGER	m_CurCount;
 
 	float			m_DT;
+	UINT			m_FPS;
+	float			m_Time;
 
 public:
 	void Init();
