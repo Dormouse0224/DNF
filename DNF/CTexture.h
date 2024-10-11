@@ -40,7 +40,7 @@ public:
     void SetOwner(CAlbum* _Album) { m_Owner = _Album; }
 
     virtual int Load() override;
-    void Render();
+    void Render(Vec2D _PlayerOffset = Vec2D(0, 0));
 
 };
 

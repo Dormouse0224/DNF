@@ -11,14 +11,12 @@ CBackground::CBackground(wstring _Name)
 
 CBackground::~CBackground()
 {
+
 }
 
 void CBackground::Begin()
 {
-	/*for (int i = 0; i < m_AlbumPlayerVector.size(); ++i)
-	{
-		m_AlbumPlayerVector[i]->Load();
-	}*/
+
 }
 
 void CBackground::Tick()

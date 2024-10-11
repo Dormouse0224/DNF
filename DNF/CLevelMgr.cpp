@@ -37,7 +37,7 @@ void CLevelMgr::Init()
 
 	CLevel_Start* pStartLevel = new CLevel_Start;
 	CLevel_Edit* pEditLevel = new CLevel_Edit;
-	m_CurrentLevel = pStartLevel;
+	m_CurrentLevel = pEditLevel;
 	m_CurrentLevel->Begin();
 }
 

@@ -4,6 +4,8 @@
 #include "CLevel_Edit.h"
 #include "CLevelMgr.h"
 #include "CTextMgr.h"
+#include "CBackground.h"
+#include "CAlbumPlayer.h"
 
 CLevel_Edit::CLevel_Edit()
 	:CLevel(L"Level_Edit")
@@ -16,6 +18,28 @@ CLevel_Edit::~CLevel_Edit()
 
 void CLevel_Edit::Begin()
 {
+	CBackground* pStartBackground = new CBackground(L"StartBackground");
+
+	string album = "sprite/character/archer/equipment/avatar/skin/ac_body0000.img";
+	wstring directory = L"D:\\repos\\DNF\\Output\\resource\\texture\\player\\sprite_character_archer_equipment_avatar_skin.NPK";
+	CAlbumPlayer* albumplayer = new CAlbumPlayer(L"Cutin1", album, directory);
+	pStartBackground->AddComponent(albumplayer);
+	albumplayer->SetPlayInfo(12, 19, true, 10, Vec2D(0, 0));
+
+	album = "sprite/character/archer/equipment/avatar/skin/ac_body0001.img";
+	directory = L"D:\\repos\\DNF\\Output\\resource\\texture\\player\\sprite_character_archer_equipment_avatar_skin.NPK";
+	CAlbumPlayer* albumplayer1 = new CAlbumPlayer(L"Cutin2", album, directory);
+	pStartBackground->AddComponent(albumplayer1);
+	albumplayer1->SetPlayInfo(12, 19, true, 10, Vec2D(100, 0));
+
+	album = "sprite/character/archer/equipment/avatar/skin/ac_body0002.img";
+	directory = L"D:\\repos\\DNF\\Output\\resource\\texture\\player\\sprite_character_archer_equipment_avatar_skin.NPK";
+	CAlbumPlayer* albumplayer2 = new CAlbumPlayer(L"Cutin3", album, directory);
+	pStartBackground->AddComponent(albumplayer2);
+	albumplayer2->SetPlayInfo(12, 19, true, 10, Vec2D(200, 0));
+
+	AddObject(pStartBackground, LayerType::Background);
+
 	CTextMgr::GetInst()->WriteText(10, 10, L"에디터 레벨", RGB(0, 0, 0));
 
 	CLevel::Begin();

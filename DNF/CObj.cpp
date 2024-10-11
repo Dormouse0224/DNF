@@ -21,13 +21,7 @@ CObj::CObj(wstring _Name, Vec2D _Loc, Vec2D _Scale)
 
 CObj::~CObj()
 {
-	for (int i = 0; i < m_ComponentVector.size(); ++i)
-	{
-		if (m_ComponentVector[i] != nullptr)
-			delete m_ComponentVector[i];
-
-		m_ComponentVector.clear();
-	}
+	Delete_Vector(m_ComponentVector);
 }
 
 void CObj::AddComponent(CComponent* _Component)

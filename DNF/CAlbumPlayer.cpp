@@ -23,7 +23,7 @@ CAlbumPlayer::~CAlbumPlayer()
 
 }
 
-void CAlbumPlayer::SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS)
+void CAlbumPlayer::SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D _Offset)
 {
 	assert(!(_End >= m_CurrentAlbum->m_SceneVector.size() || _Begin >= m_CurrentAlbum->m_SceneVector.size() || _Begin < 0 || _End < 0));
 	m_SceneNumber = 0;
@@ -32,6 +32,7 @@ void CAlbumPlayer::SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS)
 	m_End = _End;
 	m_Loop = _Loop;
 	m_FPS = _FPS;
+	m_Offset = _Offset;
 }
 
 void CAlbumPlayer::FinalTick()
@@ -63,5 +64,5 @@ void CAlbumPlayer::Render(CObj* _thisObj)
 {
 	// 현재 씬을 재생
 	m_CurrentAlbum->m_Owner = _thisObj;
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render();
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset);
 }

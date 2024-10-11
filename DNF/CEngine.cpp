@@ -128,7 +128,7 @@ void CEngine::CreateBackBuffer()
 {
 	// 더블버퍼링용 DC 와 비트맵 생성, 기존 비트맵 삭제
 	//m_hSubBitmap = CreateCompatibleBitmap(m_hMainDC, (int)m_Resolution.x, (int)m_Resolution.y);
-	m_hSubDC = CTextureMgr::GetInst()->CreateRectTexture(L"BackBuffer", m_Resolution, Vec2D(0, 0), Color(255, 0, 0, 0));
+	m_hSubDC = CTextureMgr::GetInst()->CreateRectTexture(L"BackBuffer", m_Resolution, Vec2D(0, 0), Color(255, 0, 0, 0), true);
 	SetBkMode(m_hSubDC, TRANSPARENT);
 	//m_hSubDC = CreateCompatibleDC(m_hMainDC);
 	

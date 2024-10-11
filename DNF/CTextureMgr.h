@@ -20,7 +20,7 @@ public:
 	byte* ReadColor(const char* _data, ColorBits _bits);
 	void WriteColor(char* _dest, const char* _src, ColorBits _bits);
 	CAlbum* LoadAlbum(string _AlbumPath, wstring _NpkPath);
-	HDC CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color);
+	HDC CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color, bool _IsAddedBySys);
 
 private:
 

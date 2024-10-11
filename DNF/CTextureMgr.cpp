@@ -17,7 +17,15 @@ CTextureMgr::CTextureMgr()
 
 CTextureMgr::~CTextureMgr()
 {
-	Delete_Map(m_Albums);
+	for (map<string, CAlbum*>::iterator iter = m_Albums.begin(); iter != m_Albums.end(); ++iter)
+	{
+		if (iter->second != nullptr)
+		{
+			delete iter->second;
+			iter->second = nullptr;
+		}
+	}
+	m_Albums.clear();
 }
 
 void CTextureMgr::Init()
@@ -495,7 +503,7 @@ vector<Color> CTextureMgr::ReadPalette(ifstream& _file, int count)
 	{
 		char buf[4] = {};
 		_file.read(buf, 4);
-		Palette.push_back(Color(Color::MakeARGB(buf[3], buf[0], buf[1], buf[2])));
+		Palette.push_back(Color(Color::MakeARGB(buf[2], buf[1], buf[0], buf[3])));
 	}
 	return Palette;
 }
@@ -646,7 +654,7 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	return pBitmap;
 }
 
-HDC CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color)
+HDC CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color, bool _IsAddedBySys)
 {
 	// 같은 이름의 텍스쳐가 시스템 예약 앨범 또는 임시 앨범에 없어야함
 	assert(m_SysReservedAlbum->GetScene(_Name) == nullptr);
@@ -663,6 +671,15 @@ HDC CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Co
 	graphics.DrawRectangle(&pen, _offset.x, _offset.y, _size.x, _size.y);
 
 	pTex->m_DC = graphics.GetHDC();
+
+	if (_IsAddedBySys)
+	{
+		m_SysReservedAlbum->AddScene(pTex);
+	}
+	else
+	{
+		m_TempAlbum->AddScene(pTex);
+	}
 
 	return pTex->m_DC;
 }

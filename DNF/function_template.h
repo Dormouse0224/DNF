@@ -8,8 +8,6 @@ void Delete_Vector(vector<T*>& _vec)
 	{
 		if (_vec[i] != nullptr) { delete _vec[i]; _vec[i] = nullptr; }
 	}
-
-	//vector<T>().swap(_vec);
 	_vec.clear();
 }
 

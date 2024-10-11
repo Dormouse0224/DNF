@@ -18,12 +18,13 @@ private:
     int m_Begin;
     int m_End;
     bool m_Loop;
+    Vec2D m_Offset;
 
     int m_SceneNumber;
     float m_SceneTime;
 
 public:
-    void SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS);
+    void SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D m_Offset);
     void SetFPS(int _FPS) { m_FPS = _FPS; }
     void FinalTick() override;
     void Render(CObj* _thisObj);
