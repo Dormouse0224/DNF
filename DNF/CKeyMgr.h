@@ -77,6 +77,7 @@ enum class Keyboard
     RSHIFT,
     RALT,
     RCTRL,
+    SPACE,
 
     UP,
     DOWN,

@@ -3,6 +3,8 @@
 #include "CEngine.h"
 #include "CObj.h"
 #include "CTextureMgr.h"
+#include "CCameraMgr.h"
+
 
 CTexture::CTexture(wstring _RelativPath, CAlbum* _Owner)
 	: CResource(_RelativPath, ResourceType::Texture)
@@ -47,13 +49,22 @@ int CTexture::Load()
 
 void CTexture::Render(Vec2D _PlayerOffset)
 {
+	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
+	Vec2D FinalPos = Vec2D(m_Owner->GetOwner()->GetLocation().x + m_Offset.x + _PlayerOffset.x
+		, m_Owner->GetOwner()->GetLocation().y + m_Offset.y + _PlayerOffset.y);
+	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
+	if (abs((CCameraMgr::GetInst()->GetCameraPos().x + 1066 / 2) - (FinalPos.x + m_Size.x / 2)) < ((CEngine::GetInst()->GetResolution().x + m_Size.x) / 2)
+		&& abs((CCameraMgr::GetInst()->GetCameraPos().y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))
+	{
+		// 로드된 이미지를 해상도 비율에 맞춰 렌더링
+		m_DC = CEngine::GetInst()->GetSubDC();
+		Graphics graphics(m_DC);
+		Status st = graphics.DrawImage(m_Bitmap
+			, (int)((FinalPos.x - CCameraMgr::GetInst()->GetCameraPos().x) * CEngine::GetInst()->GetScreenScale())
+			, (int)((FinalPos.y - CCameraMgr::GetInst()->GetCameraPos().y) * CEngine::GetInst()->GetScreenScale())
+			, (int)(m_Size.x * CEngine::GetInst()->GetScreenScale())
+			, (int)(m_Size.y * CEngine::GetInst()->GetScreenScale()));
+	}
 
-	// 로드된 이미지를 렌더링
-	m_DC = CEngine::GetInst()->GetSubDC();
-	Graphics graphics(m_DC);
-	Status st = graphics.DrawImage(m_Bitmap
-								, (int)(m_Owner->GetOwner()->GetLocation().x + m_Offset.x + _PlayerOffset.x)
-								, (int)(m_Owner->GetOwner()->GetLocation().y + m_Offset.y + _PlayerOffset.y)
-								, (int)(m_Size.x * CEngine::GetInst()->GetScreenScale())
-								, (int)(m_Size.y * CEngine::GetInst()->GetScreenScale()));
+
 }

@@ -18,12 +18,13 @@ void CTextMgr::Init()
 {
 	// 폰트를 시스템에 추가
 	AddFontResourceEx(m_FontPath.c_str(), FR_PRIVATE, 0);
-	m_Font = CreateFont(
-		50, 0, 0, 0, 0, FALSE, FALSE, FALSE,
-		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, m_FontName.c_str());
+	ChangeTextSize(CEngine::GetInst()->GetResolution().y / 20);
+	//m_Font = CreateFont(
+	//	CEngine::GetInst()->GetResolution().y / 20, 0, 0, 0, 0, FALSE, FALSE, FALSE,
+	//	DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+	//	DEFAULT_PITCH | FF_DONTCARE, m_FontName.c_str());
 
-	DeleteObject((HFONT)SelectObject(CEngine::GetInst()->GetSubDC(), m_Font));
+	//DeleteObject((HFONT)SelectObject(CEngine::GetInst()->GetSubDC(), m_Font));
 }
 
 void CTextMgr::Render()
@@ -31,7 +32,9 @@ void CTextMgr::Render()
 	for (TextInfo info : m_VecTextInfo)
 	{
 		SetTextColor(CEngine::GetInst()->GetSubDC(), info.Color);
-		TextOut(CEngine::GetInst()->GetSubDC(), info.x, info.y, info.Text.c_str(), info.Text.size());
+		TextOut(CEngine::GetInst()->GetSubDC()
+			, info.x * CEngine::GetInst()->GetScreenScale(), info.y * CEngine::GetInst()->GetScreenScale()
+			, info.Text.c_str(), info.Text.size());
 	}
 }
 
@@ -72,5 +75,15 @@ void CTextMgr::DeleteText(TextInfo _info)
 			break;
 		}
 	}
+}
+
+void CTextMgr::ChangeTextSize(int _size)
+{
+	m_Font = CreateFont(
+		_size, 0, 0, 0, 0, FALSE, FALSE, FALSE,
+		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, m_FontName.c_str());
+
+	DeleteObject((HFONT)SelectObject(CEngine::GetInst()->GetSubDC(), m_Font));
 }
 

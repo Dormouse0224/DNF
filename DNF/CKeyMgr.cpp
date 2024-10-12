@@ -78,6 +78,7 @@ UINT key_value[(int)Keyboard::Keyboard_end] =
     VK_RSHIFT,
     VK_RMENU,
     VK_RCONTROL,
+    VK_SPACE,
 
     VK_UP,
     VK_DOWN,

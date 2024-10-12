@@ -139,6 +139,7 @@
     <ClInclude Include="CAlbumPlayer.h" />
     <ClInclude Include="CBackground.h" />
     <ClInclude Include="CBase.h" />
+    <ClInclude Include="CCameraMgr.h" />
     <ClInclude Include="CCollider.h" />
     <ClInclude Include="CCollisionMgr.h" />
     <ClInclude Include="CComponent.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="CAlbumPlayer.cpp" />
     <ClCompile Include="CBackground.cpp" />
     <ClCompile Include="CBase.cpp" />
+    <ClCompile Include="CCameraMgr.cpp" />
     <ClCompile Include="CCollider.cpp" />
     <ClCompile Include="CCollisionMgr.cpp" />
     <ClCompile Include="CComponent.cpp" />

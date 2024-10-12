@@ -7,6 +7,7 @@
 #include "CTaskMgr.h"
 #include "CTextMgr.h"
 #include "CTextureMgr.h"
+#include "CCameraMgr.h"
 
 #include "CSelectGDI.h"
 #include "CDbgRender.h"
@@ -73,6 +74,8 @@ int CEngine::Init(HINSTANCE _hInst)
 	CLevelMgr::GetInst()->Init();
 	CTimeMgr::GetInst()->Init();
 	CTextMgr::GetInst()->Init();
+	CCameraMgr::GetInst()->Init();
+
 
 	// 메인 DC 생성
 	m_hMainDC = GetDC(m_hMainWnd);
@@ -91,6 +94,7 @@ void CEngine::Progress()
 	// 매니저 프레임 행동 수행
 	CKeyMgr::GetInst()->Tick();
 	CTimeMgr::GetInst()->Tick();
+	CCameraMgr::GetInst()->Tick();
 
 	// 레벨 프레임 행동 수행
 	CLevelMgr::GetInst()->Progress();

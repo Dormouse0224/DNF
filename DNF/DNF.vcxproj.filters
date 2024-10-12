@@ -56,9 +56,6 @@
     <Filter Include="main\07. Resource\01. Texture">
       <UniqueIdentifier>{90a242ce-144b-4dee-b0f3-d26b5c612fe0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="main\05. Object\01. Background">
-      <UniqueIdentifier>{44a341d7-f39d-4089-af09-4080a8204086}</UniqueIdentifier>
-    </Filter>
     <Filter Include="main\03. Manager\07. NPK">
       <UniqueIdentifier>{87569e12-132a-4635-929b-1f20e519654e}</UniqueIdentifier>
     </Filter>
@@ -82,6 +79,15 @@
     </Filter>
     <Filter Include="main\03. Manager\10. Text">
       <UniqueIdentifier>{11cfdcdb-9297-4145-b4ff-67ff097e586a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\01.UI">
+      <UniqueIdentifier>{ccacb245-7920-489c-9f4d-20af44badd7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\01.UI\01. Background">
+      <UniqueIdentifier>{44a341d7-f39d-4089-af09-4080a8204086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\11. Camera">
+      <UniqueIdentifier>{892397ee-99d7-4f12-bf61-a42c2aa1b6c0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -161,7 +167,7 @@
       <Filter>main\07. Resource\01. Texture</Filter>
     </ClInclude>
     <ClInclude Include="CBackground.h">
-      <Filter>main\05. Object\01. Background</Filter>
+      <Filter>main\05. Object\01.UI\01. Background</Filter>
     </ClInclude>
     <ClInclude Include="CAlbum.h">
       <Filter>main\07. Resource\02. Album</Filter>
@@ -192,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="CTextMgr.h">
       <Filter>main\03. Manager\10. Text</Filter>
+    </ClInclude>
+    <ClInclude Include="CCameraMgr.h">
+      <Filter>main\03. Manager\11. Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -248,7 +257,7 @@
       <Filter>main\07. Resource\01. Texture</Filter>
     </ClCompile>
     <ClCompile Include="CBackground.cpp">
-      <Filter>main\05. Object\01. Background</Filter>
+      <Filter>main\05. Object\01.UI\01. Background</Filter>
     </ClCompile>
     <ClCompile Include="CAlbum.cpp">
       <Filter>main\07. Resource\02. Album</Filter>
@@ -273,6 +282,9 @@
     </ClCompile>
     <ClCompile Include="CTextMgr.cpp">
       <Filter>main\03. Manager\10. Text</Filter>
+    </ClCompile>
+    <ClCompile Include="CCameraMgr.cpp">
+      <Filter>main\03. Manager\11. Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

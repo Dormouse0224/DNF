@@ -17,5 +17,6 @@ public:
 	void DeleteText(UINT _x, UINT _y, wstring _Text);
 	void DeleteText(TextInfo _info);
 	void ClearText() {	m_VecTextInfo.clear(); }
+	void ChangeTextSize(int _size);
 };
 

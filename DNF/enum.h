@@ -29,7 +29,8 @@ enum class TaskType
 
 enum class LayerType
 {
-	Background, 
+	Background,
+	MapObject,
 	Player,
 	PlayerObject,
 	Monseter,
