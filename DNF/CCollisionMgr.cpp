@@ -142,7 +142,7 @@ void CCollisionMgr::ColliderCollision(CCollider* _first, CCollider* _second)
 
 bool CCollisionMgr::IsCollision(CCollider * _first, CCollider * _second)
 {
-	Vec2D vect = _second->GetLocation() - _first->GetLocation();
+	Vec2D vect = (_second->GetLocation() + (_second->GetSize()) / 2.f) - (_first->GetLocation() + (_first->GetSize()) / 2.f);
 	Vec2D benchmark = (_second->GetSize() + _first->GetSize()) / 2.f;
 
 	if (abs(benchmark.x) > abs(vect.x) && abs(benchmark.y) > abs(vect.y))
