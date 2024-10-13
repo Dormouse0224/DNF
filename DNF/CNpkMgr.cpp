@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CNpkMgr.h"
 #include "CTextureMgr.h"
+#include "CAlbum.h"
+#include "CTexture.h"
 
 CNpkMgr::CNpkMgr()
 {
@@ -53,7 +55,66 @@ vector<CAlbum*> CNpkMgr::ReadNpk(ifstream& _file, wstring _NpkPath)
 	return AlbumVector;
 }
 
+void CNpkMgr::WriteNpk(ofstream& _file, string _AlbumName)
+{
+	// __TempAlbum__ 을 _AlbumName 으로 저장
+	CAlbum* TempAlbum = CTextureMgr::GetInst()->GetTempAlbum();
+	_file.write("NeoplePack_Bill", 16);		// NPK 기본 헤더
+	int AlbumCount = 1;						// 앨범 개수는 1개로 고정
+	int AlbumOffset = 316;					// 앨범 개수가 하나밖에 없으므로 오프셋 또한 상수
+	int ImgVer = 2;
+	_file.write((char*)&AlbumCount, sizeof(AlbumCount));
 
+	// 앨범 내 텍스처를 바이너리 데이터로 변경
+	LONGLONG IndexLen = 36 * TempAlbum->GetCount();
+	int AlbumLength = 32 + IndexLen;
+	for (int i = 0; i < TempAlbum->GetCount(); ++i)
+	{
+		CTextureMgr::GetInst()->BitmapToArray(TempAlbum->GetScene(i));
+		AlbumLength += TempAlbum->GetScene(i)->GetLength();
+	}
+
+	// Info 작성
+	_file.write((char*)&AlbumOffset, sizeof(AlbumOffset));
+	_file.write((char*)&AlbumLength, sizeof(AlbumLength));
+	WritePath(_file, _AlbumName);
+	_file.write("Dummy_Hash_Data_Dummy_Hash_Data", 32);
+
+	// Album 데이터 작성
+	_file.write("Neople Img File", 16);
+	_file.write((char*)&IndexLen, sizeof(IndexLen));
+	_file.write((char*)&ImgVer, sizeof(ImgVer));
+	_file.write((char*)&(TempAlbum->Count), sizeof(TempAlbum->Count));
+
+	// 앨범 내 텍스처 정보 작성
+	for (int i = 0; i < TempAlbum->GetCount(); ++i)
+	{
+		CTexture* pTex = TempAlbum->GetScene(i);
+		int type = (int)pTex->Type;
+		int CompressMode = (int)pTex->CompressMode;
+		int size_x = (int)pTex->m_Size.x;
+		int size_y = (int)pTex->m_Size.y;
+		int length = (int)pTex->Length;
+		int offset_x = (int)pTex->m_Offset.x;
+		int offset_y = (int)pTex->m_Offset.y;
+		int canvassize_x = (int)pTex->m_CanvasSize.x;
+		int canvassize_y = (int)pTex->m_CanvasSize.y;
+		_file.write((char*)&type, sizeof(type));
+		_file.write((char*)&CompressMode, sizeof(CompressMode));
+		_file.write((char*)&size_x, sizeof(size_x));
+		_file.write((char*)&size_y, sizeof(size_y));
+		_file.write((char*)&length, sizeof(length));
+		_file.write((char*)&offset_x, sizeof(offset_x));
+		_file.write((char*)&offset_y, sizeof(offset_y));
+		_file.write((char*)&canvassize_x, sizeof(canvassize_x));
+		_file.write((char*)&canvassize_y, sizeof(canvassize_y));
+	}
+	for (int index = 0; index < TempAlbum->GetSceneCount(); ++index)
+	{
+		CTexture* pTex = TempAlbum->GetScene(index);
+		_file.write(pTex->Data, pTex->Length);
+	}
+}
 
 
 void CNpkMgr::ReadImg(ifstream& _file, CAlbum* _Album, LONGLONG _Length)
@@ -117,4 +178,16 @@ string CNpkMgr::ReadPath(ifstream& _file)
 	}
 	_file.seekg(255 - index, ios::cur);
 	return string(buffer);
+}
+
+void CNpkMgr::WritePath(ofstream& _file, string _AlbumName)
+{
+	char buffer1[256] = {};
+	memcpy(buffer1, _AlbumName.c_str(), _AlbumName.size());
+	char buffer2[256] = {};
+	for (int index = 0; index < 256; ++index)
+	{
+		buffer2[index] = (char)((UINT)buffer1[index] ^ (UINT)m_encryptionKey[index]);
+	}
+	_file.write(buffer2, 256);
 }

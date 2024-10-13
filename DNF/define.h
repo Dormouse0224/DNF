@@ -28,3 +28,8 @@
 						GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
 #define GDIPlusEnd		GdiplusShutdown(gdiplusToken);
+
+#define _TempNPK		L"__TempNPK__"
+#define _TempAlbum		"__TempAlbum__"
+#define _SysNPK			L"__SysReservedNPK__"
+#define _SysAlbum		"__SysReservedAlbum__"

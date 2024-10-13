@@ -385,6 +385,28 @@ Bitmap* CTextureMgr::BitmapFromArray(const char* _data, Vec2D _size, ColorBits _
 	return bitmap;
 }
 
+void CTextureMgr::BitmapToArray(CTexture* _Texture)
+{
+	int pixelCount = (int)_Texture->m_Size.x * (int)_Texture->m_Size.y;
+	char* temp = new char[pixelCount * 4];
+	BitmapData bitmapdata;
+	Rect rect = Rect((INT)0, (INT)0, (INT)_Texture->m_Size.x, (INT)_Texture->m_Size.y);
+	_Texture->m_Bitmap->LockBits(&rect, ImageLockModeWrite, PixelFormat32bppARGB, &bitmapdata);
+	memcpy(temp, bitmapdata.Scan0, (size_t)(pixelCount * 4));
+	_Texture->m_Bitmap->UnlockBits(&bitmapdata);
+
+	uLongf compLen = pixelCount * 4;
+	char* comp = new char[compLen];
+	compress((Bytef*)comp, &compLen, (Bytef*)temp, (uLong)(pixelCount * 4));
+	delete[] temp;
+
+	_Texture->Type = ColorBits::ARGB_8888;
+	_Texture->CompressMode = CompressMode::ZLIB;
+	_Texture->Length = compLen;
+	_Texture->m_CanvasSize = _Texture->m_Size;
+	_Texture->Data = comp;
+}
+
 byte* CTextureMgr::ReadColor(const char* _data, ColorBits _bits)
 {
 	int bits = (int)_bits;
@@ -470,31 +492,41 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 {
 	// 앨범 데이터 가져왔는지 검사
 	map<string, CAlbum*>::iterator iter = m_Albums.find(_AlbumPath);
-	// 앨범을 가져온 적 없는 경우 - 앨범이 속한 NPK 파일 로드 후 앨범 데이터 저장
-	if (iter == m_Albums.end())
+	if (_NpkPath != L"__TempNPK__" && _NpkPath != L"__SysReservedNPK__")
 	{
-		ifstream readfile;
-		readfile.open(_NpkPath, ios::binary);
-		assert(readfile.is_open());	// 파일 읽기 오류
-		// NPK 파일 읽어서 앨범 저장
-		vector<CAlbum*> AlbumList = CNpkMgr::GetInst()->ReadNpk(readfile, _NpkPath);
-		readfile.close();
-		for (CAlbum* _album : AlbumList)
+		// 앨범을 가져온 적 없는 경우 - 앨범이 속한 NPK 파일 로드 후 앨범 데이터 저장
+		if (iter == m_Albums.end())
 		{
-			m_Albums.insert(make_pair(_album->GetPath(), _album));
+			ifstream readfile;
+			readfile.open(_NpkPath, ios::binary);
+			assert(readfile.is_open());	// 파일 읽기 오류
+			// NPK 파일 읽어서 앨범 저장
+			vector<CAlbum*> AlbumList = CNpkMgr::GetInst()->ReadNpk(readfile, _NpkPath);
+			readfile.close();
+			for (CAlbum* _album : AlbumList)
+			{
+				m_Albums.insert(make_pair(_album->GetPath(), _album));
+			}
+			// 재검색
+			iter = m_Albums.find(_AlbumPath);
 		}
-		// 재검색
-		iter = m_Albums.find(_AlbumPath);
+		// 메모리에 앨범 이미지 로드
+		for (int i = 0; i < iter->second->GetSceneCount(); ++i)
+		{
+			iter->second->GetScene(i)->Load();
+		}
 	}
-	// 메모리에 앨범 이미지 로드
-	for (int i = 0; i < iter->second->GetSceneCount(); ++i)
-	{
-		iter->second->GetScene(i)->Load();
-	}
-
 	return iter->second;
-	
 }
+
+void CTextureMgr::SaveAlbum(string _AlbumName, string _Directory)
+{
+	ofstream writeAlbum;
+	writeAlbum.open(_Directory + "\\" + _AlbumName + ".NPK", ios::binary);
+	CNpkMgr::GetInst()->WriteNpk(writeAlbum, _AlbumName);
+	writeAlbum.close();
+}
+
 
 vector<Color> CTextureMgr::ReadPalette(ifstream& _file, int count)
 {
@@ -682,4 +714,19 @@ HDC CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Co
 	}
 
 	return pTex->m_DC;
+}
+
+void CTextureMgr::LoadFromFile(wstring _filepath)
+{
+	wstring filename = _filepath;
+	filename = filename.substr(filename.rfind('\\') + 1, filename.rfind('.') - filename.rfind('\\'));
+	CTexture* newTex = new CTexture(filename, m_TempAlbum);
+	m_TempAlbum->AddScene(newTex);
+	++m_TempAlbum->Count;
+
+	newTex->m_Bitmap = Bitmap::FromFile(_filepath.c_str());
+	newTex->m_Size = Vec2D(newTex->m_Bitmap->GetWidth(), newTex->m_Bitmap->GetHeight());
+	newTex->m_Offset = Vec2D(0, 0);
+	Graphics graphics(newTex->m_Bitmap);
+	newTex->m_DC = graphics.GetHDC();
 }

@@ -13,14 +13,19 @@ private:
 public:
 	void Init();
 
+	CAlbum* GetTempAlbum() { return m_TempAlbum; }
+
 	void CreateFromNpk(ifstream& _file, CAlbum* _Album);
 	Bitmap* ConvertToBitmap(CTexture* _pTexture);
 	Bytef* UncompressZlib(const char* _data, int size, int _dataSize);
 	Bitmap* BitmapFromArray(const char* data, Vec2D size, ColorBits bits);
+	void BitmapToArray(CTexture* _Texture);
 	byte* ReadColor(const char* _data, ColorBits _bits);
 	void WriteColor(char* _dest, const char* _src, ColorBits _bits);
 	CAlbum* LoadAlbum(string _AlbumPath, wstring _NpkPath);
+	void SaveAlbum(string _AlbumName, string _Directory);
 	HDC CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color, bool _IsAddedBySys);
+	void LoadFromFile(wstring _filepath);
 
 private:
 

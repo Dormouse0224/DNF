@@ -28,6 +28,8 @@ public:
     void SetFPS(int _FPS) { m_FPS = _FPS; }
     void FinalTick() override;
     void Render(CObj* _thisObj);
+    void NextScene();
+    void SetCurrentScene(int _SceneIndex);
 
 };
 

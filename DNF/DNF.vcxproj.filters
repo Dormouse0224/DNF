@@ -83,11 +83,17 @@
     <Filter Include="main\05. Object\01.UI">
       <UniqueIdentifier>{ccacb245-7920-489c-9f4d-20af44badd7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="main\05. Object\01.UI\01. Background">
-      <UniqueIdentifier>{44a341d7-f39d-4089-af09-4080a8204086}</UniqueIdentifier>
-    </Filter>
     <Filter Include="main\03. Manager\11. Camera">
       <UniqueIdentifier>{892397ee-99d7-4f12-bf61-a42c2aa1b6c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\02. Map">
+      <UniqueIdentifier>{0982a8a4-15f4-4fc5-b9e4-1046ccb27ee6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\02. Map\01. Background">
+      <UniqueIdentifier>{44a341d7-f39d-4089-af09-4080a8204086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\01.UI\01. Button">
+      <UniqueIdentifier>{3b7ce3ea-286c-485a-b94f-4c9265f63514}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -167,7 +173,7 @@
       <Filter>main\07. Resource\01. Texture</Filter>
     </ClInclude>
     <ClInclude Include="CBackground.h">
-      <Filter>main\05. Object\01.UI\01. Background</Filter>
+      <Filter>main\05. Object\02. Map\01. Background</Filter>
     </ClInclude>
     <ClInclude Include="CAlbum.h">
       <Filter>main\07. Resource\02. Album</Filter>
@@ -201,6 +207,12 @@
     </ClInclude>
     <ClInclude Include="CCameraMgr.h">
       <Filter>main\03. Manager\11. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CButton.h">
+      <Filter>main\05. Object\01.UI\01. Button</Filter>
+    </ClInclude>
+    <ClInclude Include="CUI.h">
+      <Filter>main\05. Object\01.UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -257,7 +269,7 @@
       <Filter>main\07. Resource\01. Texture</Filter>
     </ClCompile>
     <ClCompile Include="CBackground.cpp">
-      <Filter>main\05. Object\01.UI\01. Background</Filter>
+      <Filter>main\05. Object\02. Map\01. Background</Filter>
     </ClCompile>
     <ClCompile Include="CAlbum.cpp">
       <Filter>main\07. Resource\02. Album</Filter>
@@ -285,6 +297,12 @@
     </ClCompile>
     <ClCompile Include="CCameraMgr.cpp">
       <Filter>main\03. Manager\11. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CButton.cpp">
+      <Filter>main\05. Object\01.UI\01. Button</Filter>
+    </ClCompile>
+    <ClCompile Include="CUI.cpp">
+      <Filter>main\05. Object\01.UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

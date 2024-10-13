@@ -66,3 +66,24 @@ void CAlbumPlayer::Render(CObj* _thisObj)
 	m_CurrentAlbum->m_Owner = _thisObj;
 	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset);
 }
+
+void CAlbumPlayer::NextScene()
+{
+	if (m_Loop)
+	{
+		if ((m_SceneNumber + m_Begin) == m_End)
+		{
+			m_SceneNumber = 0;
+		}
+		else
+		{
+			++m_SceneNumber;
+		}
+	}
+}
+
+void CAlbumPlayer::SetCurrentScene(int _SceneIndex)
+{
+	assert(_SceneIndex <= m_End && _SceneIndex >= m_Begin);
+	m_SceneNumber = _SceneIndex;
+}

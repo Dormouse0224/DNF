@@ -139,6 +139,7 @@
     <ClInclude Include="CAlbumPlayer.h" />
     <ClInclude Include="CBackground.h" />
     <ClInclude Include="CBase.h" />
+    <ClInclude Include="CButton.h" />
     <ClInclude Include="CCameraMgr.h" />
     <ClInclude Include="CCollider.h" />
     <ClInclude Include="CCollisionMgr.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="CTextMgr.h" />
     <ClInclude Include="CTexture.h" />
     <ClInclude Include="CTextureMgr.h" />
+    <ClInclude Include="CUI.h" />
     <ClInclude Include="DDSTextureLoader11.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DirectXTex.h" />
@@ -178,6 +180,7 @@
     <ClCompile Include="CAlbumPlayer.cpp" />
     <ClCompile Include="CBackground.cpp" />
     <ClCompile Include="CBase.cpp" />
+    <ClCompile Include="CButton.cpp" />
     <ClCompile Include="CCameraMgr.cpp" />
     <ClCompile Include="CCollider.cpp" />
     <ClCompile Include="CCollisionMgr.cpp" />
@@ -197,6 +200,7 @@
     <ClCompile Include="CTextMgr.cpp" />
     <ClCompile Include="CTexture.cpp" />
     <ClCompile Include="CTextureMgr.cpp" />
+    <ClCompile Include="CUI.cpp" />
     <ClCompile Include="DDSTextureLoader11.cpp" />
     <ClCompile Include="function.cpp" />
     <ClCompile Include="main.cpp" />

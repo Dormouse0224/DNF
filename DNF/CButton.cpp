@@ -5,79 +5,73 @@
 #include "CTextMgr.h"
 
 CButton::CButton(wstring _Name)
-	:CObj(_Name)
-	, m_Action{}
-	, m_CurBtnState(BtnState::Idle)
-	, m_PrevBtnState(BtnState::Idle)
-	, m_IsBtnReleased(false)
+	:CUI(_Name)
+	, m_Action{ nullptr, nullptr, nullptr }
+	, m_IsPressed(false)
+	, m_IsClicked(false)
 {
 }
 
 CButton::~CButton()
 {
-	for (int i = 0; i < (int)BtnState::END; ++i)
-	{
-		if (m_Action[i] != nullptr)
-		{
-			delete m_Action[i];
-			m_Action[i] = nullptr;
-		}
-	}
-
-	memset(m_Action, 0, sizeof(m_Action));
+	
 }
 
 void CButton::Begin()
 {
-	CTextMgr::GetInst()->WriteText(m_Text[(int)m_CurBtnState]);
+
 }
 
 void CButton::Tick()
 {
-	Vec2D Cursor = CKeyMgr::GetInst()->GetMousePos();
-	Vec2D LT = Vec2D(GetLocation().x - (GetScale().x / 2), GetLocation().y - (GetScale().y / 2));
-	Vec2D RB = Vec2D(GetLocation().x + (GetScale().x / 2), GetLocation().y + (GetScale().y / 2));
+	CUI::Tick();
 	Key_state MLBtn = CKeyMgr::GetInst()->GetKeyState(Keyboard::MOUSE_LBTN);
-	if (MLBtn == Key_state::TAP && (Cursor > LT && Cursor < RB))
+
+	if (MLBtn == Key_state::NONE)
 	{
-		m_PrevBtnState = m_CurBtnState;
-		m_CurBtnState = BtnState::Pressed;
-	}
-	else if (MLBtn == Key_state::RELEASE && (Cursor > LT && Cursor < RB))
-	{
-		m_PrevBtnState = m_CurBtnState;
-		m_CurBtnState = BtnState::Idle;
-		m_IsBtnReleased = true;
-	}
-	else if (MLBtn == Key_state::PRESSED && (Cursor > LT && Cursor < RB))
-	{
-		if (m_CurBtnState == BtnState::Pressed)
-		{
-			m_PrevBtnState = m_CurBtnState;
-			m_CurBtnState = BtnState::Pressed;
-		}
-	}
-	else if (Cursor > LT && Cursor < RB)
-	{
-		m_PrevBtnState = m_CurBtnState;
-		m_CurBtnState = BtnState::OnCursor;
+		m_IsPressed = false;
 	}
 	else
 	{
-		m_PrevBtnState = m_CurBtnState;
-		m_CurBtnState = BtnState::Idle;
+		if (MLBtn == Key_state::TAP && IsCursorOn())
+		{
+			m_IsPressed = true;
+		}
+		else if (MLBtn == Key_state::RELEASE && IsCursorOn() && m_IsPressed)
+		{
+			m_IsClicked = true;
+			m_IsPressed = false;
+		}
 	}
 }
 
 void CButton::Render()
 {
-	if (m_Action[(int)m_CurBtnState])
-		m_Action[(int)m_CurBtnState]->Render(this);
-
-	if (m_CurBtnState != m_PrevBtnState)
+	if (IsCursorOn())
 	{
-		CTextMgr::GetInst()->WriteText(m_Text[(int)m_CurBtnState]);
-		CTextMgr::GetInst()->DeleteText(m_Text[(int)m_PrevBtnState]);
+		if (m_IsPressed)
+		{
+			// 버튼 눌림 애니메이션
+			if (m_Action[(int)BtnState::PRESSED] != nullptr)
+				m_Action[(int)BtnState::PRESSED]->Render(this);
+		}
+		else
+		{
+			// 버튼 커서온 애니메이션
+			if (m_Action[(int)BtnState::CURSOR_ON] != nullptr)
+				m_Action[(int)BtnState::CURSOR_ON]->Render(this);
+		}
 	}
+	else
+	{
+		// 버튼 기본 애니메이션
+		if (m_Action[(int)BtnState::IDLE] != nullptr)
+			m_Action[(int)BtnState::IDLE]->Render(this);
+	}
+}
 
+void CButton::SetAction(CAlbumPlayer* _Scene, BtnState _BtnState)
+{
+	m_Action[(int)_BtnState] = _Scene;
+	AddComponent(_Scene);
 }

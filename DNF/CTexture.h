@@ -7,30 +7,31 @@ class CTexture :
     public CResource
 {
     friend class CTextureMgr;
+    friend class CNpkMgr;
 public:
     CTexture(wstring _Name, CAlbum* _Owner);
     ~CTexture();
 
 private:
-    CAlbum* m_Owner;
+    CAlbum*         m_Owner;
 
-    Bitmap* m_Bitmap;
-    HDC m_DC;
-    Vec2D m_Size;
-    Vec2D m_Offset;
+    Bitmap*         m_Bitmap;
+    HDC             m_DC;
+    Vec2D           m_Size;
+    Vec2D           m_Offset;
 
 
     // Texture 가 속한 Album 관련 정보
-    int Index;
-    ColorBits Type;
-    CompressMode CompressMode;
-    int Length;     // Album 내 데이터 길이
-    Vec2D m_CanvasSize;
-    CTexture* Target;
-    char* Data;
+    int             Index;
+    ColorBits       Type;
+    CompressMode    CompressMode;
+    int             Length;             // Album 내 데이터 길이
+    Vec2D           m_CanvasSize;
+    CTexture*       Target;
+    char*           Data;
 
-    TextureVersion Version;
-    int FullLength;
+    TextureVersion  Version;
+    int             FullLength;
 
 
 public:
@@ -41,6 +42,7 @@ public:
 
     virtual int Load() override;
     void Render(Vec2D _PlayerOffset = Vec2D(0, 0));
+    int GetLength() { return Length; }
 
 };
 
