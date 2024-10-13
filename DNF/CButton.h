@@ -24,7 +24,6 @@ private:
     CAlbumPlayer* m_Action[(int)BtnState::END];
 
     bool m_IsPressed;   // 버튼 영역 안에서 마우스 좌측 키가 눌린 적이 있음
-    bool m_IsClicked;   // Pressed 상태에서 버튼 영역 안에서 마우스 좌측 키가 뗴어짐
 
 
 
@@ -36,6 +35,7 @@ public:
 
     void SetAction(CAlbumPlayer* _Scene, BtnState _BtnState);
 
+    virtual void Click() = 0;
 };
 
 

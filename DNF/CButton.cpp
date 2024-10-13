@@ -8,7 +8,6 @@ CButton::CButton(wstring _Name)
 	:CUI(_Name)
 	, m_Action{ nullptr, nullptr, nullptr }
 	, m_IsPressed(false)
-	, m_IsClicked(false)
 {
 }
 
@@ -39,8 +38,8 @@ void CButton::Tick()
 		}
 		else if (MLBtn == Key_state::RELEASE && IsCursorOn() && m_IsPressed)
 		{
-			m_IsClicked = true;
 			m_IsPressed = false;
+			Click();
 		}
 	}
 }

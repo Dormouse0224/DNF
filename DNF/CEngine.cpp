@@ -84,7 +84,10 @@ int CEngine::Init(HINSTANCE _hInst)
 	// GDIObject 생성
 	CreateGDIObject();
 
-
+	WCHAR curdir[255] = {};
+	GetCurrentDirectory(255, curdir);
+	m_ResourcePath = curdir;
+	m_ResourcePath += L"\\resource";
 
 	return S_OK;
 }
@@ -100,27 +103,20 @@ void CEngine::Progress()
 	CLevelMgr::GetInst()->Progress();
 
 
-
 	// 백버퍼 화면 초기화
 	{
 		SELECT_BRUSH(BRUSH_TYPE::GRAY);
 		Rectangle(m_hSubDC, -1, -1, (int)m_Resolution.x + 1, (int)m_Resolution.y + 1);
 	}
-
 	// 레벨 렌더링
 	CLevelMgr::GetInst()->Render();
-
 	// 텍스트 렌더링
 	CTextMgr::GetInst()->Render();
-
 	// 디버그 렌더링
 	CDbgRender::GetInst()->Render();
-
-
-
-
 	// 백버퍼 비트맵을 프런트버퍼 비트맵으로 복사
 	BitBlt(m_hMainDC, 0, 0, (int)m_Resolution.x, (int)m_Resolution.y, m_hSubDC, 0, 0, SRCCOPY);
+
 
 
 	// 태스크 매니저에 요청된 태스크 수행

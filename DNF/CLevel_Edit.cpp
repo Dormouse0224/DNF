@@ -7,7 +7,7 @@
 #include "CBackground.h"
 #include "CAlbumPlayer.h"
 #include "CTextureMgr.h"
-#include "CButton.h"
+#include "CButton_LoadNPK.h"
 
 CLevel_Edit::CLevel_Edit()
 	:CLevel(L"Level_Edit")
@@ -51,7 +51,7 @@ void CLevel_Edit::Begin()
 
 	//CTextureMgr::GetInst()->SaveAlbum("Edit_Button", "C:\\Users\\arcti\\Desktop\\temp_res");
 
-	CButton* OpenNpk = new CButton(L"Btn_OpenNpk");
+	CButton_LoadNPK* OpenNpk = new CButton_LoadNPK(L"Btn_OpenNpk");
 	CAlbumPlayer* Btn_OpenNpk_Idle = new CAlbumPlayer(L"Btn_OpenNpk_Idle", "Edit_Button"
 		, L"D:\\repos\\DNF\\Output\\resource\\texture\\ui\\Edit_Button.NPK");
 	OpenNpk->SetAction(Btn_OpenNpk_Idle, BtnState::IDLE);

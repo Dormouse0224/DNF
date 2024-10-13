@@ -488,6 +488,22 @@ void CTextureMgr::WriteColor(char* _dest, const char* _src, ColorBits _bits)
 	}
 }
 
+vector<CAlbum*> CTextureMgr::LoadNPK(wstring _NpkPath)
+{
+	ifstream readfile;
+	readfile.open(_NpkPath, ios::binary);
+	assert(readfile.is_open());	// 파일 읽기 오류
+	// NPK 파일 읽어서 앨범 저장
+	vector<CAlbum*> AlbumList = CNpkMgr::GetInst()->ReadNpk(readfile, _NpkPath);
+	readfile.close();
+	for (CAlbum* _album : AlbumList)
+	{
+		m_Albums.insert(make_pair(_album->GetPath(), _album));
+	}
+	return AlbumList;
+}
+
+
 CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 {
 	// 앨범 데이터 가져왔는지 검사

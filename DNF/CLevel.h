@@ -24,6 +24,7 @@ public:
 
     void AddObject(CObj* _Object, LayerType _layer) { m_hObj[(int)_layer].push_back(_Object); _Object->m_LayerType = _layer; }
     void DeleteObject();
+    vector<CObj*> GetObjLayer(LayerType _layer) { return m_hObj[(int)_layer]; }
 
     void AddCollider(CCollider* _Collider, LayerType _layer) { m_hCollider[(int)_layer].push_back(_Collider); }
     const vector<CCollider*>& GetCollider(LayerType _layer) { return m_hCollider[(int)_layer]; }

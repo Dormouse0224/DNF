@@ -1,6 +1,11 @@
 #pragma once
 
+#define _AFXDLL
+
 #include "framework.h"
+
+
+
 
 #include <vector>
 #include <list>
@@ -8,6 +13,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+
 
 //#include <ole2.h>
 #include <gdiplus.h>

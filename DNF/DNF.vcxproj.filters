@@ -95,6 +95,9 @@
     <Filter Include="main\05. Object\01.UI\01. Button">
       <UniqueIdentifier>{3b7ce3ea-286c-485a-b94f-4c9265f63514}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\05. Object\01.UI\01. Button\01. LoadNPK">
+      <UniqueIdentifier>{1287e15f-8362-44c2-ac60-ae9a33dad678}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -214,6 +217,9 @@
     <ClInclude Include="CUI.h">
       <Filter>main\05. Object\01.UI</Filter>
     </ClInclude>
+    <ClInclude Include="CButton_LoadNPK.h">
+      <Filter>main\05. Object\01.UI\01. Button\01. LoadNPK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -303,6 +309,9 @@
     </ClCompile>
     <ClCompile Include="CUI.cpp">
       <Filter>main\05. Object\01.UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CButton_LoadNPK.cpp">
+      <Filter>main\05. Object\01.UI\01. Button\01. LoadNPK</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

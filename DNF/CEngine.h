@@ -11,6 +11,8 @@ private:
 	float m_ScreenScale;
 	Vec2D m_MainWndPos;
 
+	wstring m_ResourcePath;
+
 	HDC m_hSubDC;
 	HBITMAP	m_hSubBitmap;
 
@@ -29,6 +31,9 @@ public:
 	float GetScreenScale() { return m_ScreenScale; }
 	void SetScreenScale(float _Scale) { m_ScreenScale = _Scale; }
 	HWND GetMainWnd() { return m_hMainWnd; }
+
+	HINSTANCE GetProgramInst() { return m_hInst; }
+	wstring GetResourcePath() { return m_ResourcePath; }
 
 
 public:

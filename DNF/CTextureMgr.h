@@ -22,6 +22,7 @@ public:
 	void BitmapToArray(CTexture* _Texture);
 	byte* ReadColor(const char* _data, ColorBits _bits);
 	void WriteColor(char* _dest, const char* _src, ColorBits _bits);
+	vector<CAlbum*> LoadNPK(wstring _NpkPath);
 	CAlbum* LoadAlbum(string _AlbumPath, wstring _NpkPath);
 	void SaveAlbum(string _AlbumName, string _Directory);
 	HDC CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color, bool _IsAddedBySys);
