@@ -23,7 +23,11 @@
 #pragma comment (lib, "zlibwapi.lib")
 
 #include "DirectXTex.h"
+#ifdef _DEBUG
 #pragma comment (lib, "DirectXTex.lib")
+#else
+#pragma comment (lib, "DirectXTexRelease.lib")
+#endif
 
 #include "vld.h"
 #pragma comment (lib, "vld.lib")
