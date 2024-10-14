@@ -21,7 +21,7 @@ CButton_LoadNPK::~CButton_LoadNPK()
 {
 }
 
-void CButton_LoadNPK::Click()
+void CButton_LoadNPK::MouseLBtnClikced()
 {
     if (m_hAlbumViewerWnd == nullptr)
 	    m_hAlbumViewerWnd = CreateDialog(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AlbumViewer), CEngine::GetInst()->GetMainWnd(), &AlbumViewerProc);

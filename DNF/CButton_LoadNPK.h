@@ -11,6 +11,8 @@ private:
     HWND m_hAlbumViewerWnd;
 
 public:
-    virtual void Click() override;
+    virtual void MouseLBtnClikced() override;
+
+    virtual void Tick_UI() {};
 };
 

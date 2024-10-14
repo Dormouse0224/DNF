@@ -8,6 +8,7 @@
 #include "CTextMgr.h"
 #include "CTextureMgr.h"
 #include "CCameraMgr.h"
+#include "CUIMgr.h"
 
 #include "CSelectGDI.h"
 #include "CDbgRender.h"
@@ -100,6 +101,8 @@ void CEngine::Progress()
 	CKeyMgr::GetInst()->Tick();
 	CTimeMgr::GetInst()->Tick();
 	CCameraMgr::GetInst()->Tick();
+	CUIMgr::GetInst()->Tick();
+
 
 	// 레벨 프레임 행동 수행
 	CLevelMgr::GetInst()->Progress();

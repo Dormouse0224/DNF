@@ -159,6 +159,7 @@
     <ClInclude Include="CTexture.h" />
     <ClInclude Include="CTextureMgr.h" />
     <ClInclude Include="CUI.h" />
+    <ClInclude Include="CUIMgr.h" />
     <ClInclude Include="DDSTextureLoader11.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DirectXTex.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="CTexture.cpp" />
     <ClCompile Include="CTextureMgr.cpp" />
     <ClCompile Include="CUI.cpp" />
+    <ClCompile Include="CUIMgr.cpp" />
     <ClCompile Include="DDSTextureLoader11.cpp" />
     <ClCompile Include="function.cpp" />
     <ClCompile Include="main.cpp" />

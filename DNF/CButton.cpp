@@ -7,41 +7,12 @@
 CButton::CButton(wstring _Name)
 	:CUI(_Name)
 	, m_Action{ nullptr, nullptr, nullptr }
-	, m_IsPressed(false)
 {
 }
 
 CButton::~CButton()
 {
 	
-}
-
-void CButton::Begin()
-{
-
-}
-
-void CButton::Tick()
-{
-	CUI::Tick();
-	Key_state MLBtn = CKeyMgr::GetInst()->GetKeyState(Keyboard::MOUSE_LBTN);
-
-	if (MLBtn == Key_state::NONE)
-	{
-		m_IsPressed = false;
-	}
-	else
-	{
-		if (MLBtn == Key_state::TAP && IsCursorOn())
-		{
-			m_IsPressed = true;
-		}
-		else if (MLBtn == Key_state::RELEASE && IsCursorOn() && m_IsPressed)
-		{
-			m_IsPressed = false;
-			Click();
-		}
-	}
 }
 
 void CButton::Render()
