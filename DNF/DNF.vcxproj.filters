@@ -101,6 +101,9 @@
     <Filter Include="main\03. Manager\12. UI">
       <UniqueIdentifier>{b5797a3d-3db0-428d-947c-a9862ed49cfe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\05. Object\01.UI\01. Button\02. CreateAlbum">
+      <UniqueIdentifier>{ae1edc55-8775-4542-90fb-d093eb6acc69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -226,6 +229,9 @@
     <ClInclude Include="CUIMgr.h">
       <Filter>main\03. Manager\12. UI</Filter>
     </ClInclude>
+    <ClInclude Include="CButton_CreateAlbum.h">
+      <Filter>main\05. Object\01.UI\01. Button\02. CreateAlbum</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -321,6 +327,9 @@
     </ClCompile>
     <ClCompile Include="CUIMgr.cpp">
       <Filter>main\03. Manager\12. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CButton_CreateAlbum.cpp">
+      <Filter>main\05. Object\01.UI\01. Button\02. CreateAlbum</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -28,7 +28,6 @@ void CButton_LoadNPK::MouseLBtnClikced()
     ShowWindow(m_hAlbumViewerWnd, SW_SHOW);
 }
 
-vector<WPARAM> wpar;
 INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
 {
     UNREFERENCED_PARAMETER(_lParam);
@@ -38,7 +37,6 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
         return (INT_PTR)TRUE;
 
     case WM_COMMAND:
-        wpar.push_back(_wParam);
         if (LOWORD(_wParam) == IDOK || LOWORD(_wParam) == IDCANCEL)
         {
             EndDialog(hDlg, LOWORD(_wParam));
@@ -83,7 +81,6 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
         }
         else if (HIWORD(_wParam) == LBN_DBLCLK && LOWORD(_wParam) == LBX_AlbumList)
         {
-            //if (LOWORD(_wParam) == LBX_AlbumList)
             // 앨범 리스트박스 항목을 더블클릭했을 경우
             HWND hAlbumLBX = GetDlgItem(hDlg, LBX_AlbumList);
             HWND hTexLBX = GetDlgItem(hDlg, LBX_TextureList);
@@ -112,7 +109,7 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
         }
         else if (HIWORD(_wParam) == LBN_SELCHANGE && LOWORD(_wParam) == LBX_TextureList)
         {
-            // 텍스처 리스트박스 항목이 더블클릭됨
+            // 텍스처 리스트박스 항목이 클릭됨
             HWND hTexLBX = GetDlgItem(hDlg, LBX_TextureList);
             HWND hOwnALbum = GetDlgItem(hDlg, STATIC_OwnerAlbum);
             HWND hNPKDir = GetDlgItem(hDlg, STATIC_NPKDir);

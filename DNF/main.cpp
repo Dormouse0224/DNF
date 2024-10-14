@@ -124,8 +124,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
 
         // 종료 전 창 크기와 위치 기억
+        char buff[255] = {};
+        GetModuleFileNameA(nullptr, buff, 255);
         ofstream DataFile;
-        DataFile.open("DNF_program.data", ios::binary);
+        string str = string(buff).substr(0, string(buff).rfind('\\')) + "\\DNF_program.data";
+        DataFile.open(str, ios::binary);
+        assert(DataFile.is_open());
         ProgramInfo info;
         info.Resolution = Vec2D(CEngine::GetInst()->GetResolution().x, CEngine::GetInst()->GetResolution().y);
         RECT rect;

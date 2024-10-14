@@ -38,7 +38,8 @@ private:
 public:
     HDC GetDC() { return m_DC; }
     void SetSize(float _x, float _y) { m_Size.x = _x; m_Size.y = _y; }
-    void SteOffset(float _x, float _y) { m_Offset.x = _x; m_Offset.y = _y; }
+    Vec2D GetOffset() { return m_Offset; }
+    void SetOffset(float _x, float _y) { m_Offset.x = _x; m_Offset.y = _y; }
     void SetOwner(CAlbum* _Album) { m_Owner = _Album; }
 
     virtual int Load() override;

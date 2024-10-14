@@ -542,7 +542,7 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 void CTextureMgr::SaveAlbum(string _AlbumName, string _Directory)
 {
 	ofstream writeAlbum;
-	writeAlbum.open(_Directory + "\\" + _AlbumName + ".NPK", ios::binary);
+	writeAlbum.open(_Directory, ios::binary);
 	CNpkMgr::GetInst()->WriteNpk(writeAlbum, _AlbumName);
 	writeAlbum.close();
 }
@@ -736,7 +736,7 @@ HDC CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Co
 	return pTex->m_DC;
 }
 
-void CTextureMgr::LoadFromFile(wstring _filepath)
+CTexture* CTextureMgr::LoadFromFile(wstring _filepath)
 {
 	wstring filename = _filepath;
 	filename = filename.substr(filename.rfind('\\') + 1, filename.rfind('.') - filename.rfind('\\'));
@@ -749,6 +749,7 @@ void CTextureMgr::LoadFromFile(wstring _filepath)
 	newTex->m_Offset = Vec2D(0, 0);
 	Graphics graphics(newTex->m_Bitmap);
 	newTex->m_DC = graphics.GetHDC();
+	return newTex;
 }
 
 CAlbum* CTextureMgr::GetAlbum(string _AlbumPath)
