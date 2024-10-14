@@ -23,18 +23,18 @@ CLevel_Edit::~CLevel_Edit()
 
 void CLevel_Edit::Begin()
 {
-
+	
 	CButton_LoadNPK* OpenNpk = new CButton_LoadNPK(L"Btn_OpenNpk");
 	CAlbumPlayer* Btn_OpenNpk_Idle = new CAlbumPlayer(L"Btn_OpenNpk_Idle", "Edit_Button"
-		, L"D:\\repos\\DNF\\Output\\resource\\texture\\ui\\Edit_Button.NPK");
+		, CEngine::GetInst()->GetResourcePath() + L"\\texture\\ui\\Edit_Button.NPK");
 	OpenNpk->SetAction(Btn_OpenNpk_Idle, BtnState::IDLE);
 	Btn_OpenNpk_Idle->SetPlayInfo(0, 0, false, 0, Vec2D(0, 0));
 	CAlbumPlayer* Btn_OpenNpk_CursorOn = new CAlbumPlayer(L"Btn_OpenNpk_Idle", "Edit_Button"
-		, L"D:\\repos\\DNF\\Output\\resource\\texture\\ui\\Edit_Button.NPK");
+		, CEngine::GetInst()->GetResourcePath() + L"\\texture\\ui\\Edit_Button.NPK");
 	OpenNpk->SetAction(Btn_OpenNpk_CursorOn, BtnState::CURSOR_ON);
 	Btn_OpenNpk_CursorOn->SetPlayInfo(1, 1, false, 0, Vec2D(0, 0));
 	CAlbumPlayer* Btn_OpenNpk_Pressed = new CAlbumPlayer(L"Btn_OpenNpk_Idle", "Edit_Button"
-		, L"D:\\repos\\DNF\\Output\\resource\\texture\\ui\\Edit_Button.NPK");
+		, CEngine::GetInst()->GetResourcePath() + L"\\texture\\ui\\Edit_Button.NPK");
 	OpenNpk->SetAction(Btn_OpenNpk_Pressed, BtnState::PRESSED);
 	Btn_OpenNpk_Pressed->SetPlayInfo(2, 2, false, 0, Vec2D(0, 0));
 
