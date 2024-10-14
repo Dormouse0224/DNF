@@ -3,6 +3,7 @@
 
 class CAlbum;
 
+// 모든 텍스처는 앨범에 속하며, 앨범은 텍스처 매니저에서 관리됨
 class CTexture :
     public CResource
 {
@@ -41,7 +42,8 @@ public:
     void SetOwner(CAlbum* _Album) { m_Owner = _Album; }
 
     virtual int Load() override;
-    void Render(Vec2D _PlayerOffset = Vec2D(0, 0));
+    void Render(Vec2D _RenderOffset = Vec2D(0, 0), bool bCameraDependent = true);
+    void DirectRender(Vec2D _RenderOffset = Vec2D(0, 0), bool bCameraDependent = true);
     int GetLength() { return Length; }
 
 };

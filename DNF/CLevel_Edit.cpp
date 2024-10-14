@@ -8,48 +8,21 @@
 #include "CAlbumPlayer.h"
 #include "CTextureMgr.h"
 #include "CButton_LoadNPK.h"
+#include "CTexture.h"
 
 CLevel_Edit::CLevel_Edit()
 	:CLevel(L"Level_Edit")
+	, m_PreviewTexture(nullptr)
 {
 }
 
 CLevel_Edit::~CLevel_Edit()
 {
+
 }
 
 void CLevel_Edit::Begin()
 {
-	// 배경 오브젝트 추가
-	CBackground* pStartBackground = new CBackground(L"StartBackground");
-	AddObject(pStartBackground, LayerType::Background);
-
-	//string album2 = "sprite/character/archer/equipment/avatar/skin/ac_body0010.img";
-	//wstring directory2 = L"D:\\repos\\DNF\\Output\\resource\\texture\\player\\sprite_character_archer_equipment_avatar_skin.NPK";
-	//CAlbumPlayer* albumplayer2 = new CAlbumPlayer(L"Cutin", album2, directory2);
-	//pStartBackground->AddComponent(albumplayer2);
-	//albumplayer2->SetPlayInfo(12, 19, true, 10, Vec2D(0, 0));
-
-	//string album = "ZZZ";
-	//wstring directory = L"D:\\Img\\ZZZ\\ZZZ.NPK";
-	//CAlbumPlayer* albumplayer = new CAlbumPlayer(L"ZZZ", album, directory);
-	//pStartBackground->AddComponent(albumplayer);
-	//albumplayer->SetPlayInfo(0, 0, true, 0, Vec2D(50, 100));
-
-	//CTextureMgr::GetInst()->LoadFromFile(L"C:\\Users\\arcti\\Desktop\\temp_res\\0.png");
-	//CTextureMgr::GetInst()->LoadFromFile(L"C:\\Users\\arcti\\Desktop\\temp_res\\1.png");
-	//CTextureMgr::GetInst()->LoadFromFile(L"C:\\Users\\arcti\\Desktop\\temp_res\\2.png");
-	//CTextureMgr::GetInst()->LoadFromFile(L"C:\\Users\\arcti\\Desktop\\temp_res\\3.png");
-	//CTextureMgr::GetInst()->LoadFromFile(L"C:\\Users\\arcti\\Desktop\\temp_res\\4.png");
-	//CTextureMgr::GetInst()->LoadFromFile(L"C:\\Users\\arcti\\Desktop\\temp_res\\5.png");
-	//CTextureMgr::GetInst()->LoadFromFile(L"C:\\Users\\arcti\\Desktop\\temp_res\\6.png");
-	//CTextureMgr::GetInst()->LoadFromFile(L"C:\\Users\\arcti\\Desktop\\temp_res\\7.png");
-	//CTextureMgr::GetInst()->LoadFromFile(L"C:\\Users\\arcti\\Desktop\\temp_res\\8.png");
-	//CAlbumPlayer* albumplayer3 = new CAlbumPlayer(L"pngs", _TempAlbum, _TempNPK);
-	//pStartBackground->AddComponent(albumplayer3);
-	//albumplayer3->SetPlayInfo(0, 8, true, 1, Vec2D(10, 10));
-
-	//CTextureMgr::GetInst()->SaveAlbum("Edit_Button", "C:\\Users\\arcti\\Desktop\\temp_res");
 
 	CButton_LoadNPK* OpenNpk = new CButton_LoadNPK(L"Btn_OpenNpk");
 	CAlbumPlayer* Btn_OpenNpk_Idle = new CAlbumPlayer(L"Btn_OpenNpk_Idle", "Edit_Button"
@@ -89,12 +62,16 @@ void CLevel_Edit::FinalTick()
 
 void CLevel_Edit::Render()
 {
+	if (m_PreviewTexture != nullptr)
+		m_PreviewTexture->DirectRender();
+
 	CLevel::Render();
 }
 
 void CLevel_Edit::End()
 {
 }
+
 
 
 bool EditorMenu(HINSTANCE _hInst, HWND _hWnd, int _wmID)

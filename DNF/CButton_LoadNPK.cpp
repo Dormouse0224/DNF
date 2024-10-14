@@ -4,6 +4,10 @@
 #include "resource.h"
 #include "CAlbum.h"
 #include "CTextureMgr.h"
+#include "CTexture.h"
+#include "CLevelMgr.h"
+#include "CLevel_Edit.h"
+#include "CAlbumPlayer.h"
 
 LRESULT CALLBACK AlbumViewerProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -24,7 +28,7 @@ void CButton_LoadNPK::Click()
     ShowWindow(m_hAlbumViewerWnd, SW_SHOW);
 }
 
-
+vector<WPARAM> wpar;
 INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
 {
     UNREFERENCED_PARAMETER(_lParam);
@@ -34,6 +38,7 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
         return (INT_PTR)TRUE;
 
     case WM_COMMAND:
+        wpar.push_back(_wParam);
         if (LOWORD(_wParam) == IDOK || LOWORD(_wParam) == IDCANCEL)
         {
             EndDialog(hDlg, LOWORD(_wParam));
@@ -41,6 +46,8 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
         }
         else if (LOWORD(_wParam) == BTN_LoadNPK)
         {
+            // NPK 파일 불러오기 버튼이 클릭된 경우
+            // 파일 탐색기 초기화
             WCHAR filepath[255] = {};
             WCHAR filename[255] = {};
             WCHAR InitDir[255] = {};
@@ -59,23 +66,79 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
 
             if (GetOpenFileName(&OpenNPK))
             {
+                // 파일 탐색기에서 NPK 파일을 가져온 뒤 NPK 파일 안의 앨범을 앨범 리스트박스에 넣음
+                HWND hAlbumLBX = GetDlgItem(hDlg, LBX_AlbumList);
+                HWND hNPKDir = GetDlgItem(hDlg, STATIC_NPKDir);
+                SendMessage(hAlbumLBX, LB_RESETCONTENT, 0, 0);  // 앨범 리스트박스 초기화
+                SetWindowText(hNPKDir, filepath);
                 wstring npkdir = filepath;
                 vector<CAlbum*> AlbumVec = CTextureMgr::GetInst()->LoadNPK(npkdir);
                 for (CAlbum* pAlbum : AlbumVec)
                 {
                     string lpar = pAlbum->GetPath();
-                    lpar = lpar.substr(lpar.rfind('/') + 1);
                     wstring wstr(lpar.begin(), lpar.end());
-                    HWND hAlbumLBX = GetDlgItem(hDlg, LBX_AlbumList);
                     SendMessage(hAlbumLBX, LB_ADDSTRING, 0, (LPARAM)wstr.c_str());
                 }
             }
-
-            
         }
-        else if (LOWORD(_wParam) == BTN_LoadImg)
+        else if (HIWORD(_wParam) == LBN_DBLCLK && LOWORD(_wParam) == LBX_AlbumList)
         {
+            //if (LOWORD(_wParam) == LBX_AlbumList)
+            // 앨범 리스트박스 항목을 더블클릭했을 경우
+            HWND hAlbumLBX = GetDlgItem(hDlg, LBX_AlbumList);
+            HWND hTexLBX = GetDlgItem(hDlg, LBX_TextureList);
+            HWND hNPKDir = GetDlgItem(hDlg, STATIC_NPKDir);
+            HWND hOwnALbum = GetDlgItem(hDlg, STATIC_OwnerAlbum);
 
+            WCHAR npkdir[255] = {};
+            GetWindowText(hNPKDir, npkdir, 255);
+
+            SendMessage(hTexLBX, LB_RESETCONTENT, 0, 0);    // 텍스처 리스트박스 초기화
+
+            int index = SendMessage(hAlbumLBX, LB_GETCURSEL, 0, 0);
+            TCHAR buffer[255] = {};
+            SendMessage(hAlbumLBX, LB_GETTEXT, index, (LPARAM)buffer);
+            wstring filename = buffer;
+
+            CAlbum* pAlbum = CTextureMgr::GetInst()->LoadAlbum(string(filename.begin(), filename.end()), npkdir);
+            SetWindowText(hOwnALbum, buffer);
+            for (int i = 0; i < pAlbum->GetCount(); ++i)
+            {
+                CTexture* pTex = pAlbum->GetScene(i);
+                pTex->Load();
+                SendMessage(hTexLBX, LB_ADDSTRING, 0, (LPARAM)pTex->GetName().c_str());
+            }
+
+        }
+        else if (HIWORD(_wParam) == LBN_SELCHANGE && LOWORD(_wParam) == LBX_TextureList)
+        {
+            // 텍스처 리스트박스 항목이 더블클릭됨
+            HWND hTexLBX = GetDlgItem(hDlg, LBX_TextureList);
+            HWND hOwnALbum = GetDlgItem(hDlg, STATIC_OwnerAlbum);
+            HWND hNPKDir = GetDlgItem(hDlg, STATIC_NPKDir);
+
+            // album path
+            WCHAR ownalb[255] = {};
+            GetWindowText(hOwnALbum, ownalb, 255);
+            wstring wstr = ownalb;
+
+            // npk directory
+            WCHAR npkdir[255] = {};
+            GetWindowText(hNPKDir, npkdir, 255);
+
+            int index = SendMessage(hTexLBX, LB_GETCURSEL, 0, 0);
+
+            CAlbum* pAlbum = CTextureMgr::GetInst()->GetAlbum(string(wstr.begin(), wstr.end()));
+            WCHAR buffer[255] = {};
+            SendMessage(hTexLBX, LB_GETTEXT, index, (LPARAM)buffer);
+            CTexture* pTex = pAlbum->GetScene(buffer);
+
+            CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
+            CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
+            if (pEditLv && pTex)
+            {
+                pEditLv->SetPreviewTexture(pTex);
+            }
         }
         break;
     }

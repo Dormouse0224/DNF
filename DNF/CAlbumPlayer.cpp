@@ -60,11 +60,11 @@ void CAlbumPlayer::FinalTick()
 
 }
 
-void CAlbumPlayer::Render(CObj* _thisObj)
+void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraDependent)
 {
 	// 현재 씬을 재생
 	m_CurrentAlbum->m_Owner = _thisObj;
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset);
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, bCameraDependent);
 }
 
 void CAlbumPlayer::NextScene()
@@ -86,4 +86,9 @@ void CAlbumPlayer::SetCurrentScene(int _SceneIndex)
 {
 	assert(_SceneIndex <= m_End && _SceneIndex >= m_Begin);
 	m_SceneNumber = _SceneIndex;
+}
+
+void CAlbumPlayer::ChangeAlbum(string _AlbumPath, wstring _NpkPath)
+{
+	m_CurrentAlbum = CTextureMgr::GetInst()->LoadAlbum(_AlbumPath, _NpkPath);
 }

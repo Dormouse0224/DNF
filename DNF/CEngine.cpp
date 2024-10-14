@@ -33,6 +33,12 @@ CEngine::~CEngine()
 
 int CEngine::Init(HINSTANCE _hInst)
 {
+
+	WCHAR curdir[255] = {};
+	GetCurrentDirectory(255, curdir);
+	m_ResourcePath = curdir;
+	m_ResourcePath += L"\\resource";
+
 	ifstream DataFile;
 	DataFile.open("DNF_program.data", ios::binary);
 	if (!DataFile.is_open())
@@ -84,10 +90,6 @@ int CEngine::Init(HINSTANCE _hInst)
 	// GDIObject »ý¼º
 	CreateGDIObject();
 
-	WCHAR curdir[255] = {};
-	GetCurrentDirectory(255, curdir);
-	m_ResourcePath = curdir;
-	m_ResourcePath += L"\\resource";
 
 	return S_OK;
 }

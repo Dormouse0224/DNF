@@ -16,14 +16,16 @@
 #define IDD_AlbumViewer                 129
 #define DLG_AlbumViewer                 129
 #define IDC_LIST1                       1000
-#define LBX_TextureList                 1000
 #define IDC_LIST2                       1001
-#define LIST_AlbumList                  1001
 #define LBX_AlbumList                   1001
 #define IDC_BUTTON1                     1002
 #define BTN_LoadNPK                     1002
 #define IDC_BUTTON2                     1003
 #define BTN_LoadImg                     1003
+#define LBX_TextureList                 1003
+#define STATIC_NPKDir                   1004
+#define STATIC_NPKDir2                  1005
+#define STATIC_OwnerAlbum               1005
 #define ID_32773                        32773
 #define ID_32774                        32774
 #define ID_32775                        32775
@@ -39,7 +41,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1003
+#define _APS_NEXT_CONTROL_VALUE         1005
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

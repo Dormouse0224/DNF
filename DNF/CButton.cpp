@@ -52,20 +52,20 @@ void CButton::Render()
 		{
 			// 버튼 눌림 애니메이션
 			if (m_Action[(int)BtnState::PRESSED] != nullptr)
-				m_Action[(int)BtnState::PRESSED]->Render(this);
+				m_Action[(int)BtnState::PRESSED]->Render(this, false);
 		}
 		else
 		{
 			// 버튼 커서온 애니메이션
 			if (m_Action[(int)BtnState::CURSOR_ON] != nullptr)
-				m_Action[(int)BtnState::CURSOR_ON]->Render(this);
+				m_Action[(int)BtnState::CURSOR_ON]->Render(this, false);
 		}
 	}
 	else
 	{
 		// 버튼 기본 애니메이션
 		if (m_Action[(int)BtnState::IDLE] != nullptr)
-			m_Action[(int)BtnState::IDLE]->Render(this);
+			m_Action[(int)BtnState::IDLE]->Render(this, false);
 	}
 }
 

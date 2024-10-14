@@ -27,6 +27,7 @@ public:
 	void SaveAlbum(string _AlbumName, string _Directory);
 	HDC CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color, bool _IsAddedBySys);
 	void LoadFromFile(wstring _filepath);
+	CAlbum* GetAlbum(string _AlbumPath);
 
 private:
 

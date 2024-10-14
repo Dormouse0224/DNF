@@ -3,6 +3,7 @@
 #include "CTexture.h"
 #include "CAlbum.h"
 #include "CNpkMgr.h"
+#include "CEngine.h"
 
 #include "DDSTextureLoader11.h"
 #include <d3d11.h>
@@ -34,6 +35,7 @@ void CTextureMgr::Init()
 	pAlbum1->Path = "__TempAlbum__";
 	m_TempAlbum = pAlbum1;
 	m_Albums.insert(make_pair("__TempAlbum__", pAlbum1));
+
 
 	CAlbum* pAlbum2 = new CAlbum(L"__SysReservedNPK__");
 	pAlbum2->Path = "__SysReservedAlbum__";
@@ -500,6 +502,7 @@ vector<CAlbum*> CTextureMgr::LoadNPK(wstring _NpkPath)
 	{
 		m_Albums.insert(make_pair(_album->GetPath(), _album));
 	}
+
 	return AlbumList;
 }
 
@@ -525,11 +528,12 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 			}
 			// 재검색
 			iter = m_Albums.find(_AlbumPath);
-		}
-		// 메모리에 앨범 이미지 로드
-		for (int i = 0; i < iter->second->GetSceneCount(); ++i)
-		{
-			iter->second->GetScene(i)->Load();
+
+			// 메모리에 앨범 이미지 로드
+			for (int i = 0; i < iter->second->GetSceneCount(); ++i)
+			{
+				iter->second->GetScene(i)->Load();
+			}
 		}
 	}
 	return iter->second;
@@ -745,4 +749,14 @@ void CTextureMgr::LoadFromFile(wstring _filepath)
 	newTex->m_Offset = Vec2D(0, 0);
 	Graphics graphics(newTex->m_Bitmap);
 	newTex->m_DC = graphics.GetHDC();
+}
+
+CAlbum* CTextureMgr::GetAlbum(string _AlbumPath)
+{
+	map<string, CAlbum*>::iterator iter = m_Albums.find(_AlbumPath);
+	if (iter != m_Albums.end())
+	{
+		return iter->second;
+	}
+	return nullptr;
 }
