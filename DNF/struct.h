@@ -161,3 +161,14 @@ struct TextInfo
 		Color = _Color;
 	}
 };
+
+struct AnimationInfo
+{
+	int AlbumPathLen;
+	int NPKDirLen;
+	int IndexBegin;
+	int IndexEnd;
+	bool bLoop;
+	int FPS;
+	Vec2D Offset;
+};
