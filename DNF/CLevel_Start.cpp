@@ -18,17 +18,8 @@ void CLevel_Start::Begin()
 	// 시작 레벨의 배경 생성
 	CBackground* pStartBackground = new CBackground(L"StartBackground");
 
-	string album1 = "sprite/interface2/channel/serverselect/background/background.img";
-	wstring directory1 = L"D:\\repos\\DNF\\Output\\resource\\texture\\ui\\sprite_interface2_channel_serverselect_background.NPK";
-	CAlbumPlayer* albumplayer1 = new CAlbumPlayer(L"StartBackground", album1, directory1);
-	pStartBackground->AddComponent(albumplayer1);
-	albumplayer1->SetPlayInfo(0, 0, true, 0, Vec2D(0, 0));
-
-	string album2 = "sprite/character/archer/equipment/avatar/skin/ac_body0010.img";
-	wstring directory2 = L"D:\\repos\\DNF\\Output\\resource\\texture\\player\\sprite_character_archer_equipment_avatar_skin.NPK";
-	CAlbumPlayer* albumplayer2 = new CAlbumPlayer(L"Cutin", album2, directory2);
-	pStartBackground->AddComponent(albumplayer2);
-	albumplayer2->SetPlayInfo(12, 19, true, 10, Vec2D(0, 0));
+	pStartBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"temp", "D:\\repos\\DNF\\Output\\resource\\animation\\start_background.animation"));
+	pStartBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"temp", "D:\\repos\\DNF\\Output\\resource\\animation\\running_archor_test.animation"));
 
 	AddObject(pStartBackground, LayerType::Background);
 

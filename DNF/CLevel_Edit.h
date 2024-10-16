@@ -2,6 +2,8 @@
 #include "CLevel.h"
 
 class CTexture;
+class CAlbumPlayer;
+class CBackground;
 
 class CLevel_Edit :
     public CLevel

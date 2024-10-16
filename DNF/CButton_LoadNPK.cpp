@@ -204,6 +204,7 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
             Desc.lpstrInitialDir = wstr.c_str();
             Desc.lpstrTitle = L"애니메이션 파일 저장";
             Desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+            Desc.lpstrDefExt = L"animation";
 
             if (GetSaveFileName(&Desc))
             {
@@ -215,6 +216,7 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
                 string NPKDir = cNPKPath;
                 string OwnerAlbum = cOwnerAlbum;
 
+                // 입력된 정보를 구조체로 저장
                 AnimationInfo animationInfo;
                 animationInfo.NPKDirLen = NPKDir.size();
                 animationInfo.AlbumPathLen = OwnerAlbum.size();
@@ -231,7 +233,16 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
                 animationInfo.Offset = Vec2D(stof(wstring(buffer)), stof(wstring(buffer1)));
 
                 HWND hLoop = GetDlgItem(hDlg, CHECK_LOOP);
+                if (SendMessage(hLoop, BM_GETCHECK, 0, 0) == BST_CHECKED)
+                {
+                    animationInfo.bLoop = true;
+                }
+                else
+                {
+                    animationInfo.bLoop = false;
+                }
                 
+                // 구조체로 저장된 정보를 파일로 쓰기
                 ofstream writeFile;
                 writeFile.open(filepath, ios::binary);
 
@@ -241,6 +252,9 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
 
                 writeFile.close();
             }
+
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
         }
     }
     return (INT_PTR)FALSE;

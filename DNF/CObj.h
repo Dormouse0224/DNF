@@ -4,6 +4,7 @@
 class CComponent;
 class CCollider;
 class CLevel;
+class CAlbumPlayer;
 
 class CObj :
     public CBase
@@ -23,6 +24,8 @@ private:
 
     bool m_Dead;
 
+protected:
+    vector<CAlbumPlayer*> m_AlbumPlayerVector;
 
 public:
     void SetLocation(Vec2D _Location) { m_Location = _Location; }

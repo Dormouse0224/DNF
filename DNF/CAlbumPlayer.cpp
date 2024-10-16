@@ -92,3 +92,37 @@ void CAlbumPlayer::ChangeAlbum(string _AlbumPath, wstring _NpkPath)
 {
 	m_CurrentAlbum = CTextureMgr::GetInst()->LoadAlbum(_AlbumPath, _NpkPath);
 }
+
+CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, string _filepath)
+{
+	ifstream animation;
+	AnimationInfo desc;
+	animation.open(_filepath.c_str(), ios::binary);
+	if (animation.is_open())
+	{
+		char NPKDir[255] = {};
+		char AlbumPath[255] = {};
+		animation.read((char*)&desc, sizeof(desc));
+		animation.read(NPKDir, desc.NPKDirLen);
+		animation.read(AlbumPath, desc.AlbumPathLen);
+
+		animation.close();
+
+
+		string strAlbumPath = AlbumPath; 
+		size_t len = strlen(NPKDir);
+		wchar_t wNPKDir[255];
+		size_t convertedChars = 0;
+		mbstowcs_s(&convertedChars, wNPKDir, NPKDir, _TRUNCATE);
+		std::wstring strNPKDir = wNPKDir;
+		CAlbumPlayer* pNewPlayer = new CAlbumPlayer(_Name, strAlbumPath, strNPKDir);
+		pNewPlayer->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset);
+		return pNewPlayer;
+	}
+	else
+	{
+
+		animation.close();
+		return nullptr;
+	}
+}

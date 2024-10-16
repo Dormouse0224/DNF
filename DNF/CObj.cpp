@@ -3,6 +3,7 @@
 #include "CEngine.h"
 #include "CComponent.h"
 #include "CCollider.h"
+#include "CAlbumPlayer.h"
 
 CObj::CObj(wstring _Name)
 	: CBase(_Name)
@@ -28,6 +29,8 @@ void CObj::AddComponent(CComponent* _Component)
 {
 	m_ComponentVector.push_back(_Component);
 	_Component->m_Owner = this;
+	if (dynamic_cast<CAlbumPlayer*>(_Component))
+		m_AlbumPlayerVector.push_back((CAlbumPlayer*)_Component);
 }
 
 void CObj::BeginOverlap(CCollider* _Self, CCollider* _Other)
@@ -57,7 +60,10 @@ void CObj::FinalTick()
 
 void CObj::Render()
 {
-	HDC dc = CEngine::GetInst()->GetSubDC();
+	for (int i = 0; i < m_AlbumPlayerVector.size(); ++i)
+	{
+		m_AlbumPlayerVector[i]->Render(this);
+	}
 }
 
 template<typename T>

@@ -24,6 +24,7 @@
 #define IDC_BUTTON1                     1002
 #define BTN_LoadNPK                     1002
 #define BTN_AddImg                      1002
+#define BTN_AniPreview                  1002
 #define IDC_BUTTON2                     1003
 #define BTN_LoadImg                     1003
 #define LBX_TextureList                 1003

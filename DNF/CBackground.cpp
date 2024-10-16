@@ -25,18 +25,9 @@ void CBackground::Tick()
 
 void CBackground::Render()
 {
-	for (int i = 0; i < m_AlbumPlayerVector.size(); ++i)
-	{
-		m_AlbumPlayerVector[i]->Render(this);
-	}
+	CObj::Render();
 }
 
-void CBackground::AddComponent(CComponent* _Component)
-{
-	CObj::AddComponent(_Component);
-	if(dynamic_cast<CAlbumPlayer*>(_Component))
-		m_AlbumPlayerVector.push_back((CAlbumPlayer*)_Component);
-}
 
 
 

@@ -40,7 +40,7 @@ void CButton::Render()
 	}
 }
 
-void CButton::SetAction(CAlbumPlayer* _Scene, BtnState _BtnState)
+void CButton::AddComponent_Btn(CAlbumPlayer* _Scene, BtnState _BtnState)
 {
 	m_Action[(int)_BtnState] = _Scene;
 	AddComponent(_Scene);
