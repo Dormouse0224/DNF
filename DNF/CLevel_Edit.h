@@ -14,6 +14,8 @@ class CLevel_Edit :
 
 private:
     CTexture* m_PreviewTexture;
+    HWND m_hAlbumViewerWnd;
+    HWND m_hCreateAlbum;
 
 public:
     virtual void Begin() override;
@@ -21,6 +23,8 @@ public:
     virtual void FinalTick() override;
     virtual void Render() override;
     virtual void End() override;
+    void LoadNPKCallback();
+    void CreateAlbumCallback();
     void SetPreviewTexture(CTexture* _pTexture) { m_PreviewTexture = _pTexture; }
 };
 

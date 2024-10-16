@@ -45,3 +45,16 @@ void CButton::AddComponent_Btn(CAlbumPlayer* _Scene, BtnState _BtnState)
 	m_Action[(int)_BtnState] = _Scene;
 	AddComponent(_Scene);
 }
+
+void CButton::MouseLBtnClikced()
+{
+	if (m_ClickCallback)
+	{
+		m_ClickCallback();
+	}
+	
+	if (m_ClickDelegate)
+	{
+		(m_DelegateObj->*m_ClickDelegate)();
+	}
+}

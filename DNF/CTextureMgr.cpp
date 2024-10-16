@@ -268,6 +268,7 @@ Bitmap* CTextureMgr::ConvertToBitmap(CTexture* _pTexture)
 		return ConvertToBitmapV6(_pTexture);
 	}
 	}
+	return nullptr;
 }
 
 Bitmap* CTextureMgr::ConvertToBitmapV2(CTexture* _pTexture)

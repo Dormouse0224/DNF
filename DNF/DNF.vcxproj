@@ -140,9 +140,8 @@
     <ClInclude Include="CAlbumPlayer.h" />
     <ClInclude Include="CBackground.h" />
     <ClInclude Include="CBase.h" />
-    <ClInclude Include="CButton_CreateAlbum.h" />
     <ClInclude Include="CButton.h" />
-    <ClInclude Include="CButton_LoadNPK.h" />
+    <ClInclude Include="DialogProc.h" />
     <ClInclude Include="CCameraMgr.h" />
     <ClInclude Include="CCollider.h" />
     <ClInclude Include="CCollisionMgr.h" />
@@ -184,9 +183,8 @@
     <ClCompile Include="CAlbumPlayer.cpp" />
     <ClCompile Include="CBackground.cpp" />
     <ClCompile Include="CBase.cpp" />
-    <ClCompile Include="CButton_CreateAlbum.cpp" />
     <ClCompile Include="CButton.cpp" />
-    <ClCompile Include="CButton_LoadNPK.cpp" />
+    <ClCompile Include="DialogProc.cpp" />
     <ClCompile Include="CCameraMgr.cpp" />
     <ClCompile Include="CCollider.cpp" />
     <ClCompile Include="CCollisionMgr.cpp" />

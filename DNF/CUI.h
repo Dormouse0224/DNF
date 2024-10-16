@@ -1,5 +1,12 @@
 #pragma once
 #include "CObj.h"
+
+typedef void (*CALLBACK_0)(void);
+typedef void (*CALLBACK_1)(DWORD_PTR);
+
+typedef void (CBase::* DELEGATE_0)(void);
+typedef void (CBase::* DELEGATE_1)(DWORD_PTR);
+
 class CUI :
     public CObj
 {
