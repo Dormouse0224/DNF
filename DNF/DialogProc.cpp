@@ -40,7 +40,7 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             WCHAR filepath[255] = {};
             WCHAR filename[255] = {};
             WCHAR InitDir[255] = {};
-            wstring wsInitDir = CEngine::GetInst()->GetResourcePath() + L"\\texture";
+            wstring wsInitDir = CEngine::GetInst()->GetResourcePathW() + L"\\texture";
             //const wchar_t wcInitDir = wsInitDir.c_str();
            
             OPENFILENAME Desc = {};
@@ -195,7 +195,7 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
             WCHAR filename[255] = {};
             WCHAR buff[255] = {};
             GetModuleFileName(nullptr, buff, 255);
-            wstring wstr = wstring(buff).substr(0, wstring(buff).rfind('\\'));
+            wstring wstr = wstring(buff).substr(0, wstring(buff).rfind('\\')) + L"\\resource\\animation";
             OPENFILENAME Desc = {};
             Desc.lStructSize = sizeof(OPENFILENAME);
             Desc.hwndOwner = hDlg;
@@ -263,7 +263,7 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
     return (INT_PTR)FALSE;
 }
 
-
+// 앨범 작성 프로시저
 INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
 {
     UNREFERENCED_PARAMETER(_lParam);
@@ -296,8 +296,6 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             // 파일 탐색기 초기화
             WCHAR filepath[255] = {};
             WCHAR filename[255] = {};
-            WCHAR InitDir[255] = {};
-            memcpy(InitDir, CEngine::GetInst()->GetResourcePath().c_str(), CEngine::GetInst()->GetResourcePath().size() * 2);
             OPENFILENAME OpenNPK = {};
             OpenNPK.lStructSize = sizeof(OPENFILENAME);
             OpenNPK.hwndOwner = hDlg;
@@ -306,7 +304,6 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             OpenNPK.nMaxFile = 255;
             OpenNPK.lpstrFileTitle = filename;
             OpenNPK.nMaxFileTitle = 255;
-            //OpenNPK.lpstrInitialDir = InitDir;
             OpenNPK.lpstrTitle = L"이미지 파일 불러오기";
             OpenNPK.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
 
@@ -403,6 +400,48 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
         // TempAlbum 초기화
         CTextureMgr::GetInst()->ClearTempAlbum();
         break;
+    }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR EditAlimation(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
+{
+    switch (message)
+    {
+    case(WM_COMMAND):
+    {
+        if (LOWORD(_wParam) == BTN_LoadAni)
+        {
+            // 파일 탐색기 초기화
+            WCHAR filepath[255] = {};
+            WCHAR filename[255] = {};
+            OPENFILENAME desc = {};
+            desc.lStructSize = sizeof(OPENFILENAME);
+            desc.hwndOwner = hDlg;
+            desc.lpstrFilter = L"animation\0*.animation\0ALL\0*.*\0";
+            desc.lpstrFile = filepath;
+            desc.nMaxFile = 255;
+            desc.lpstrFileTitle = filename;
+            desc.nMaxFileTitle = 255;
+            desc.lpstrTitle = L"애니메이션 파일 불러오기";
+            desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+
+            if (GetOpenFileName(&desc))
+            {
+                AnimationInfo info;
+                char NPKDir[255] = {};
+                char AlbumPath[255] = {};
+                ifstream infofile;
+                infofile.open(filepath, ios::binary);
+                infofile.read((char*)&info, sizeof(info));
+                infofile.read(NPKDir, info.NPKDirLen);
+                infofile.read(AlbumPath, info.AlbumPathLen);
+                infofile.close();
+
+                HWND 
+            }
+        }
     }
     }
     return (INT_PTR)FALSE;

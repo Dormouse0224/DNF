@@ -31,22 +31,12 @@ void CLevel_Edit::Begin()
 	// NPK 파일 로드 버튼 추가
 	CButton* OpenNpk = new CButton(L"Btn_OpenNpk");
     OpenNpk->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::LoadNPKCallback);
-
-	CAlbumPlayer* Btn_OpenNpk_Idle = new CAlbumPlayer(L"Btn_OpenNpk_Idle", "Edit_Button"
-		, CEngine::GetInst()->GetResourcePath() + L"\\texture\\ui\\Edit_Button.NPK");
-	OpenNpk->AddComponent_Btn(Btn_OpenNpk_Idle, BtnState::IDLE);
-	Btn_OpenNpk_Idle->SetPlayInfo(0, 0, false, 0, Vec2D(0, 0));
-
-	CAlbumPlayer* Btn_OpenNpk_CursorOn = new CAlbumPlayer(L"Btn_OpenNpk_CursorOn", "Edit_Button"
-		, CEngine::GetInst()->GetResourcePath() + L"\\texture\\ui\\Edit_Button.NPK");
-	OpenNpk->AddComponent_Btn(Btn_OpenNpk_CursorOn, BtnState::CURSOR_ON);
-	Btn_OpenNpk_CursorOn->SetPlayInfo(1, 1, false, 0, Vec2D(0, 0));
-
-	CAlbumPlayer* Btn_OpenNpk_Pressed = new CAlbumPlayer(L"Btn_OpenNpk_Pressed", "Edit_Button"
-		, CEngine::GetInst()->GetResourcePath() + L"\\texture\\ui\\Edit_Button.NPK");
-	OpenNpk->AddComponent_Btn(Btn_OpenNpk_Pressed, BtnState::PRESSED);
-	Btn_OpenNpk_Pressed->SetPlayInfo(2, 2, false, 0, Vec2D(0, 0));
-
+	OpenNpk->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadNPK_Idle"
+		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\LoadNPK_Idle.animation"), BtnState::IDLE);
+	OpenNpk->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadNPK_CursorOn"
+		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\LoadNPK_CursorOn.animation"), BtnState::CURSOR_ON);
+	OpenNpk->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadNPK_Pressed"
+		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\LoadNPK_Pressed.animation"), BtnState::PRESSED);
 	AddObject(OpenNpk, LayerType::UI);
 	OpenNpk->SetScale(Vec2D(219, 47));
 	OpenNpk->SetLocation(Vec2D(830, 10));
@@ -54,31 +44,32 @@ void CLevel_Edit::Begin()
 	// 이미지 파일 로드 버튼 추가
 	CButton* MakeAlbum = new CButton(L"Btn_MakeAlbum");
 	MakeAlbum->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::CreateAlbumCallback);
-
-	CAlbumPlayer* Btn_MakeAlbum_Idle = new CAlbumPlayer(L"Btn_MakeAlbum_Idle", "Edit_Button"
-		, CEngine::GetInst()->GetResourcePath() + L"\\texture\\ui\\Edit_Button.NPK");
-	MakeAlbum->AddComponent_Btn(Btn_MakeAlbum_Idle, BtnState::IDLE);
-	Btn_MakeAlbum_Idle->SetPlayInfo(3, 3, false, 0, Vec2D(0, 0));
-
-	CAlbumPlayer* Btn_MakeAlbum_CursorOn = new CAlbumPlayer(L"Btn_MakeAlbum_CursorOn", "Edit_Button"
-		, CEngine::GetInst()->GetResourcePath() + L"\\texture\\ui\\Edit_Button.NPK");
-	MakeAlbum->AddComponent_Btn(Btn_MakeAlbum_CursorOn, BtnState::CURSOR_ON);
-	Btn_MakeAlbum_CursorOn->SetPlayInfo(4, 4, false, 0, Vec2D(0, 0));
-
-	CAlbumPlayer* Btn_MakeAlbum_Pressed = new CAlbumPlayer(L"Btn_MakeAlbum_Pressed", "Edit_Button"
-		, CEngine::GetInst()->GetResourcePath() + L"\\texture\\ui\\Edit_Button.NPK");
-	MakeAlbum->AddComponent_Btn(Btn_MakeAlbum_Pressed, BtnState::PRESSED);
-	Btn_MakeAlbum_Pressed->SetPlayInfo(5, 5, false, 0, Vec2D(0, 0));
-
+	MakeAlbum->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"CreateAlbum_Idle"
+		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\CreateAlbum_Idle.animation"), BtnState::IDLE);
+	MakeAlbum->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"CreateAlbum_CursorOn"
+		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\CreateAlbum_CursorOn.animation"), BtnState::CURSOR_ON);
+	MakeAlbum->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"CreateAlbum_Pressed"
+		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\CreateAlbum_Pressed.animation"), BtnState::PRESSED);
 	AddObject(MakeAlbum, LayerType::UI);
 	MakeAlbum->SetScale(Vec2D(219, 47));
-	MakeAlbum->SetLocation(Vec2D(830, 60));
+	MakeAlbum->SetLocation(Vec2D(830, 65));
+
+	// 애니메이션 파일 편집 버튼 추가
+	CButton* EditAni = new CButton(L"Btn_MakeAlbum");
+	//EditAni->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::CreateAlbumCallback);
+	EditAni->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditAnimation_Idle"
+		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditAnimation_Idle.animation"), BtnState::IDLE);
+	EditAni->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditAnimation_CursorOn"
+		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditAnimation_CursorOn.animation"), BtnState::CURSOR_ON);
+	EditAni->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditAnimation_Pressed"
+		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditAnimation_Pressed.animation"), BtnState::PRESSED);
+	AddObject(EditAni, LayerType::UI);
+	EditAni->SetScale(Vec2D(219, 47));
+	EditAni->SetLocation(Vec2D(830, 120));
 
 
 	// 에디터 레벨 텍스트 추가
 	CTextMgr::GetInst()->WriteText(10, 10, L"에디터 레벨", RGB(0, 0, 0));
-
-	// 불러오기 버튼 추가
 
 	CLevel::Begin();
 }

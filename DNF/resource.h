@@ -17,6 +17,7 @@
 #define DLG_AlbumViewer                 129
 #define DLG_AlbumMaker                  130
 #define DLG_CreateAni                   132
+#define DLG_AnimationEditor             133
 #define IDC_LIST1                       1000
 #define LBX_CustomAlbum                 1000
 #define IDC_LIST2                       1001
@@ -25,6 +26,7 @@
 #define BTN_LoadNPK                     1002
 #define BTN_AddImg                      1002
 #define BTN_AniPreview                  1002
+#define BTN_LoadAni                     1002
 #define IDC_BUTTON2                     1003
 #define BTN_LoadImg                     1003
 #define LBX_TextureList                 1003
@@ -44,6 +46,14 @@
 #define EDIT_FPS                        1015
 #define EDIT_IndexEnd3                  1017
 #define CHECK_LOOP                      1018
+#define STATIC_IndexBegin               1019
+#define STATIC_IndexEnd                 1020
+#define EDIT_EditFPS                    1021
+#define CHECK_EditLOOP                  1022
+#define EDIT_EditOffsetY                1023
+#define EDIT_EditOffsetX                1024
+#define STATIC_TargetNpk                1025
+#define STATIC_TargetAlbum              1026
 #define ID_32773                        32773
 #define ID_32774                        32774
 #define ID_32775                        32775
@@ -57,9 +67,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        133
+#define _APS_NEXT_RESOURCE_VALUE        134
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1019
+#define _APS_NEXT_CONTROL_VALUE         1027
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

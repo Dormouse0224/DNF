@@ -32,6 +32,8 @@ CEngine::~CEngine()
 	GdiplusShutdown(gdiplusToken);
 }
 
+
+
 int CEngine::Init(HINSTANCE _hInst)
 {
 

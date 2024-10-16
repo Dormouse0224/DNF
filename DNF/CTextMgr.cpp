@@ -5,7 +5,7 @@
 
 CTextMgr::CTextMgr()
 	: m_FontName(L"던파 연단된 칼날 Medium")
-	, m_FontPath(CEngine::GetInst()->GetResourcePath() + L"\\Font\\DNFForgedBlade-Medium.ttf")
+	, m_FontPath(CEngine::GetInst()->GetResourcePathW() + L"\\Font\\DNFForgedBlade-Medium.ttf")
 {
 }
 

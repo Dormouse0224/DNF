@@ -33,8 +33,8 @@ public:
 	HWND GetMainWnd() { return m_hMainWnd; }
 
 	HINSTANCE GetProgramInst() { return m_hInst; }
-	wstring GetResourcePath() { return m_ResourcePath; }
-
+	wstring GetResourcePathW() { return m_ResourcePath; }
+	string GetResourcePathA() { return string(m_ResourcePath.begin(), m_ResourcePath.end()); }
 
 public:
 	int Init(HINSTANCE _hInst);
