@@ -25,7 +25,15 @@ CButton_LoadNPK::~CButton_LoadNPK()
 void CButton_LoadNPK::MouseLBtnClikced()
 {
     if (m_hAlbumViewerWnd == nullptr)
-	    m_hAlbumViewerWnd = CreateDialog(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AlbumViewer), CEngine::GetInst()->GetMainWnd(), &AlbumViewerProc);
+    {
+        m_hAlbumViewerWnd = CreateDialog(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AlbumViewer), CEngine::GetInst()->GetMainWnd(), &AlbumViewerProc);
+    }
+    else
+    {
+        DestroyWindow(m_hAlbumViewerWnd);
+        m_hAlbumViewerWnd = CreateDialog(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AlbumViewer), CEngine::GetInst()->GetMainWnd(), &AlbumViewerProc);
+    }
+	    
     ShowWindow(m_hAlbumViewerWnd, SW_SHOW);
 }
 
@@ -58,7 +66,8 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             WCHAR filepath[255] = {};
             WCHAR filename[255] = {};
             WCHAR InitDir[255] = {};
-            memcpy(InitDir, CEngine::GetInst()->GetResourcePath().c_str(), CEngine::GetInst()->GetResourcePath().size() * 2);
+            wstring wsInitDir = CEngine::GetInst()->GetResourcePath() + L"\\texture";
+            //const wchar_t wcInitDir = wsInitDir.c_str();
            
             OPENFILENAME Desc = {};
             Desc.lStructSize = sizeof(OPENFILENAME);
@@ -68,7 +77,7 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             Desc.nMaxFile = 255;
             Desc.lpstrFileTitle = filename;
             Desc.nMaxFileTitle = 255;
-            Desc.lpstrInitialDir = InitDir;
+            Desc.lpstrInitialDir = wsInitDir.c_str();
             Desc.lpstrTitle = L"NPK 파일 불러오기";
             Desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
 
@@ -77,7 +86,9 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
                 // 파일 탐색기에서 NPK 파일을 가져온 뒤 NPK 파일 안의 앨범을 앨범 리스트박스에 넣음
                 HWND hAlbumLBX = GetDlgItem(hDlg, LBX_AlbumList);
                 HWND hNPKDir = GetDlgItem(hDlg, STATIC_NPKDir);
+                HWND hTexLBX = GetDlgItem(hDlg, LBX_TextureList);
                 SendMessage(hAlbumLBX, LB_RESETCONTENT, 0, 0);  // 앨범 리스트박스 초기화
+                SendMessage(hTexLBX, LB_RESETCONTENT, 0, 0);    // 텍스처 리스트박스 초기화
                 SetWindowText(hNPKDir, filepath);
                 wstring npkdir = filepath;
                 vector<CAlbum*> AlbumVec = CTextureMgr::GetInst()->LoadNPK(npkdir);
@@ -164,6 +175,17 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             DialogBox(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_CreateAni), hDlg, &CreateAniProc);
         }
         break;
+        case WM_DESTROY:
+        {
+            // 종료시 화면 초기화
+            CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
+            CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
+            if (pEditLv)
+            {
+                pEditLv->SetPreviewTexture(nullptr);
+            }
+            break;
+        }
     }
     return (INT_PTR)FALSE;
 }

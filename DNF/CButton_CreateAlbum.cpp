@@ -21,8 +21,15 @@ CButton_CreateAlbum::~CButton_CreateAlbum()
 
 void CButton_CreateAlbum::MouseLBtnClikced()
 {
-	if (m_hCreateAlbum == nullptr)
-		m_hCreateAlbum = CreateDialog(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AlbumMaker), CEngine::GetInst()->GetMainWnd(), &CreateAlbumProc);
+    if (m_hCreateAlbum == nullptr)
+    {
+        m_hCreateAlbum = CreateDialog(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AlbumMaker), CEngine::GetInst()->GetMainWnd(), &CreateAlbumProc);
+    }
+    else
+    {
+        DestroyWindow(m_hCreateAlbum);
+        m_hCreateAlbum = CreateDialog(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AlbumMaker), CEngine::GetInst()->GetMainWnd(), &CreateAlbumProc);
+    }
 	ShowWindow(m_hCreateAlbum, SW_SHOW);
 }
 
@@ -38,12 +45,17 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
     case WM_COMMAND:
         if (LOWORD(_wParam) == IDOK || LOWORD(_wParam) == IDCANCEL)
         {
+            // 종료시 화면 초기화
             CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
             CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
             if (pEditLv)
             {
                 pEditLv->SetPreviewTexture(nullptr);
             }
+
+            // TempAlbum 초기화
+            CTextureMgr::GetInst()->ClearTempAlbum();
+
             EndDialog(hDlg, LOWORD(_wParam));
             return (INT_PTR)TRUE;
         }
@@ -64,7 +76,7 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             OpenNPK.nMaxFile = 255;
             OpenNPK.lpstrFileTitle = filename;
             OpenNPK.nMaxFileTitle = 255;
-            OpenNPK.lpstrInitialDir = InitDir;
+            //OpenNPK.lpstrInitialDir = InitDir;
             OpenNPK.lpstrTitle = L"이미지 파일 불러오기";
             OpenNPK.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
 
@@ -148,6 +160,20 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             pTex->SetOffset(stof(string(buffer1)), stof(string(buffer2)));
         }
         break;
+    case WM_DESTROY:
+    {
+        // 종료시 화면 초기화
+        CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
+        CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
+        if (pEditLv)
+        {
+            pEditLv->SetPreviewTexture(nullptr);
+        }
+
+        // TempAlbum 초기화
+        CTextureMgr::GetInst()->ClearTempAlbum();
+        break;
+    }
     }
     return (INT_PTR)FALSE;
 }
