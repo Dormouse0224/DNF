@@ -43,6 +43,17 @@ void CTextureMgr::Init()
 	m_Albums.insert(make_pair("__SysReservedAlbum__", pAlbum2));
 }
 
+void CTextureMgr::ClearTempAlbum()
+{
+	for (CTexture* pTex : m_TempAlbum->m_SceneVector)
+	{
+		delete pTex;
+		pTex = nullptr;
+	}
+	m_TempAlbum->m_SceneVector.clear();
+	m_TempAlbum->Count = 0;
+}
+
 void CTextureMgr::CreateFromNpk(ifstream& _file, CAlbum* _Album)
 {
 	switch (_Album->GetVersion())

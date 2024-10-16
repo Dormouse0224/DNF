@@ -41,6 +41,13 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
     case WM_COMMAND:
         if (LOWORD(_wParam) == IDOK || LOWORD(_wParam) == IDCANCEL)
         {
+            // 종료시 화면 초기화
+            CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
+            CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
+            if (pEditLv)
+            {
+                pEditLv->SetPreviewTexture(nullptr);
+            }
             EndDialog(hDlg, LOWORD(_wParam));
             return (INT_PTR)TRUE;
         }
@@ -161,7 +168,7 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
     return (INT_PTR)FALSE;
 }
 
-
+// 애니메이션 인포 파일 작성 프로시저
 INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
 {
     switch (message)

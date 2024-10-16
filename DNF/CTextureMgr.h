@@ -14,6 +14,7 @@ public:
 	void Init();
 
 	CAlbum* GetTempAlbum() { return m_TempAlbum; }
+	void ClearTempAlbum();
 
 	void CreateFromNpk(ifstream& _file, CAlbum* _Album);
 	Bitmap* ConvertToBitmap(CTexture* _pTexture);

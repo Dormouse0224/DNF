@@ -38,6 +38,12 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
     case WM_COMMAND:
         if (LOWORD(_wParam) == IDOK || LOWORD(_wParam) == IDCANCEL)
         {
+            CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
+            CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
+            if (pEditLv)
+            {
+                pEditLv->SetPreviewTexture(nullptr);
+            }
             EndDialog(hDlg, LOWORD(_wParam));
             return (INT_PTR)TRUE;
         }
@@ -122,6 +128,9 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
 
                 // 앨범 리스트박스 초기화
                 SendMessage(hAlbumLBX, LB_RESETCONTENT, 0, 0);
+
+                // TempAlbum 초기화
+                CTextureMgr::GetInst()->ClearTempAlbum();
             }
         }
         else if (LOWORD(_wParam) == BTN_ChangeOffset)
