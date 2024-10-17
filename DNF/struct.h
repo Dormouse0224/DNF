@@ -172,6 +172,7 @@ struct AnimationInfo
 	bool bLoop;
 	int FPS;
 	Vec2D Offset;
+	float angle;
 };
 #pragma pack(pop)
 

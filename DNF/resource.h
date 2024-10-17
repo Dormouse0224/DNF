@@ -45,6 +45,7 @@
 #define EDIT_IndexBegin                 1013
 #define EDIT_IndexEnd                   1014
 #define EDIT_FPS                        1015
+#define EDIT_Angle                      1016
 #define EDIT_IndexEnd3                  1017
 #define CHECK_LOOP                      1018
 #define STATIC_IndexBegin               1019
@@ -57,6 +58,7 @@
 #define STATIC_TargetAlbum              1026
 #define STATIC_TargetAlbum2             1027
 #define STATIC_TargetFile               1027
+#define EDIT_EditAngle                  1028
 #define ID_32773                        32773
 #define ID_32774                        32774
 #define ID_32775                        32775
@@ -72,7 +74,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        134
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1027
+#define _APS_NEXT_CONTROL_VALUE         1029
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

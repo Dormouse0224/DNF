@@ -24,7 +24,7 @@ CAlbumPlayer::~CAlbumPlayer()
 
 }
 
-void CAlbumPlayer::SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D _Offset)
+void CAlbumPlayer::SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D _Offset, float _angle)
 {
 	assert(!(_End >= m_CurrentAlbum->m_SceneVector.size() || _Begin >= m_CurrentAlbum->m_SceneVector.size() || _Begin < 0 || _End < 0));
 	m_SceneNumber = 0;
@@ -34,6 +34,7 @@ void CAlbumPlayer::SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D
 	m_Loop = _Loop;
 	m_FPS = _FPS;
 	m_Offset = _Offset;
+	m_angle = _angle;
 }
 
 void CAlbumPlayer::FinalTick()
@@ -61,17 +62,17 @@ void CAlbumPlayer::FinalTick()
 
 }
 
-void CAlbumPlayer::Render(CObj* _thisObj, float _angle, bool bCameraFallow)
+void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraFallow)
 {
 	// 현재 씬을 재생
 	m_CurrentAlbum->m_Owner = _thisObj;
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, _angle, bCameraFallow);
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, m_angle, bCameraFallow);
 }
 
 // 오브젝트를 거치지 않고 직접 렌더링
-void CAlbumPlayer::DirectRender(float _angle, bool bCameraFallow)
+void CAlbumPlayer::DirectRender(bool bCameraFallow)
 {
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->DirectRender(m_Offset, _angle, bCameraFallow);
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->DirectRender(m_Offset, m_angle, bCameraFallow);
 }
 
 void CAlbumPlayer::NextScene()
@@ -124,7 +125,7 @@ CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, string _filepath
 
 
 		CAlbumPlayer* pNewPlayer = new CAlbumPlayer(_Name, strAlbumPath, wstrNPKDir);
-		pNewPlayer->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset);
+		pNewPlayer->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset, desc.angle);
 		return pNewPlayer;
 	}
 	else

@@ -235,6 +235,8 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
                 GetDlgItemText(hDlg, EDIT_OffsetX, buffer, 255);
                 GetDlgItemText(hDlg, EDIT_OffsetY, buffer1, 255);
                 animationInfo.Offset = Vec2D(stof(wstring(buffer)), stof(wstring(buffer1)));
+                GetDlgItemText(hDlg, EDIT_Angle, buffer, 255);
+                animationInfo.angle = stoi(wstring(buffer));
 
                 HWND hLoop = GetDlgItem(hDlg, CHECK_LOOP);
                 if (SendMessage(hLoop, BM_GETCHECK, 0, 0) == BST_CHECKED)
@@ -456,6 +458,7 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
                 SetWindowText(GetDlgItem(hDlg, EDIT_EditFPS), std::to_wstring(info.FPS).c_str());
                 SetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetX), std::to_wstring(info.Offset.x).c_str());
                 SetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetY), std::to_wstring(info.Offset.y).c_str());
+                SetWindowText(GetDlgItem(hDlg, EDIT_EditAngle), std::to_wstring(info.angle).c_str());
                 if (info.bLoop)
                 {
                     SendMessage(GetDlgItem(hDlg, CHECK_EditLOOP), BM_SETCHECK, BST_CHECKED, 0);
@@ -497,10 +500,12 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             WCHAR wOffsetY[255] = {};
             WCHAR filepath[255] = {};
             bool bCheck = false;
+            WCHAR wAngle[255] = {};
             GetWindowText(GetDlgItem(hDlg, EDIT_EditFPS), wFPS, 255);
             GetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetX), wOffsetX, 255);
             GetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetY), wOffsetY, 255);
             GetWindowText(GetDlgItem(hDlg, STATIC_TargetFile), filepath, 255);
+            GetWindowText(GetDlgItem(hDlg, EDIT_EditAngle), wAngle, 255);
             if (SendMessage(GetDlgItem(hDlg, CHECK_EditLOOP), BM_GETCHECK, 0, 0) == BST_CHECKED)
             {
                 bCheck = true;
@@ -511,6 +516,7 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             }
             int FPS = std::stoi(wFPS);
             Vec2D Offset(std::stoi(wOffsetX), std::stoi(wOffsetY));
+            float Angle = std::stof(wAngle);
 
             // 수정된 정보를 기반으로 파일 데이터 편집
             fstream infofile;
@@ -519,6 +525,7 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             infofile.write((char*)&bCheck, sizeof(bCheck));
             infofile.write((char*)&FPS, sizeof(FPS));
             infofile.write((char*)&Offset, sizeof(Offset));
+            infofile.write((char*)&Angle, sizeof(Angle));
             infofile.close();
 
             CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
@@ -539,11 +546,13 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             WCHAR wOffsetX[255] = {};
             WCHAR wOffsetY[255] = {};
             bool bCheck = false;
+            WCHAR wAngle[255] = {};
             GetWindowText(GetDlgItem(hDlg, STATIC_IndexBegin), wIndexBegin, 255);
             GetWindowText(GetDlgItem(hDlg, STATIC_IndexEnd), wIndexEnd, 255);
             GetWindowText(GetDlgItem(hDlg, EDIT_EditFPS), wFPS, 255);
             GetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetX), wOffsetX, 255);
             GetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetY), wOffsetY, 255);
+            GetWindowText(GetDlgItem(hDlg, EDIT_EditAngle), wAngle, 255);
             if (SendMessage(GetDlgItem(hDlg, CHECK_EditLOOP), BM_GETCHECK, 0, 0) == BST_CHECKED)
             {
                 bCheck = true;
@@ -559,7 +568,7 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             if (pEditLv)
             {
                 pEditLv->GetPreviewPlayer()->SetPlayInfo(std::stoi(wIndexBegin), std::stoi(wIndexEnd), bCheck
-                    , std::stoi(wFPS), Vec2D(std::stof(wOffsetX), std::stof(wOffsetY)));
+                    , std::stoi(wFPS), Vec2D(std::stof(wOffsetX), std::stof(wOffsetY)), std::stof(wAngle));
             }
         }
         break;

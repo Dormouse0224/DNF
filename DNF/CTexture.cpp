@@ -52,10 +52,9 @@ int CTexture::Load()
 void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow)
 {
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
-	Vec2D FinalPos(m_Owner->GetOwner()->GetLocation().x + m_Offset.x + _RenderOffset.x
-		, m_Owner->GetOwner()->GetLocation().y + m_Offset.y + _RenderOffset.y);
-	Vec2D ObjCenter = m_Owner->GetOwner()->GetLocation() + (m_Owner->GetOwner()->GetScale() / 2) - _RenderOffset;		// 오브젝트 중심점 계산
+	Vec2D FinalPos(m_Owner->GetOwner()->GetLocation() + m_Offset + _RenderOffset);
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	Vec2D ObjCenter = m_Owner->GetOwner()->GetLocation() + (m_Owner->GetOwner()->GetScale() / 2) - CameraPos;		// 오브젝트 중심점 계산
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
 	if (((abs((CameraPos.x + 1066 / 2) - (FinalPos.x + m_Size.x / 2)) < ((CEngine::GetInst()->GetResolution().x + m_Size.x) / 2)
 		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || !bCameraFallow)
@@ -84,8 +83,9 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow)
 void CTexture::DirectRender(Vec2D _RenderOffset, float _angle, bool bCameraFallow)
 {
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
-	Vec2D FinalPos(m_Offset.x + _RenderOffset.x, m_Offset.y + _RenderOffset.y);
+	Vec2D FinalPos(m_Offset + _RenderOffset);
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	Vec2D AbsCenter = CameraPos * (-1);		// 죄표계 원점 계산
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
 	if (((abs((CameraPos.x + 1066 / 2) - (FinalPos.x + m_Size.x / 2)) < ((CEngine::GetInst()->GetResolution().x + m_Size.x) / 2)
 		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || !bCameraFallow)
@@ -97,7 +97,9 @@ void CTexture::DirectRender(Vec2D _RenderOffset, float _angle, bool bCameraFallo
 		// 로드된 이미지를 해상도 비율에 맞춰 렌더링
 		m_DC = CEngine::GetInst()->GetSubDC();
 		Graphics graphics(m_DC);
-		graphics.RotateTransform(_angle);	// 회전 적용
+		graphics.TranslateTransform(AbsCenter.x, AbsCenter.y);		// 죄표계 원점으로 회전중심 이동
+		graphics.RotateTransform(_angle);							// 회전 적용
+		graphics.TranslateTransform(-AbsCenter.x, -AbsCenter.y);	// 원래 위치로 이동
 		Status st = graphics.DrawImage(m_Bitmap
 			, (int)((FinalPos.x - CameraPos.x) * CEngine::GetInst()->GetScreenScale())
 			, (int)((FinalPos.y - CameraPos.y) * CEngine::GetInst()->GetScreenScale())
