@@ -162,6 +162,7 @@ struct TextInfo
 	}
 };
 
+#pragma pack(push, 1)
 struct AnimationInfo
 {
 	int AlbumPathLen;
@@ -172,3 +173,4 @@ struct AnimationInfo
 	int FPS;
 	Vec2D Offset;
 };
+#pragma pack(pop)

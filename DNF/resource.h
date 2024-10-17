@@ -31,6 +31,7 @@
 #define BTN_LoadImg                     1003
 #define LBX_TextureList                 1003
 #define BTN_ChangeOffset                1003
+#define BTN_Preview                     1003
 #define STATIC_NPKDir                   1004
 #define STATIC_OwnerAlbum               1005
 #define PROG_NPKSave                    1006
@@ -54,6 +55,8 @@
 #define EDIT_EditOffsetX                1024
 #define STATIC_TargetNpk                1025
 #define STATIC_TargetAlbum              1026
+#define STATIC_TargetAlbum2             1027
+#define STATIC_TargetFile               1027
 #define ID_32773                        32773
 #define ID_32774                        32774
 #define ID_32775                        32775

@@ -18,12 +18,18 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
 CLevel_Edit::CLevel_Edit()
 	:CLevel(L"Level_Edit")
 	, m_PreviewTexture(nullptr)
+	, m_hCreateAlbum(nullptr)
+	, m_hEditAnimation(nullptr)
 {
 }
 
 CLevel_Edit::~CLevel_Edit()
 {
-
+	if (m_PreviewPlayer)
+	{
+		delete m_PreviewPlayer;
+		m_PreviewPlayer = nullptr;
+	}
 }
 
 void CLevel_Edit::Begin()
@@ -56,7 +62,7 @@ void CLevel_Edit::Begin()
 
 	// 애니메이션 파일 편집 버튼 추가
 	CButton* EditAni = new CButton(L"Btn_MakeAlbum");
-	//EditAni->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::CreateAlbumCallback);
+	EditAni->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::EditAnimationCallback);
 	EditAni->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditAnimation_Idle"
 		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditAnimation_Idle.animation"), BtnState::IDLE);
 	EditAni->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditAnimation_CursorOn"
@@ -81,6 +87,8 @@ void CLevel_Edit::Tick()
 
 void CLevel_Edit::FinalTick()
 {
+	if (m_PreviewPlayer != nullptr)
+		m_PreviewPlayer->FinalTick();
 	CLevel::FinalTick();
 }
 
@@ -88,12 +96,30 @@ void CLevel_Edit::Render()
 {
 	if (m_PreviewTexture != nullptr)
 		m_PreviewTexture->DirectRender();
+	if (m_PreviewPlayer != nullptr)
+		m_PreviewPlayer->DirectRender();
 	CLevel::Render();
 }
 
 void CLevel_Edit::End()
 {
 }
+
+void CLevel_Edit::SetPreviewPlayer(CAlbumPlayer* _pAlbPlayer)
+{
+	if (m_PreviewPlayer)
+	{
+		delete m_PreviewPlayer;
+		m_PreviewPlayer = nullptr;
+	}
+	m_PreviewPlayer = _pAlbPlayer;
+}
+
+
+
+//=========
+// 전역함수
+//=========
 
 bool EditorMenu(HINSTANCE _hInst, HWND _hWnd, int _wmID)
 {
@@ -163,4 +189,18 @@ void CLevel_Edit::CreateAlbumCallback()
 		m_hCreateAlbum = CreateDialog(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AlbumMaker), CEngine::GetInst()->GetMainWnd(), &CreateAlbumProc);
 	}
 	ShowWindow(m_hCreateAlbum, SW_SHOW);
+}
+
+void CLevel_Edit::EditAnimationCallback()
+{
+	if (m_hEditAnimation == nullptr)
+	{
+		m_hEditAnimation = CreateDialog(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AnimationEditor), CEngine::GetInst()->GetMainWnd(), &EditAlimationProc);
+	}
+	else
+	{
+		DestroyWindow(m_hEditAnimation);
+		m_hEditAnimation = CreateDialog(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AnimationEditor), CEngine::GetInst()->GetMainWnd(), &EditAlimationProc);
+	}
+	ShowWindow(m_hEditAnimation, SW_SHOW);
 }

@@ -42,6 +42,7 @@ using std::map;
 using std::make_pair;
 using std::ifstream;
 using std::ofstream;
+using std::fstream;
 using std::ios;
 
 

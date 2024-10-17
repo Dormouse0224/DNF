@@ -27,10 +27,12 @@ public:
     void SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D m_Offset);
     void SetFPS(int _FPS) { m_FPS = _FPS; }
     void FinalTick() override;
-    void Render(CObj* _thisObj, bool bCameraDependent = true);
+    void Render(CObj* _thisObj, bool bCameraFallow = true);
+    void DirectRender(bool bCameraFallow = true);
     void NextScene();
     void SetCurrentScene(int _SceneIndex);
     void ChangeAlbum(string _AlbumPath, wstring _NpkPath);
     static CAlbumPlayer* CreatePlayerFromFile(wstring _Name, string _filepath);
+    void SwitchLoop() { m_Loop = !m_Loop; }
 };
 

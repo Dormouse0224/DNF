@@ -14,8 +14,11 @@ class CLevel_Edit :
 
 private:
     CTexture* m_PreviewTexture;
+    CAlbumPlayer* m_PreviewPlayer;
+
     HWND m_hAlbumViewerWnd;
     HWND m_hCreateAlbum;
+    HWND m_hEditAnimation;
 
 public:
     virtual void Begin() override;
@@ -23,8 +26,13 @@ public:
     virtual void FinalTick() override;
     virtual void Render() override;
     virtual void End() override;
+
+    void SetPreviewTexture(CTexture* _pTexture) { m_PreviewTexture = _pTexture; }
+    void SetPreviewPlayer(CAlbumPlayer* _pAlbPlayer);
+
+
     void LoadNPKCallback();
     void CreateAlbumCallback();
-    void SetPreviewTexture(CTexture* _pTexture) { m_PreviewTexture = _pTexture; }
+    void EditAnimationCallback();
 };
 

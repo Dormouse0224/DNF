@@ -219,7 +219,6 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
                 string NPKDir = cNPKPath;
                 string OwnerAlbum = cOwnerAlbum;
                 NPKDir = NPKDir.substr(CEngine::GetInst()->GetResourcePathA().size());
-                OwnerAlbum = OwnerAlbum.substr(CEngine::GetInst()->GetResourcePathA().size());
 
                 // 입력된 정보를 구조체로 저장
                 AnimationInfo animationInfo;
@@ -407,7 +406,7 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
     return (INT_PTR)FALSE;
 }
 
-INT_PTR EditAlimation(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
+INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
 {
     switch (message)
     {
@@ -418,6 +417,7 @@ INT_PTR EditAlimation(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             // 파일 탐색기 초기화
             WCHAR filepath[255] = {};
             WCHAR filename[255] = {};
+            wstring initpath = CEngine::GetInst()->GetResourcePathW() + L"\\animation";
             OPENFILENAME desc = {};
             desc.lStructSize = sizeof(OPENFILENAME);
             desc.hwndOwner = hDlg;
@@ -428,10 +428,11 @@ INT_PTR EditAlimation(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             desc.nMaxFileTitle = 255;
             desc.lpstrTitle = L"애니메이션 파일 불러오기";
             desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-            desc.lpstrInitialDir = (CEngine::GetInst()->GetResourcePathW() + L"\\animation").c_str();
+            desc.lpstrInitialDir = initpath.c_str();
 
             if (GetOpenFileName(&desc))
             {
+                // 파일로부터 정보를 읽어서 표시
                 AnimationInfo info;
                 char NPKDir[255] = {};
                 char AlbumPath[255] = {};
@@ -449,13 +450,87 @@ INT_PTR EditAlimation(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
 
                 SetWindowText(GetDlgItem(hDlg, STATIC_TargetNpk), wNPKDir);
                 SetWindowText(GetDlgItem(hDlg, STATIC_TargetAlbum), wAlbumPath);
+                SetWindowText(GetDlgItem(hDlg, STATIC_TargetFile), filepath);
                 SetWindowText(GetDlgItem(hDlg, STATIC_IndexBegin), std::to_wstring(info.IndexBegin).c_str());
                 SetWindowText(GetDlgItem(hDlg, STATIC_IndexEnd), std::to_wstring(info.IndexEnd).c_str());
                 SetWindowText(GetDlgItem(hDlg, EDIT_EditFPS), std::to_wstring(info.FPS).c_str());
                 SetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetX), std::to_wstring(info.Offset.x).c_str());
                 SetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetY), std::to_wstring(info.Offset.y).c_str());
+                if (info.bLoop)
+                {
+                    SendMessage(GetDlgItem(hDlg, CHECK_EditLOOP), BM_SETCHECK, BST_CHECKED, 0);
+                }
+                else
+                {
+                    SendMessage(GetDlgItem(hDlg, CHECK_EditLOOP), BM_SETCHECK, BST_UNCHECKED, 0);
+                }
+
+                // 읽은 파일 정보를 토대로 애니메이션 프리뷰
+                char cFilepath[255] = {};
+                WideCharToMultiByte(CP_ACP, 0, filepath, -1, cFilepath, 255, NULL, NULL);
+                CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
+                CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
+                if (pEditLv)
+                {
+                    CAlbumPlayer* pAlbPlayer = CAlbumPlayer::CreatePlayerFromFile(L"PreviewAnimation", cFilepath);
+                    pEditLv->SetPreviewPlayer(pAlbPlayer);
+                }
             }
         }
+        else if (LOWORD(_wParam) == IDCANCEL)
+        {
+            CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
+            CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
+            if (pEditLv)
+            {
+                pEditLv->SetPreviewPlayer(nullptr);
+            }
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(_wParam) == IDOK)
+        {
+
+            // 수정된 정보를 가져옴
+            WCHAR wFPS[255] = {};
+            WCHAR wOffsetX[255] = {};
+            WCHAR wOffsetY[255] = {};
+            WCHAR filepath[255] = {};
+            bool bCheck = false;
+            GetWindowText(GetDlgItem(hDlg, EDIT_EditFPS), wFPS, 255);
+            GetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetX), wOffsetX, 255);
+            GetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetY), wOffsetY, 255);
+            GetWindowText(GetDlgItem(hDlg, STATIC_TargetFile), filepath, 255);
+            if (SendMessage(GetDlgItem(hDlg, CHECK_EditLOOP), BM_GETCHECK, 0, 0) == BST_CHECKED)
+            {
+                bCheck = true;
+            }
+            else
+            {
+                bCheck = false;
+            }
+            int FPS = std::stoi(wFPS);
+            Vec2D Offset(std::stoi(wOffsetX), std::stoi(wOffsetY));
+
+            // 수정된 정보를 기반으로 파일 데이터 편집
+            fstream infofile;
+            infofile.open(filepath, std::ios::in | std::ios::out | std::ios::binary);
+            infofile.seekp(16);
+            infofile.write((char*)&bCheck, sizeof(bCheck));
+            infofile.write((char*)&FPS, sizeof(FPS));
+            infofile.write((char*)&Offset, sizeof(Offset));
+            infofile.close();
+
+            CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
+            CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
+            if (pEditLv)
+            {
+                pEditLv->SetPreviewPlayer(nullptr);
+            }
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+        break;
     }
     }
     return (INT_PTR)FALSE;

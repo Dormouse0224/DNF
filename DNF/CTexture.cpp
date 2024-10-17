@@ -49,7 +49,7 @@ int CTexture::Load()
 
 // 오브젝트에 속한 텍스처의 렌더링
 // 오브젝트 로케이션 + 텍스쳐 자체 오프셋 + 추가 렌더링 오프셋(기본값 0)
-void CTexture::Render(Vec2D _RenderOffset, bool bCameraDependent)
+void CTexture::Render(Vec2D _RenderOffset, bool bCameraFallow)
 {
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
 	Vec2D FinalPos = Vec2D(m_Owner->GetOwner()->GetLocation().x + m_Offset.x + _RenderOffset.x
@@ -57,9 +57,9 @@ void CTexture::Render(Vec2D _RenderOffset, bool bCameraDependent)
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
 	if (((abs((CameraPos.x + 1066 / 2) - (FinalPos.x + m_Size.x / 2)) < ((CEngine::GetInst()->GetResolution().x + m_Size.x) / 2)
-		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || !bCameraDependent)
+		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || !bCameraFallow)
 	{
-		if (!bCameraDependent)
+		if (!bCameraFallow)
 		{
 			CameraPos = Vec2D(0, 0);
 		}
@@ -77,16 +77,16 @@ void CTexture::Render(Vec2D _RenderOffset, bool bCameraDependent)
 
 // 오브젝트에 속하지 않은 텍스처의 렌더링
 // 텍스쳐 자체 오프셋 + 추가 렌더링 오프셋(기본값 0)
-void CTexture::DirectRender(Vec2D _RenderOffset, bool bCameraDependent)
+void CTexture::DirectRender(Vec2D _RenderOffset, bool bCameraFallow)
 {
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
 	Vec2D FinalPos = Vec2D(m_Offset.x + _RenderOffset.x, m_Offset.y + _RenderOffset.y);
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
 	if (((abs((CameraPos.x + 1066 / 2) - (FinalPos.x + m_Size.x / 2)) < ((CEngine::GetInst()->GetResolution().x + m_Size.x) / 2)
-		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || !bCameraDependent)
+		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || !bCameraFallow)
 	{
-		if (!bCameraDependent)
+		if (!bCameraFallow)
 		{
 			CameraPos = Vec2D(0, 0);
 		}

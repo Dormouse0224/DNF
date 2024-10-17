@@ -61,11 +61,17 @@ void CAlbumPlayer::FinalTick()
 
 }
 
-void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraDependent)
+void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraFallow)
 {
 	// 현재 씬을 재생
 	m_CurrentAlbum->m_Owner = _thisObj;
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, bCameraDependent);
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, bCameraFallow);
+}
+
+// 오브젝트를 거치지 않고 직접 렌더링
+void CAlbumPlayer::DirectRender(bool bCameraFallow)
+{
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->DirectRender(m_Offset, bCameraFallow);
 }
 
 void CAlbumPlayer::NextScene()
@@ -111,7 +117,6 @@ CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, string _filepath
 
 
 		string strAlbumPath = AlbumPath;
-		strAlbumPath = CEngine::GetInst()->GetResourcePathA() + strAlbumPath;
 		WCHAR wNPKDir[255] = {};
 		MultiByteToWideChar(CP_ACP, 0, NPKDir, -1, wNPKDir, 255);
 		wstring wstrNPKDir = wNPKDir;
