@@ -530,6 +530,38 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             EndDialog(hDlg, LOWORD(_wParam));
             return (INT_PTR)TRUE;
         }
+        else if (LOWORD(_wParam) == BTN_Preview)
+        {
+            // 현재 입력된 정보를 가져옴
+            WCHAR wIndexBegin[255] = {};
+            WCHAR wIndexEnd[255] = {};
+            WCHAR wFPS[255] = {};
+            WCHAR wOffsetX[255] = {};
+            WCHAR wOffsetY[255] = {};
+            bool bCheck = false;
+            GetWindowText(GetDlgItem(hDlg, STATIC_IndexBegin), wIndexBegin, 255);
+            GetWindowText(GetDlgItem(hDlg, STATIC_IndexEnd), wIndexEnd, 255);
+            GetWindowText(GetDlgItem(hDlg, EDIT_EditFPS), wFPS, 255);
+            GetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetX), wOffsetX, 255);
+            GetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetY), wOffsetY, 255);
+            if (SendMessage(GetDlgItem(hDlg, CHECK_EditLOOP), BM_GETCHECK, 0, 0) == BST_CHECKED)
+            {
+                bCheck = true;
+            }
+            else
+            {
+                bCheck = false;
+            }
+
+            // 현재 레벨이 에디터 레벨인지 확인 후 프리뷰 변경
+            CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
+            CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
+            if (pEditLv)
+            {
+                pEditLv->GetPreviewPlayer()->SetPlayInfo(std::stoi(wIndexBegin), std::stoi(wIndexEnd), bCheck
+                    , std::stoi(wFPS), Vec2D(std::stof(wOffsetX), std::stof(wOffsetY)));
+            }
+        }
         break;
     }
     }

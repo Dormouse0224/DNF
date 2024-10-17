@@ -174,3 +174,8 @@ struct AnimationInfo
 	Vec2D Offset;
 };
 #pragma pack(pop)
+
+struct StageInfo
+{
+
+};

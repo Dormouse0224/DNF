@@ -33,3 +33,5 @@
 #define _TempAlbum		"__TempAlbum__"
 #define _SysNPK			L"__SysReservedNPK__"
 #define _SysAlbum		"__SysReservedAlbum__"
+
+#define PI = 3.141592

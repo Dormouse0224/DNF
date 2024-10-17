@@ -71,12 +71,6 @@
     <Filter Include="main\03. Manager\09.DirectXTex">
       <UniqueIdentifier>{29e222fc-1f2d-4689-9618-8a3eaf4d07ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="main\04. Level\Level_Start">
-      <UniqueIdentifier>{9d4bdd6c-6e5e-4e1f-ab89-6ed179b1922c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="main\04. Level\Level_Edit">
-      <UniqueIdentifier>{0d7a481b-a3cb-4580-830a-f071db914693}</UniqueIdentifier>
-    </Filter>
     <Filter Include="main\03. Manager\10. Text">
       <UniqueIdentifier>{11cfdcdb-9297-4145-b4ff-67ff097e586a}</UniqueIdentifier>
     </Filter>
@@ -97,6 +91,30 @@
     </Filter>
     <Filter Include="main\03. Manager\12. UI">
       <UniqueIdentifier>{b5797a3d-3db0-428d-947c-a9862ed49cfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Edit">
+      <UniqueIdentifier>{0d7a481b-a3cb-4580-830a-f071db914693}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Start">
+      <UniqueIdentifier>{9d4bdd6c-6e5e-4e1f-ab89-6ed179b1922c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\DungeonMaker">
+      <UniqueIdentifier>{5bc4cd39-cc41-4c5b-90dd-ddf0dd8dcfa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\DungeonStage">
+      <UniqueIdentifier>{c068a962-1a84-475e-9732-1635aead4e3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\03. Monster">
+      <UniqueIdentifier>{86e47505-f39b-4d77-9f5a-b1c3d5661fe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\04. NPC">
+      <UniqueIdentifier>{84faaa50-ad7e-4978-9623-49a56880e80e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\13. Sound">
+      <UniqueIdentifier>{79909f9c-d3e1-468c-949d-9b17940110f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\07. Resource\03. Sound">
+      <UniqueIdentifier>{644f2d16-49c7-46c6-af28-6fbfca0ef955}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -200,10 +218,10 @@
       <Filter>main\01. Header</Filter>
     </ClInclude>
     <ClInclude Include="CLevel_Start.h">
-      <Filter>main\04. Level\Level_Start</Filter>
+      <Filter>main\04. Level\Start</Filter>
     </ClInclude>
     <ClInclude Include="CLevel_Edit.h">
-      <Filter>main\04. Level\Level_Edit</Filter>
+      <Filter>main\04. Level\Edit</Filter>
     </ClInclude>
     <ClInclude Include="CTextMgr.h">
       <Filter>main\03. Manager\10. Text</Filter>
@@ -222,6 +240,24 @@
     </ClInclude>
     <ClInclude Include="DialogProc.h">
       <Filter>main\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="CDungeonMaker.h">
+      <Filter>main\04. Level\DungeonMaker</Filter>
+    </ClInclude>
+    <ClInclude Include="CDungeonStage.h">
+      <Filter>main\04. Level\DungeonStage</Filter>
+    </ClInclude>
+    <ClInclude Include="CMonster.h">
+      <Filter>main\05. Object\03. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="CNPC.h">
+      <Filter>main\05. Object\04. NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="CSoundMgr.h">
+      <Filter>main\03. Manager\13. Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="CSound.h">
+      <Filter>main\07. Resource\03. Sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -296,10 +332,10 @@
       <Filter>main\03. Manager\09.DirectXTex</Filter>
     </ClCompile>
     <ClCompile Include="CLevel_Start.cpp">
-      <Filter>main\04. Level\Level_Start</Filter>
+      <Filter>main\04. Level\Start</Filter>
     </ClCompile>
     <ClCompile Include="CLevel_Edit.cpp">
-      <Filter>main\04. Level\Level_Edit</Filter>
+      <Filter>main\04. Level\Edit</Filter>
     </ClCompile>
     <ClCompile Include="CTextMgr.cpp">
       <Filter>main\03. Manager\10. Text</Filter>
@@ -318,6 +354,24 @@
     </ClCompile>
     <ClCompile Include="DialogProc.cpp">
       <Filter>main\01. Header</Filter>
+    </ClCompile>
+    <ClCompile Include="CDungeonMaker.cpp">
+      <Filter>main\04. Level\DungeonMaker</Filter>
+    </ClCompile>
+    <ClCompile Include="CDungeonStage.cpp">
+      <Filter>main\04. Level\DungeonStage</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonster.cpp">
+      <Filter>main\05. Object\03. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="CNPC.cpp">
+      <Filter>main\05. Object\04. NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="CSoundMgr.cpp">
+      <Filter>main\03. Manager\13. Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="CSound.cpp">
+      <Filter>main\07. Resource\03. Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

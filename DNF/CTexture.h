@@ -43,8 +43,8 @@ public:
     void SetOwner(CAlbum* _Album) { m_Owner = _Album; }
 
     virtual int Load() override;
-    void Render(Vec2D _RenderOffset = Vec2D(0, 0), bool bCameraDependent = true);
-    void DirectRender(Vec2D _RenderOffset = Vec2D(0, 0), bool bCameraDependent = true);
+    void Render(Vec2D _RenderOffset = Vec2D(0, 0), float _angle = 0.f, bool bCameraDependent = true);
+    void DirectRender(Vec2D _RenderOffset = Vec2D(0, 0), float _angle = 0.f, bool bCameraDependent = true);
     int GetLength() { return Length; }
 
 };

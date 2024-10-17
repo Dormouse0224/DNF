@@ -29,6 +29,7 @@ public:
 
     void SetPreviewTexture(CTexture* _pTexture) { m_PreviewTexture = _pTexture; }
     void SetPreviewPlayer(CAlbumPlayer* _pAlbPlayer);
+    CAlbumPlayer* GetPreviewPlayer() { return m_PreviewPlayer; }
 
 
     void LoadNPKCallback();

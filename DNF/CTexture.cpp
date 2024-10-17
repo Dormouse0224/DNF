@@ -49,11 +49,12 @@ int CTexture::Load()
 
 // 오브젝트에 속한 텍스처의 렌더링
 // 오브젝트 로케이션 + 텍스쳐 자체 오프셋 + 추가 렌더링 오프셋(기본값 0)
-void CTexture::Render(Vec2D _RenderOffset, bool bCameraFallow)
+void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow)
 {
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
-	Vec2D FinalPos = Vec2D(m_Owner->GetOwner()->GetLocation().x + m_Offset.x + _RenderOffset.x
+	Vec2D FinalPos(m_Owner->GetOwner()->GetLocation().x + m_Offset.x + _RenderOffset.x
 		, m_Owner->GetOwner()->GetLocation().y + m_Offset.y + _RenderOffset.y);
+	Vec2D ObjCenter = m_Owner->GetOwner()->GetLocation() + (m_Owner->GetOwner()->GetScale() / 2) - _RenderOffset;		// 오브젝트 중심점 계산
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
 	if (((abs((CameraPos.x + 1066 / 2) - (FinalPos.x + m_Size.x / 2)) < ((CEngine::GetInst()->GetResolution().x + m_Size.x) / 2)
@@ -66,6 +67,9 @@ void CTexture::Render(Vec2D _RenderOffset, bool bCameraFallow)
 		// 로드된 이미지를 해상도 비율에 맞춰 렌더링
 		m_DC = CEngine::GetInst()->GetSubDC();
 		Graphics graphics(m_DC);
+		graphics.TranslateTransform(ObjCenter.x, ObjCenter.y);		// 소속 오브젝트 중심점으로 회전중심 이동
+		graphics.RotateTransform(_angle);							// 회전 적용
+		graphics.TranslateTransform(-ObjCenter.x, -ObjCenter.y);	// 원래 위치로 이동
 		Status st = graphics.DrawImage(m_Bitmap
 			, (int)((FinalPos.x - CameraPos.x) * CEngine::GetInst()->GetScreenScale())
 			, (int)((FinalPos.y - CameraPos.y) * CEngine::GetInst()->GetScreenScale())
@@ -77,10 +81,10 @@ void CTexture::Render(Vec2D _RenderOffset, bool bCameraFallow)
 
 // 오브젝트에 속하지 않은 텍스처의 렌더링
 // 텍스쳐 자체 오프셋 + 추가 렌더링 오프셋(기본값 0)
-void CTexture::DirectRender(Vec2D _RenderOffset, bool bCameraFallow)
+void CTexture::DirectRender(Vec2D _RenderOffset, float _angle, bool bCameraFallow)
 {
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
-	Vec2D FinalPos = Vec2D(m_Offset.x + _RenderOffset.x, m_Offset.y + _RenderOffset.y);
+	Vec2D FinalPos(m_Offset.x + _RenderOffset.x, m_Offset.y + _RenderOffset.y);
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
 	if (((abs((CameraPos.x + 1066 / 2) - (FinalPos.x + m_Size.x / 2)) < ((CEngine::GetInst()->GetResolution().x + m_Size.x) / 2)
@@ -93,6 +97,7 @@ void CTexture::DirectRender(Vec2D _RenderOffset, bool bCameraFallow)
 		// 로드된 이미지를 해상도 비율에 맞춰 렌더링
 		m_DC = CEngine::GetInst()->GetSubDC();
 		Graphics graphics(m_DC);
+		graphics.RotateTransform(_angle);	// 회전 적용
 		Status st = graphics.DrawImage(m_Bitmap
 			, (int)((FinalPos.x - CameraPos.x) * CEngine::GetInst()->GetScreenScale())
 			, (int)((FinalPos.y - CameraPos.y) * CEngine::GetInst()->GetScreenScale())

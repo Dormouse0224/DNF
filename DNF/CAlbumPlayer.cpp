@@ -61,17 +61,17 @@ void CAlbumPlayer::FinalTick()
 
 }
 
-void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraFallow)
+void CAlbumPlayer::Render(CObj* _thisObj, float _angle, bool bCameraFallow)
 {
 	// 현재 씬을 재생
 	m_CurrentAlbum->m_Owner = _thisObj;
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, bCameraFallow);
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, _angle, bCameraFallow);
 }
 
 // 오브젝트를 거치지 않고 직접 렌더링
-void CAlbumPlayer::DirectRender(bool bCameraFallow)
+void CAlbumPlayer::DirectRender(float _angle, bool bCameraFallow)
 {
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->DirectRender(m_Offset, bCameraFallow);
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->DirectRender(m_Offset, _angle, bCameraFallow);
 }
 
 void CAlbumPlayer::NextScene()
