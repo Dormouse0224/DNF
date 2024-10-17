@@ -4,6 +4,7 @@
 #include "CAlbum.h"
 #include "CTexture.h"
 #include "CTextureMgr.h"
+#include "CEngine.h"
 
 CAlbumPlayer::CAlbumPlayer(wstring _Name, string _AlbumPath, wstring _NpkPath)
 	: CComponent(_Name)
@@ -109,13 +110,15 @@ CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, string _filepath
 		animation.close();
 
 
-		string strAlbumPath = AlbumPath; 
-		size_t len = strlen(NPKDir);
-		wchar_t wNPKDir[255];
-		size_t convertedChars = 0;
-		mbstowcs_s(&convertedChars, wNPKDir, NPKDir, _TRUNCATE);
-		std::wstring strNPKDir = wNPKDir;
-		CAlbumPlayer* pNewPlayer = new CAlbumPlayer(_Name, strAlbumPath, strNPKDir);
+		string strAlbumPath = AlbumPath;
+		strAlbumPath = CEngine::GetInst()->GetResourcePathA() + strAlbumPath;
+		WCHAR wNPKDir[255] = {};
+		MultiByteToWideChar(CP_ACP, 0, NPKDir, -1, wNPKDir, 255);
+		wstring wstrNPKDir = wNPKDir;
+		wstrNPKDir = CEngine::GetInst()->GetResourcePathW() + wstrNPKDir;
+
+
+		CAlbumPlayer* pNewPlayer = new CAlbumPlayer(_Name, strAlbumPath, wstrNPKDir);
 		pNewPlayer->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset);
 		return pNewPlayer;
 	}

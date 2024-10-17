@@ -218,6 +218,8 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
                 GetDlgItemTextA(hDlg, STATIC_SelectedAlbum, cOwnerAlbum, 255);
                 string NPKDir = cNPKPath;
                 string OwnerAlbum = cOwnerAlbum;
+                NPKDir = NPKDir.substr(CEngine::GetInst()->GetResourcePathA().size());
+                OwnerAlbum = OwnerAlbum.substr(CEngine::GetInst()->GetResourcePathA().size());
 
                 // 입력된 정보를 구조체로 저장
                 AnimationInfo animationInfo;
@@ -426,6 +428,7 @@ INT_PTR EditAlimation(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             desc.nMaxFileTitle = 255;
             desc.lpstrTitle = L"애니메이션 파일 불러오기";
             desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+            desc.lpstrInitialDir = (CEngine::GetInst()->GetResourcePathW() + L"\\animation").c_str();
 
             if (GetOpenFileName(&desc))
             {
@@ -438,8 +441,19 @@ INT_PTR EditAlimation(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
                 infofile.read(NPKDir, info.NPKDirLen);
                 infofile.read(AlbumPath, info.AlbumPathLen);
                 infofile.close();
+                WCHAR wNPKDir[255] = {};
+                WCHAR wAlbumPath[255] = {};
+                MultiByteToWideChar(CP_ACP, 0, NPKDir, -1, wNPKDir, 255);
+                MultiByteToWideChar(CP_ACP, 0, AlbumPath, -1, wAlbumPath, 255);
 
-                HWND 
+
+                SetWindowText(GetDlgItem(hDlg, STATIC_TargetNpk), wNPKDir);
+                SetWindowText(GetDlgItem(hDlg, STATIC_TargetAlbum), wAlbumPath);
+                SetWindowText(GetDlgItem(hDlg, STATIC_IndexBegin), std::to_wstring(info.IndexBegin).c_str());
+                SetWindowText(GetDlgItem(hDlg, STATIC_IndexEnd), std::to_wstring(info.IndexEnd).c_str());
+                SetWindowText(GetDlgItem(hDlg, EDIT_EditFPS), std::to_wstring(info.FPS).c_str());
+                SetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetX), std::to_wstring(info.Offset.x).c_str());
+                SetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetY), std::to_wstring(info.Offset.y).c_str());
             }
         }
     }
