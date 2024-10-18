@@ -11,6 +11,9 @@
 #include "CTexture.h"
 #include "CButton.h"
 #include "resource.h"
+#include "CKeyMgr.h"
+#include "CSoundMgr.h"
+#include "CSound.h"
 
 INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);
 INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);
@@ -18,6 +21,8 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
 CLevel_Edit::CLevel_Edit()
 	:CLevel(L"Level_Edit")
 	, m_PreviewTexture(nullptr)
+	, m_PreviewPlayer(nullptr)
+	, m_hAlbumViewerWnd(nullptr)
 	, m_hCreateAlbum(nullptr)
 	, m_hEditAnimation(nullptr)
 {
@@ -77,12 +82,21 @@ void CLevel_Edit::Begin()
 	// 에디터 레벨 텍스트 추가
 	CTextMgr::GetInst()->WriteText(10, 10, L"에디터 레벨", RGB(0, 0, 0));
 
+
+	// 에디터 레벨 BGM 세팅
+	CSound* pStartBGM = CSoundMgr::GetInst()->GetSound(L"EditBGM", L"\\music\\herring_archipelago.ogg");
+	pStartBGM->PlayToBGM(true);
+
 	CLevel::Begin();
 }
 
 void CLevel_Edit::Tick()
 {
 	CLevel::Tick();
+	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::ESC) == Key_state::PRESSED)
+	{
+		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"Level_Start"));
+	}
 }
 
 void CLevel_Edit::FinalTick()
@@ -103,6 +117,15 @@ void CLevel_Edit::Render()
 
 void CLevel_Edit::End()
 {
+	ClearObject();
+	SetPreviewPlayer(nullptr);
+	if (m_hAlbumViewerWnd)
+		DestroyWindow(m_hAlbumViewerWnd);
+	if (m_hCreateAlbum)
+		DestroyWindow(m_hCreateAlbum);
+	if (m_hEditAnimation)
+		DestroyWindow(m_hEditAnimation);
+	CTextMgr::GetInst()->DeleteText(10, 10, L"에디터 레벨");
 }
 
 void CLevel_Edit::SetPreviewPlayer(CAlbumPlayer* _pAlbPlayer)

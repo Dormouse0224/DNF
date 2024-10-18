@@ -18,5 +18,6 @@ public:
 	void Render();
 	
 	CLevel* GetCurrentLevel() { return m_CurrentLevel; }
+	void ChangeLevel(CLevel* _Dest);
 };
 

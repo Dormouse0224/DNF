@@ -4,9 +4,11 @@
 #include "CSoundMgr.h"
 #include "CEngine.h"
 
-CSound::CSound(wstring _name)
+CSound::CSound(wstring _name, const wstring& _strFilePath)
 	: CResource(_name, ResourceType::Sound)
+	, m_FilePath(_strFilePath)
 {
+	Load();
 }
 
 CSound::~CSound()
@@ -14,13 +16,15 @@ CSound::~CSound()
 }
 
 
-int CSound::Load(const wstring& _strFilePath)
+int CSound::Load()
 {
+	assert(CSoundMgr::GetInst()->m_SoundMap.insert(make_pair(GetName(), this)).second);
+
 	if (nullptr == CSoundMgr::GetInst()->GetSoundDevice())
 		assert(nullptr);
 
 	wstring strContent = CEngine::GetInst()->GetResourcePathW();
-	strContent += _strFilePath;
+	strContent += m_FilePath;
 
 	wchar_t szExt[10] = { 0 };
 	_wsplitpath_s(strContent.c_str(), nullptr, 0, nullptr, 0, nullptr, 0, szExt, 10);
@@ -30,8 +34,14 @@ int CSound::Load(const wstring& _strFilePath)
 		if (false == LoadWaveSound(strContent))
 			assert(nullptr);
 	}
+	else if (!wcscmp(szExt, L".ogg"))
+	{
+		if (false == LoadOGGSound(strContent))
+			assert(nullptr);
+	}
 	else
 		assert(nullptr);
+
 
 	return true;
 }
@@ -105,6 +115,125 @@ bool CSound::LoadWaveSound(const wstring& _strPath)
 
 	return true;
 }
+
+bool CSound::LoadOGGSound(const wstring& _strPath)
+{
+	// ogg 파일을 메모리 버퍼에 복사
+	// 메모리 버퍼로부터 ogg 데이터 로드
+	// ogg 데이터로부터 vorbis_info 를 얻고 waveformat 작성
+	// ogg 데이터를 PCM 데이터로 변환
+	// 
+	//
+
+	// 버퍼 벡터 생성 후 파일 데이터 복사
+	ifstream oggfile(_strPath, ios::binary);
+	assert(oggfile.is_open());
+	oggfile.seekg(0, ios::end);
+	int filesize = oggfile.tellg();
+	oggfile.seekg(0, ios::beg);
+	vector<char> buffer(filesize);
+	oggfile.read(buffer.data(), filesize);
+	oggfile.close();
+
+	ov_callbacks callbacks;
+	OggVorbis_File oggFile;
+	WAVEFORMATEX waveFormat;
+
+	// 람다함수로 콜백 지정
+	callbacks.read_func = [](void* ptr, size_t size, size_t nmemb, void* datasource) -> size_t
+	{
+		pair<const char*, size_t>& memoryBuffer = *(pair<const char*, size_t>*)(datasource);
+		size_t bytesToRead = size * nmemb;
+		if (bytesToRead > memoryBuffer.second)
+		{
+			bytesToRead = memoryBuffer.second;
+		}
+		memcpy(ptr, memoryBuffer.first, bytesToRead);
+		memoryBuffer.first += bytesToRead;
+		memoryBuffer.second -= bytesToRead;
+		return bytesToRead;
+	};
+
+	// seek 함수는 미구현
+	callbacks.seek_func = [](void* datasource, ogg_int64_t offset, int whence) -> int 
+	{
+		return -1;
+	};
+
+	callbacks.close_func = [](void* datasource) -> int 
+	{
+		return 0;
+	};
+
+	callbacks.tell_func = [](void* datasource) -> long 
+	{
+		return 0;
+	};
+
+
+	// 메모리 버퍼로부터 ogg 데이터 로드
+	std::pair<const char*, size_t> memoryBuffer(buffer.data(), buffer.size());
+	assert(ov_open_callbacks(&memoryBuffer, &oggFile, nullptr, 0, callbacks) >= 0);
+
+	// Vorbis_info 및 waveformat 작성
+	vorbis_info* info = ov_info(&oggFile, -1);
+	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
+	waveFormat.nChannels = info->channels;
+	waveFormat.nSamplesPerSec = info->rate;
+	waveFormat.wBitsPerSample = 16;
+	waveFormat.nBlockAlign = (waveFormat.nChannels * waveFormat.wBitsPerSample) / 8;
+	waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
+	waveFormat.cbSize = 0;
+
+	// PCM 데이터를 메모리에 저장
+	std::vector<char> pcmData;
+	char pcmOut[4096];
+	int bitstream;
+	long bytesRead;
+	while ((bytesRead = ov_read(&oggFile, pcmOut, sizeof(pcmOut), 0, 2, 1, &bitstream)) > 0)
+	{
+		pcmData.insert(pcmData.end(), pcmOut, pcmOut + bytesRead);
+	}
+
+	// 리소스 해제
+	ov_clear(&oggFile);
+
+	m_tBuffInfo.dwSize = sizeof(DSBUFFERDESC);
+	m_tBuffInfo.dwFlags = DSBCAPS_CTRLVOLUME;
+	m_tBuffInfo.dwBufferBytes = pcmData.size();
+	m_tBuffInfo.lpwfxFormat = &waveFormat;
+
+	HRESULT hr = CSoundMgr::GetInst()->GetSoundDevice()->CreateSoundBuffer(&m_tBuffInfo, &m_pSoundBuffer, NULL);
+	if (FAILED(hr)) return false;
+
+	// 버퍼 잠금
+	void* pAudioPtr1 = nullptr;
+	void* pAudioPtr2 = nullptr;
+	DWORD audioBytes1 = 0;
+	DWORD audioBytes2 = 0;
+	hr = m_pSoundBuffer->Lock(0, pcmData.size(), &pAudioPtr1, &audioBytes1, &pAudioPtr2, &audioBytes2, 0);
+	if (FAILED(hr)) return false;
+
+	// PCM 데이터를 버퍼에 복사
+	memcpy(pAudioPtr1, pcmData.data(), audioBytes1);
+	if (pAudioPtr2)
+	{
+		memcpy(pAudioPtr2, pcmData.data() + audioBytes1, audioBytes2);
+	}
+
+	m_pSoundBuffer->Unlock(pAudioPtr1, audioBytes1, pAudioPtr2, audioBytes2);
+
+	// 기본 볼륨 50으로 설정
+	SetVolume(50.f);
+
+	return true;
+}
+
+
+
+
+
+
 
 void CSound::Play(bool _bLoop)
 {

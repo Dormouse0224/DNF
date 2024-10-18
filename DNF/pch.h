@@ -43,12 +43,23 @@ using namespace Gdiplus;
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "dsound.lib")
 
+// ogg 사운드용 라이브러리
+#include <ogg.h>
+#pragma comment(lib, "libogg.lib")
+#include <vorbis/codec.h>
+#include <vorbis/vorbisfile.h>
+#include <vorbis/vorbisenc.h>
+#pragma comment(lib, "libvorbis_static.lib")
+#pragma comment(lib, "libvorbisfile_static.lib")
+
+
 
 using std::wstring;
 using std::string;
 using std::vector;
 using std::list;
 using std::map;
+using std::pair;
 using std::make_pair;
 using std::ifstream;
 using std::ofstream;

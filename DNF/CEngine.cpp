@@ -9,6 +9,7 @@
 #include "CTextureMgr.h"
 #include "CCameraMgr.h"
 #include "CUIMgr.h"
+#include "CSoundMgr.h"
 
 #include "CSelectGDI.h"
 #include "CDbgRender.h"
@@ -80,6 +81,7 @@ int CEngine::Init(HINSTANCE _hInst)
 	CKeyMgr::GetInst()->Init();
 	CTextureMgr::GetInst()->Init();
 	CreateBackBuffer();		// 백버퍼 생성
+	CSoundMgr::GetInst()->Init();
 	CLevelMgr::GetInst()->Init();
 	CTimeMgr::GetInst()->Init();
 	CTextMgr::GetInst()->Init();

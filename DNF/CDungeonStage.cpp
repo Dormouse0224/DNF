@@ -12,6 +12,7 @@ CDungeonStage::~CDungeonStage()
 
 void CDungeonStage::Begin()
 {
+
 }
 
 void CDungeonStage::Tick()

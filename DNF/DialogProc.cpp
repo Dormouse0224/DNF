@@ -514,6 +514,11 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             {
                 bCheck = false;
             }
+
+            // 입력값이 없는경우 중단
+            if (wstring(filepath) == L"Static")
+                break;
+
             int FPS = std::stoi(wFPS);
             Vec2D Offset(std::stoi(wOffsetX), std::stoi(wOffsetY));
             float Angle = std::stof(wAngle);
@@ -561,6 +566,10 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             {
                 bCheck = false;
             }
+
+            // 입력값이 없는경우 중단
+            if (wstring(wIndexBegin) == L"Static")
+                break;
 
             // 현재 레벨이 에디터 레벨인지 확인 후 프리뷰 변경
             CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();

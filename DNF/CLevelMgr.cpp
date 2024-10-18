@@ -37,7 +37,7 @@ void CLevelMgr::Init()
 
 	CLevel_Start* pStartLevel = new CLevel_Start;
 	CLevel_Edit* pEditLevel = new CLevel_Edit;
-	m_CurrentLevel = pEditLevel;
+	m_CurrentLevel = pStartLevel;
 	m_CurrentLevel->Begin();
 }
 
@@ -67,4 +67,12 @@ void CLevelMgr::Render()
 	{
 		CDbgRender::GetInst()->Render();
 	}
+}
+
+void CLevelMgr::ChangeLevel(CLevel* _Dest)
+{
+	assert(_Dest);
+	m_CurrentLevel->End();
+	m_CurrentLevel = _Dest;
+	m_CurrentLevel->Begin();
 }

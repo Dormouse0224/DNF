@@ -96,4 +96,20 @@ void CLevel::DeleteObject()
 	
 }
 
+void CLevel::ClearObject()
+{
+	for (int i = 0; i < (int)LayerType::END; ++i)
+	{
+		for (int j = 0; j < m_hObj[i].size(); ++j)
+		{
+			if (m_hObj[i][j] != nullptr)
+			{
+				delete m_hObj[i][j];
+				m_hObj[i][j] = nullptr;
+			}
+		}
+		m_hObj[i].clear();
+	}
+}
+
 

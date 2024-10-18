@@ -13,7 +13,15 @@ CSoundMgr::CSoundMgr()
 
 CSoundMgr::~CSoundMgr()
 {
-
+	for (map<wstring, CSound*>::iterator iter = m_SoundMap.begin(); iter != m_SoundMap.end(); ++iter)
+	{
+		if (iter->second != nullptr)
+		{
+			delete iter->second;
+			iter->second = nullptr;
+		}
+	}
+	m_SoundMap.clear();
 }
 
 int CSoundMgr::Init()
@@ -41,4 +49,18 @@ void CSoundMgr::RegisterToBGM(CSound* _pSound)
 		m_pBGM->Stop(true);
 
 	m_pBGM = _pSound;
+}
+
+CSound* CSoundMgr::GetSound(wstring _SoundName, const wstring& _strFilePath)
+{
+	map<wstring, CSound*>::iterator iter = m_SoundMap.find(_SoundName);
+	if (iter != m_SoundMap.end())
+	{
+		return iter->second;
+	}
+	else
+	{
+		CSound* pSound = new CSound(_SoundName, _strFilePath);
+		return pSound;
+	}
 }

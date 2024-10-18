@@ -29,7 +29,7 @@ private:
     DELEGATE_0 m_ClickDelegate;
 
     // 버튼쪽에서는 AddComponent_Btn 이 쓰일 것이기 때문에 함수 접근을 제한
-    virtual void AddComponent(CComponent* _Component) { CObj::AddComponent(_Component); }
+    virtual void AddComponent(CComponent* _Component) override { CObj::AddComponent(_Component); }
 
 public:
     virtual void Render() override;         // 오브젝트를 그리기

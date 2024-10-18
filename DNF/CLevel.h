@@ -28,6 +28,6 @@ public:
 
     void AddCollider(CCollider* _Collider, LayerType _layer) { m_hCollider[(int)_layer].push_back(_Collider); }
     const vector<CCollider*>& GetCollider(LayerType _layer) { return m_hCollider[(int)_layer]; }
-
+    void ClearObject();
 };
 
