@@ -4,11 +4,15 @@ class CDungeonMaker :
     public CLevel
 {
 public:
-    CDungeonMaker(wstring _name);
+    CDungeonMaker();
     ~CDungeonMaker();
 
 private:
-    
+    map<Vec2D, StageInfo*> m_StageInfoMap;
+    Vec2D m_SelectedTile;
+    const int m_RightBound;
+
+    bool m_bFinalExist;
 
 public:
     virtual void Begin() override;
@@ -17,7 +21,17 @@ public:
     virtual void Render() override;
     virtual void End() override;
 
-    void CreateStageCallback();
+    void AddStageInfo(Vec2D _GridLocation, StageInfo* _stageinfo) { assert(m_StageInfoMap.insert(make_pair(_GridLocation, _stageinfo)).second); }
+    StageInfo* FindStageInfo(Vec2D _GridLocation);
+    Vec2D GetSelectedTile() { return m_SelectedTile; }
 
+private:
+
+    void CreateStageCallback();
+    void EditStageCallback();
+    void DeleteStageCallback();
+    void ToggleFinalCallback();
+    void SaveDungeonCallback();
+    void LoadDungeonCallback();
 };
 

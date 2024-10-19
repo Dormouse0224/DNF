@@ -23,7 +23,8 @@ CEngine::CEngine()
 	, m_hSubDC(nullptr)
 	, m_Resolution(1066.f, 600.f)
 	, m_ScreenScale(1.f)
-	, m_MainWndPos(Vec2D(0, 0))
+	, m_MainWndPos(0, 0)
+	, m_WindowSize(0, 0)
 {
 	GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 }
@@ -119,8 +120,6 @@ void CEngine::Progress()
 	}
 	// 레벨 렌더링
 	CLevelMgr::GetInst()->Render();
-	// 텍스트 렌더링
-	CTextMgr::GetInst()->Render();
 	// 디버그 렌더링
 	CDbgRender::GetInst()->Render();
 	// 백버퍼 비트맵을 프런트버퍼 비트맵으로 복사
@@ -170,7 +169,10 @@ void CEngine::ChangeWindowSize(Vec2D _vResolution)
 
 	AdjustWindowRect(&rt, WS_OVERLAPPEDWINDOW, !!hMenu);
 
-	SetWindowPos(m_hMainWnd, nullptr, m_MainWndPos.x, m_MainWndPos.y, rt.right - rt.left, rt.bottom - rt.top, 0);
+	bool res = SetWindowPos(m_hMainWnd, nullptr, m_MainWndPos.x, m_MainWndPos.y, rt.right - rt.left, rt.bottom - rt.top, 0);
+	m_WindowSize = Vec2D(rt.right - rt.left, rt.bottom - rt.top);
+	MINMAXINFO minMaxInfo = {};
+	SendMessage(m_hMainWnd, WM_GETMINMAXINFO, 0, (LPARAM)&minMaxInfo); // 윈도우 창 강제 재조정
 
 	// 새 해상도의 비트맵 작성 후 백버퍼와 연결, 기존 비트맵 삭제
 	m_hSubBitmap = CreateCompatibleBitmap(m_hMainDC, (int)m_Resolution.x, (int)m_Resolution.y);

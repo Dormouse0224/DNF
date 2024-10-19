@@ -8,6 +8,7 @@
 #include "CLevelMgr.h"
 #include "CLevel_Edit.h"
 #include "CAlbumPlayer.h"
+#include "CDungeonMaker.h"
 
 
 
@@ -579,6 +580,130 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
                 pEditLv->GetPreviewPlayer()->SetPlayInfo(std::stoi(wIndexBegin), std::stoi(wIndexEnd), bCheck
                     , std::stoi(wFPS), Vec2D(std::stof(wOffsetX), std::stof(wOffsetY)), std::stof(wAngle));
             }
+        }
+        break;
+    }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR AddStageProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
+{
+    switch (message)
+    {
+    case(WM_COMMAND):
+    {
+        if (LOWORD(_wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(_wParam) == BTN_AddBGM)
+        {
+            WCHAR filepath[255] = {};
+            WCHAR filename[255] = {};
+            wstring Initpath = CEngine::GetInst()->GetResourcePathW();
+
+            OPENFILENAME desc = {};
+            desc.lStructSize = sizeof(OPENFILENAME);
+            desc.hwndOwner = hDlg;
+            desc.lpstrFilter = L"ogg\0*.ogg\0wav\0*.wav\0ALL\0*.*\0";
+            desc.lpstrFile = filepath;
+            desc.nMaxFile = 255;
+            desc.lpstrFileTitle = filename;
+            desc.nMaxFileTitle = 255;
+            desc.lpstrTitle = L"BGM 추가";
+            desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+            desc.lpstrInitialDir = Initpath.c_str();
+
+            if (GetOpenFileName(&desc))
+            {
+                wstring wstr(filepath);
+                wstr = wstr.substr(wstr.rfind('.'));
+                if (wstr == L".wav" || wstr == L".ogg")
+                {
+                    HWND hBGMPath = GetDlgItem(hDlg, STATIC_BGMPath);
+                    SetWindowText(hBGMPath, filepath);
+                }
+                else
+                {
+                    // 파일 형식이 wav, ogg 가 아닐 경우 경고창 출력
+                    MessageBox(hDlg, L"지원되지 않는 형식입니다.", L"파일 형식 오류", MB_ICONWARNING | MB_OK);
+                }
+            }
+        }
+        else if (LOWORD(_wParam) == BTN_AddBGA)
+        {
+            WCHAR filepath[255] = {};
+            WCHAR filename[255] = {};
+            wstring Initpath = CEngine::GetInst()->GetResourcePathW();
+
+            OPENFILENAME desc = {};
+            desc.lStructSize = sizeof(OPENFILENAME);
+            desc.hwndOwner = hDlg;
+            desc.lpstrFilter = L"animation\0*.animation\0ALL\0*.*\0";
+            desc.lpstrFile = filepath;
+            desc.nMaxFile = 255;
+            desc.lpstrFileTitle = filename;
+            desc.nMaxFileTitle = 255;
+            desc.lpstrTitle = L"BGA 추가";
+            desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+            desc.lpstrInitialDir = Initpath.c_str();
+
+            if (GetOpenFileName(&desc))
+            {
+                wstring wstr(filepath);
+                wstr = wstr.substr(wstr.rfind('.'));
+                if (wstr == L".animation")
+                {
+                    HWND hBGAList = GetDlgItem(hDlg, LBX_BGAList);
+                    SendMessage(hBGAList, LB_ADDFILE, 0, (LPARAM)filepath);
+                }
+                else
+                {
+                    // 파일 형식이 animation 가 아닐 경우 경고창 출력
+                    MessageBox(hDlg, L"애니메이션 파일이 아닙니다.", L"파일 형식 오류", MB_ICONWARNING | MB_OK);
+                }
+            }
+        }
+        else if (LOWORD(_wParam) == IDOK)
+        {
+            WCHAR wStageName[255] = {};
+            WCHAR wBGMPath[255] = {};
+            HWND hStageName = GetDlgItem(hDlg, EDIT_StageName);
+            HWND hBGMPath = GetDlgItem(hDlg, STATIC_BGMPath);
+            HWND hBGAList = GetDlgItem(hDlg, LBX_BGAList);
+            GetWindowText(hStageName, wStageName, 255);
+            GetWindowText(hBGMPath, wBGMPath, 255);
+
+            CDungeonMaker* pDungeonMakerLv = dynamic_cast<CDungeonMaker*>(CLevelMgr::GetInst()->GetCurrentLevel());
+            assert(pDungeonMakerLv);
+
+            // 입력값 예외처리
+            if (wstring(wStageName).empty() || wstring(wBGMPath).empty() || !SendMessage(hBGAList, LB_GETCOUNT, 0, 0))
+            {
+                // 해당 이름으로 등록된 스테이지가 이미 있음
+                MessageBox(hDlg, L"입력값이 필요합니다.", L"입력 오류", MB_ICONWARNING | MB_OK);
+                break;
+            }
+
+            // 스테이지 정보 작성
+            StageInfo* pStage = new StageInfo;
+            pStage->StageName = wStageName;
+            pStage->BGMPath = wBGMPath;
+            for (int i = 0; i < SendMessage(hBGAList, LB_GETCOUNT, 0, 0); ++i)
+            {
+                WCHAR buffer[255] = {};
+                SendMessage(hBGAList, LB_GETTEXT, i, (LPARAM)buffer);
+                pStage->vecBGA.push_back(buffer);
+            }
+
+
+            // 던전메이커 레벨의 스테이지 map에 스테이지 추가
+            pDungeonMakerLv->AddStageInfo(pDungeonMakerLv->GetSelectedTile(), pStage);
+
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
         }
         break;
     }

@@ -4,6 +4,7 @@
 #include "CAlbum.h"
 #include "CNpkMgr.h"
 #include "CEngine.h"
+#include "CCameraMgr.h"
 
 #include "DDSTextureLoader11.h"
 #include <d3d11.h>
@@ -772,4 +773,56 @@ CAlbum* CTextureMgr::GetAlbum(string _AlbumPath)
 		return iter->second;
 	}
 	return nullptr;
+}
+
+void CTextureMgr::DrawLine(Color _color, int _width, Vec2D _begin, Vec2D _end, bool bCameraFallow)
+{
+	Pen pen(_color, _width);
+	Graphics graphics(CEngine::GetInst()->GetSubDC());
+	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	if (bCameraFallow)
+	{
+		CameraPos = Vec2D(0, 0);
+	}
+	Vec2D vec = _end - _begin;
+	if ((vec.Cross(CameraPos) >= 0 && vec.Cross(CameraPos + Vec2D(1066, 0)) >= 0 && vec.Cross(CameraPos + Vec2D(1066, 600)) >= 0 && vec.Cross(CameraPos + Vec2D(0, 600)) >= 0)
+		|| (vec.Cross(CameraPos) <= 0 && vec.Cross(CameraPos + Vec2D(1066, 0)) <= 0 && vec.Cross(CameraPos + Vec2D(1066, 600)) <= 0 && vec.Cross(CameraPos + Vec2D(0, 600)) <= 0))
+	{
+		graphics.DrawLine(&pen, _begin.x - CameraPos.x, _begin.y - CameraPos.y, _end.x - CameraPos.x, _end.y - CameraPos.y);
+	}
+}
+
+void CTextureMgr::DrawRect(Color _color, int _width, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow)
+{
+	Pen pen(_color, _width);
+	Graphics graphics(CEngine::GetInst()->GetSubDC());
+	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	if (bCameraFallow)
+	{
+		CameraPos = Vec2D(0, 0);
+	}
+	Vec2D RectCenter = _LeftTop + (_size / 2);
+	if ((RectCenter.x - (CameraPos.x + CEngine::GetInst()->GetResolution().x / 2)) < ((CEngine::GetInst()->GetResolution().x / 2) + _size.x)
+		|| (RectCenter.y - (CameraPos.y + CEngine::GetInst()->GetResolution().y / 2)) < ((CEngine::GetInst()->GetResolution().y / 2) + _size.y))
+	{
+		graphics.DrawRectangle(&pen, _LeftTop.x - CameraPos.x, _LeftTop.y - CameraPos.y, _size.x, _size.y);
+	}
+	
+}
+
+void CTextureMgr::FillRect(Color _color, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow)
+{
+	SolidBrush brush(_color);
+	Graphics graphics(CEngine::GetInst()->GetSubDC());
+	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	if (bCameraFallow)
+	{
+		CameraPos = Vec2D(0, 0);
+	}
+	Vec2D RectCenter = _LeftTop + (_size / 2);
+	if ((RectCenter.x - (CameraPos.x + CEngine::GetInst()->GetResolution().x / 2)) < ((CEngine::GetInst()->GetResolution().x / 2) + _size.x)
+		|| (RectCenter.y - (CameraPos.y + CEngine::GetInst()->GetResolution().y / 2)) < ((CEngine::GetInst()->GetResolution().y / 2) + _size.y))
+	{
+		graphics.FillRectangle(&brush, _LeftTop.x - CameraPos.x, _LeftTop.y - CameraPos.y, _size.x, _size.y);
+	}
 }

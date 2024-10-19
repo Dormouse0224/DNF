@@ -98,3 +98,21 @@ enum class TextureVersion
 	Dxt3 = 3,
 	Dxt5 = 5,
 };
+
+enum class StageType
+{
+	START,
+	MIDDLE,
+	FINAL,
+
+};
+
+enum class PortalDirection
+{
+	TOP,
+	LEFT,
+	RIGHT,
+	BOTTOM,
+
+	END
+};

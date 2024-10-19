@@ -36,7 +36,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     wcex.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_DNF));
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_DNF);
+    wcex.lpszMenuName = nullptr/*MAKEINTRESOURCEW(IDC_DNF)*/;
     wcex.lpszClassName = L"main_window";
     wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -89,7 +89,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
-bool EditorMenu(HINSTANCE _hInst, HWND _hWnd, int _wmID);
+//bool EditorMenu(HINSTANCE _hInst, HWND _hWnd, int _wmID);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -99,8 +99,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             int wmId = LOWORD(wParam);
 
-            if (EditorMenu(hInst, hWnd, wmId))
-                break;
+            //if (EditorMenu(hInst, hWnd, wmId))
+            //    break;
 
             // 메뉴 선택을 구문 분석합니다:
             switch (wmId)
@@ -144,11 +144,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         MINMAXINFO* minMaxInfo = (MINMAXINFO*)lParam;
 
+        if (CEngine::GetInst()->GetWindowSize() != Vec2D(0, 0))
         // 윈도우의 최소 및 최대 크기를 설정
-        minMaxInfo->ptMinTrackSize.x = CEngine::GetInst()->GetResolution().x;
-        minMaxInfo->ptMinTrackSize.y = CEngine::GetInst()->GetResolution().y;
-        minMaxInfo->ptMaxTrackSize.x = CEngine::GetInst()->GetResolution().x;
-        minMaxInfo->ptMaxTrackSize.y = CEngine::GetInst()->GetResolution().y;
+        {
+            minMaxInfo->ptMinTrackSize.x = CEngine::GetInst()->GetWindowSize().x;
+            minMaxInfo->ptMinTrackSize.y = CEngine::GetInst()->GetWindowSize().y;
+            minMaxInfo->ptMaxTrackSize.x = CEngine::GetInst()->GetWindowSize().x;
+            minMaxInfo->ptMaxTrackSize.y = CEngine::GetInst()->GetWindowSize().y;
+        }
     }
         break;
     default:

@@ -29,43 +29,86 @@ public:
 	{}
 
 public:
-	Vec2D operator +(const Vec2D& _Other)
+	Vec2D operator +(const Vec2D& _Other) const
 	{
 		return Vec2D(x + _Other.x, y + _Other.y);
 	}
 
-	Vec2D operator -(const Vec2D& _Other)
+	Vec2D operator -(const Vec2D& _Other) const
 	{
 		return Vec2D(x - _Other.x, y - _Other.y);
 	}
 
-	bool operator >(const Vec2D& _Other)
+	bool operator >(const Vec2D& _Other) const
+	{
+		if (x != _Other.x)
+		{
+			return x > _Other.x;
+		}
+		return y > _Other.y;
+	}
+
+	bool operator >>(const Vec2D& _Other) const
 	{
 		if (x > _Other.x && y > _Other.y)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool operator <(const Vec2D& _Other) const
+	{
+		if (x != _Other.x)
+		{
+			return x < _Other.x;
+		} 
+		return y < _Other.y;
+	}
+
+	bool operator <<(const Vec2D& _Other) const
+	{
+		if (x < _Other.x && y < _Other.y)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool operator ==(const Vec2D& _Other) const
+	{
+		if (x == _Other.x && y == _Other.y)
 			return true;
 		else
 			return false;
 	}
 
-	bool operator <(const Vec2D& _Other)
+	bool operator !=(const Vec2D& _Other) const
 	{
-		if (x < _Other.x && y < _Other.y)
-			return true;
-		else
-			return false;
+		return !(*this == _Other);
 	}
 
 	template<typename T>
-	Vec2D operator *(const T& _Other)
+	Vec2D operator *(const T& _Other) const
 	{
 		return Vec2D(x * _Other, y * _Other);
 	}
 
 	template<typename T>
-	Vec2D operator /(const T& _Other)
+	Vec2D operator /(const T& _Other) const
 	{
 		assert(_Other);
 		return Vec2D(x / _Other, y / _Other);
+	}
+
+	float Dot(Vec2D _other)
+	{
+		return (this->x * _other.x) + (this->y * _other.y);
+	}
+
+	float Cross(Vec2D _other)
+	{
+		return (this->x * _other.y) - (this->x * _other.y);
 	}
 };
 
@@ -176,7 +219,33 @@ struct AnimationInfo
 };
 #pragma pack(pop)
 
-struct StageInfo
+struct MonsterInfo
 {
 
+};
+
+struct ObstacleInfo
+{
+
+};
+
+struct StageInfo
+{
+	wstring StageName;
+	StageType StageType;
+	Vec2D GridLoc;
+	wstring BGMPath;
+	vector<wstring> vecBGA;
+	Vec2D PortalInfo[(int)PortalDirection::END] = { Vec2D(-1, -1), Vec2D(-1, -1) , Vec2D(-1, -1) , Vec2D(-1, -1) };
+	int MonsterCount = 0;
+	int ObstacleCount = 0;
+	int UpperBound = 0;
+	vector<MonsterInfo> vecMonsterInfo = {};
+	vector<ObstacleInfo> vecObstacleInfo = {};
+};
+
+struct DungeonInfo
+{
+	wstring DungeonName;
+	int StageCount;
 };

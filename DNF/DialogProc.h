@@ -6,3 +6,5 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
 INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);
 
 INT_PTR CALLBACK EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);
+
+INT_PTR CALLBACK AddStageProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);

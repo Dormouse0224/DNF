@@ -14,6 +14,7 @@
 #include "CKeyMgr.h"
 #include "CSoundMgr.h"
 #include "CSound.h"
+#include "CCameraMgr.h"
 
 INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);
 INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);
@@ -39,6 +40,9 @@ CLevel_Edit::~CLevel_Edit()
 
 void CLevel_Edit::Begin()
 {
+	// 카메라 위치 초기화
+	CCameraMgr::GetInst()->InitCameraPos();
+
 	// NPK 파일 로드 버튼 추가
 	CButton* OpenNpk = new CButton(L"Btn_OpenNpk");
     OpenNpk->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::LoadNPKCallback);
@@ -50,7 +54,7 @@ void CLevel_Edit::Begin()
 		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\LoadNPK_Pressed.animation"), BtnState::PRESSED);
 	AddObject(OpenNpk, LayerType::UI);
 	OpenNpk->SetScale(Vec2D(219, 47));
-	OpenNpk->SetLocation(Vec2D(830, 10));
+	OpenNpk->SetLocation(Vec2D(833, 10));
 
 	// 이미지 파일 로드 버튼 추가
 	CButton* MakeAlbum = new CButton(L"Btn_MakeAlbum");
@@ -63,7 +67,7 @@ void CLevel_Edit::Begin()
 		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\CreateAlbum_Pressed.animation"), BtnState::PRESSED);
 	AddObject(MakeAlbum, LayerType::UI);
 	MakeAlbum->SetScale(Vec2D(219, 47));
-	MakeAlbum->SetLocation(Vec2D(830, 65));
+	MakeAlbum->SetLocation(Vec2D(833, 65));
 
 	// 애니메이션 파일 편집 버튼 추가
 	CButton* EditAni = new CButton(L"Btn_MakeAlbum");
@@ -76,11 +80,7 @@ void CLevel_Edit::Begin()
 		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditAnimation_Pressed.animation"), BtnState::PRESSED);
 	AddObject(EditAni, LayerType::UI);
 	EditAni->SetScale(Vec2D(219, 47));
-	EditAni->SetLocation(Vec2D(830, 120));
-
-
-	// 에디터 레벨 텍스트 추가
-	CTextMgr::GetInst()->WriteText(10, 10, L"에디터 레벨", RGB(0, 0, 0));
+	EditAni->SetLocation(Vec2D(833, 120));
 
 
 	// 에디터 레벨 BGM 세팅
@@ -92,11 +92,14 @@ void CLevel_Edit::Begin()
 
 void CLevel_Edit::Tick()
 {
-	CLevel::Tick();
+	// ESC 누르면 시작레벨로
 	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::ESC) == Key_state::PRESSED)
 	{
 		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"Level_Start"));
 	}
+
+	CLevel::Tick();
+
 }
 
 void CLevel_Edit::FinalTick()
@@ -125,7 +128,6 @@ void CLevel_Edit::End()
 		DestroyWindow(m_hCreateAlbum);
 	if (m_hEditAnimation)
 		DestroyWindow(m_hEditAnimation);
-	CTextMgr::GetInst()->DeleteText(10, 10, L"에디터 레벨");
 }
 
 void CLevel_Edit::SetPreviewPlayer(CAlbumPlayer* _pAlbPlayer)
@@ -143,43 +145,43 @@ void CLevel_Edit::SetPreviewPlayer(CAlbumPlayer* _pAlbPlayer)
 //=========
 // 전역함수
 //=========
-
-bool EditorMenu(HINSTANCE _hInst, HWND _hWnd, int _wmID)
-{
-	CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
-	if (!dynamic_cast<CLevel_Edit*>(pLevel))
-		return false;
-
-	switch (_wmID)
-	{
-	case ID_RES600:
-	{
-
-		CEngine::GetInst()->SetResolution(Vec2D(1066, 600));
-		CEngine::GetInst()->SetScreenScale(1);
-		CEngine::GetInst()->ChangeWindowSize(Vec2D(CEngine::GetInst()->GetResolution().x, CEngine::GetInst()->GetResolution().y));
-		CTextMgr::GetInst()->ChangeTextSize(CEngine::GetInst()->GetResolution().y / 20);
-		return true;
-	}
-	case ID_RES900:
-	{
-		CEngine::GetInst()->SetResolution(Vec2D(1600, 900));
-		CEngine::GetInst()->SetScreenScale(1.5);
-		CEngine::GetInst()->ChangeWindowSize(Vec2D(CEngine::GetInst()->GetResolution().x, CEngine::GetInst()->GetResolution().y));
-		CTextMgr::GetInst()->ChangeTextSize(CEngine::GetInst()->GetResolution().y / 20);
-		return true;
-	}
-	case ID_RES1200:
-	{
-		CEngine::GetInst()->SetResolution(Vec2D(2133, 1200));
-		CEngine::GetInst()->SetScreenScale(2);
-		CEngine::GetInst()->ChangeWindowSize(Vec2D(CEngine::GetInst()->GetResolution().x, CEngine::GetInst()->GetResolution().y));
-		CTextMgr::GetInst()->ChangeTextSize(CEngine::GetInst()->GetResolution().y / 20);
-		return true;
-	}
-	}
-	return false;
-}
+// 해상도 조절 메뉴 - 프레임 드랍 문제로 삭제
+//bool EditorMenu(HINSTANCE _hInst, HWND _hWnd, int _wmID)
+//{
+//	CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
+//	if (!dynamic_cast<CLevel_Edit*>(pLevel))
+//		return false;
+//
+//	switch (_wmID)
+//	{
+//	case ID_RES600:
+//	{
+//
+//		CEngine::GetInst()->SetResolution(Vec2D(1066, 600));
+//		CEngine::GetInst()->SetScreenScale(1);
+//		CEngine::GetInst()->ChangeWindowSize(Vec2D(CEngine::GetInst()->GetResolution().x, CEngine::GetInst()->GetResolution().y));
+//		CTextMgr::GetInst()->ChangeTextSize(CEngine::GetInst()->GetResolution().y / 20);
+//		return true;
+//	}
+//	case ID_RES900:
+//	{
+//		CEngine::GetInst()->SetResolution(Vec2D(1600, 900));
+//		CEngine::GetInst()->SetScreenScale(1.5);
+//		CEngine::GetInst()->ChangeWindowSize(Vec2D(CEngine::GetInst()->GetResolution().x, CEngine::GetInst()->GetResolution().y));
+//		CTextMgr::GetInst()->ChangeTextSize(CEngine::GetInst()->GetResolution().y / 20);
+//		return true;
+//	}
+//	case ID_RES1200:
+//	{
+//		CEngine::GetInst()->SetResolution(Vec2D(2133, 1200));
+//		CEngine::GetInst()->SetScreenScale(2);
+//		CEngine::GetInst()->ChangeWindowSize(Vec2D(CEngine::GetInst()->GetResolution().x, CEngine::GetInst()->GetResolution().y));
+//		CTextMgr::GetInst()->ChangeTextSize(CEngine::GetInst()->GetResolution().y / 20);
+//		return true;
+//	}
+//	}
+//	return false;
+//}
 
 
 

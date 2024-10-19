@@ -101,9 +101,6 @@
     <Filter Include="main\04. Level\DungeonMaker">
       <UniqueIdentifier>{5bc4cd39-cc41-4c5b-90dd-ddf0dd8dcfa3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="main\04. Level\DungeonStage">
-      <UniqueIdentifier>{c068a962-1a84-475e-9732-1635aead4e3b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="main\05. Object\03. Monster">
       <UniqueIdentifier>{86e47505-f39b-4d77-9f5a-b1c3d5661fe8}</UniqueIdentifier>
     </Filter>
@@ -115,6 +112,9 @@
     </Filter>
     <Filter Include="main\07. Resource\03. Sound">
       <UniqueIdentifier>{644f2d16-49c7-46c6-af28-6fbfca0ef955}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\StageMaker">
+      <UniqueIdentifier>{c068a962-1a84-475e-9732-1635aead4e3b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -244,8 +244,8 @@
     <ClInclude Include="CDungeonMaker.h">
       <Filter>main\04. Level\DungeonMaker</Filter>
     </ClInclude>
-    <ClInclude Include="CDungeonStage.h">
-      <Filter>main\04. Level\DungeonStage</Filter>
+    <ClInclude Include="CStageMaker.h">
+      <Filter>main\04. Level\StageMaker</Filter>
     </ClInclude>
     <ClInclude Include="CMonster.h">
       <Filter>main\05. Object\03. Monster</Filter>
@@ -358,8 +358,8 @@
     <ClCompile Include="CDungeonMaker.cpp">
       <Filter>main\04. Level\DungeonMaker</Filter>
     </ClCompile>
-    <ClCompile Include="CDungeonStage.cpp">
-      <Filter>main\04. Level\DungeonStage</Filter>
+    <ClCompile Include="CStageMaker.cpp">
+      <Filter>main\04. Level\StageMaker</Filter>
     </ClCompile>
     <ClCompile Include="CMonster.cpp">
       <Filter>main\05. Object\03. Monster</Filter>

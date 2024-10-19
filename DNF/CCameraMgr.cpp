@@ -4,10 +4,12 @@
 #include "CEngine.h"
 #include "CLevelMgr.h"
 #include "CKeyMgr.h"
+#include "CTextureMgr.h"
 
 CCameraMgr::CCameraMgr()
 	: m_CameraPos(Vec2D(0, 0))
 	, m_CameraSpeed(500.f)
+	, m_Alpha(0)
 {
 
 }
@@ -24,7 +26,8 @@ void CCameraMgr::Init()
 
 void CCameraMgr::Tick()
 {
-	if (CLevelMgr::GetInst()->GetCurrentLevel()->GetName() == L"Level_Edit")
+	wstring levelName = CLevelMgr::GetInst()->GetCurrentLevel()->GetName();
+	if (levelName == L"Level_Edit" || levelName == L"DungeonMaker" || levelName == L"StageMaker")
 	{
 		Key_state W = CKeyMgr::GetInst()->GetKeyState(Keyboard::W);
 		Key_state A = CKeyMgr::GetInst()->GetKeyState(Keyboard::A);
@@ -52,4 +55,7 @@ void CCameraMgr::Tick()
 			m_CameraPos = Vec2D(0, 0);
 		}
 	}
+
 }
+
+

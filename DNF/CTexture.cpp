@@ -57,9 +57,9 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow)
 	Vec2D ObjCenter = m_Owner->GetOwner()->GetLocation() + (m_Owner->GetOwner()->GetScale() / 2) - CameraPos;		// 오브젝트 중심점 계산
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
 	if (((abs((CameraPos.x + 1066 / 2) - (FinalPos.x + m_Size.x / 2)) < ((CEngine::GetInst()->GetResolution().x + m_Size.x) / 2)
-		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || !bCameraFallow)
+		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || bCameraFallow)
 	{
-		if (!bCameraFallow)
+		if (bCameraFallow)
 		{
 			CameraPos = Vec2D(0, 0);
 		}
@@ -88,9 +88,9 @@ void CTexture::DirectRender(Vec2D _RenderOffset, float _angle, bool bCameraFallo
 	Vec2D AbsCenter = CameraPos * (-1);		// 죄표계 원점 계산
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
 	if (((abs((CameraPos.x + 1066 / 2) - (FinalPos.x + m_Size.x / 2)) < ((CEngine::GetInst()->GetResolution().x + m_Size.x) / 2)
-		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || !bCameraFallow)
+		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || bCameraFallow)
 	{
-		if (!bCameraFallow)
+		if (bCameraFallow)
 		{
 			CameraPos = Vec2D(0, 0);
 		}

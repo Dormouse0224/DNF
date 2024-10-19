@@ -8,6 +8,7 @@
 
 #include "CLevel_Start.h"
 #include "CLevel_Edit.h"
+#include "CDungeonMaker.h"
 
 #include "CAlbum.h"
 #include "CAlbumPlayer.h"
@@ -15,6 +16,7 @@
 CLevelMgr::CLevelMgr()
 	: m_CurrentLevel(nullptr)
 	, m_CLevels()
+	, m_DungeonMap()
 {
 
 }
@@ -37,6 +39,7 @@ void CLevelMgr::Init()
 
 	CLevel_Start* pStartLevel = new CLevel_Start;
 	CLevel_Edit* pEditLevel = new CLevel_Edit;
+	CDungeonMaker* pDungeonMaker = new CDungeonMaker;
 	m_CurrentLevel = pStartLevel;
 	m_CurrentLevel->Begin();
 }
@@ -45,6 +48,15 @@ CLevel* CLevelMgr::FindLevel(wstring _LevelName)
 {
 	map<wstring, CLevel*>::iterator iter = m_CLevels.find(_LevelName);
 	if (iter == m_CLevels.end())
+		return nullptr;
+	else
+		return iter->second;
+}
+
+DungeonInfo* CLevelMgr::FindDungeon(wstring _DungeonName)
+{
+	map<wstring, DungeonInfo*>::iterator iter = m_DungeonMap.find(_DungeonName);
+	if (iter == m_DungeonMap.end())
 		return nullptr;
 	else
 		return iter->second;

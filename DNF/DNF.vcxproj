@@ -146,7 +146,7 @@
     <ClInclude Include="CBase.h" />
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CDungeonMaker.h" />
-    <ClInclude Include="CDungeonStage.h" />
+    <ClInclude Include="CStageMaker.h" />
     <ClInclude Include="CMonster.h" />
     <ClInclude Include="CNPC.h" />
     <ClInclude Include="CSound.h" />
@@ -195,7 +195,7 @@
     <ClCompile Include="CBase.cpp" />
     <ClCompile Include="CButton.cpp" />
     <ClCompile Include="CDungeonMaker.cpp" />
-    <ClCompile Include="CDungeonStage.cpp" />
+    <ClCompile Include="CStageMaker.cpp" />
     <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CNPC.cpp" />
     <ClCompile Include="CSound.cpp" />

@@ -5,12 +5,12 @@ class CBackground;
 class CMonster;
 class CNPC;
 
-class CDungeonStage :
+class CStageMaker :
     public CLevel
 {
 public:
-    CDungeonStage(wstring _name);
-    ~CDungeonStage();
+    CStageMaker();
+    ~CStageMaker();
 
 private:
     CBackground* m_Background;

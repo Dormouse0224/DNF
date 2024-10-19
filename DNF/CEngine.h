@@ -8,6 +8,7 @@ private:
 	HWND m_hMainWnd;
 	HDC m_hMainDC;
 	Vec2D m_Resolution;
+	Vec2D m_WindowSize;
 	float m_ScreenScale;
 	Vec2D m_MainWndPos;
 
@@ -31,6 +32,7 @@ public:
 	float GetScreenScale() { return m_ScreenScale; }
 	void SetScreenScale(float _Scale) { m_ScreenScale = _Scale; }
 	HWND GetMainWnd() { return m_hMainWnd; }
+	Vec2D GetWindowSize() { return m_WindowSize; }
 
 	HINSTANCE GetProgramInst() { return m_hInst; }
 	wstring GetResourcePathW() { return m_ResourcePath; }
