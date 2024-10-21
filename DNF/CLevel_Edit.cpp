@@ -47,11 +47,11 @@ void CLevel_Edit::Begin()
 	CButton* OpenNpk = new CButton(L"Btn_OpenNpk");
     OpenNpk->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::LoadNPKCallback);
 	OpenNpk->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadNPK_Idle"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\LoadNPK_Idle.animation"), BtnState::IDLE);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\LoadNPK_Idle.animation"), BtnState::IDLE);
 	OpenNpk->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadNPK_CursorOn"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\LoadNPK_CursorOn.animation"), BtnState::CURSOR_ON);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\LoadNPK_CursorOn.animation"), BtnState::CURSOR_ON);
 	OpenNpk->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadNPK_Pressed"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\LoadNPK_Pressed.animation"), BtnState::PRESSED);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\LoadNPK_Pressed.animation"), BtnState::PRESSED);
 	AddObject(OpenNpk, LayerType::UI);
 	OpenNpk->SetScale(Vec2D(219, 47));
 	OpenNpk->SetLocation(Vec2D(833, 10));
@@ -60,11 +60,11 @@ void CLevel_Edit::Begin()
 	CButton* MakeAlbum = new CButton(L"Btn_MakeAlbum");
 	MakeAlbum->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::CreateAlbumCallback);
 	MakeAlbum->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"CreateAlbum_Idle"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\CreateAlbum_Idle.animation"), BtnState::IDLE);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\CreateAlbum_Idle.animation"), BtnState::IDLE);
 	MakeAlbum->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"CreateAlbum_CursorOn"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\CreateAlbum_CursorOn.animation"), BtnState::CURSOR_ON);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\CreateAlbum_CursorOn.animation"), BtnState::CURSOR_ON);
 	MakeAlbum->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"CreateAlbum_Pressed"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\CreateAlbum_Pressed.animation"), BtnState::PRESSED);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\CreateAlbum_Pressed.animation"), BtnState::PRESSED);
 	AddObject(MakeAlbum, LayerType::UI);
 	MakeAlbum->SetScale(Vec2D(219, 47));
 	MakeAlbum->SetLocation(Vec2D(833, 65));
@@ -73,11 +73,11 @@ void CLevel_Edit::Begin()
 	CButton* EditAni = new CButton(L"Btn_MakeAlbum");
 	EditAni->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::EditAnimationCallback);
 	EditAni->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditAnimation_Idle"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditAnimation_Idle.animation"), BtnState::IDLE);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\EditAnimation_Idle.animation"), BtnState::IDLE);
 	EditAni->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditAnimation_CursorOn"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditAnimation_CursorOn.animation"), BtnState::CURSOR_ON);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\EditAnimation_CursorOn.animation"), BtnState::CURSOR_ON);
 	EditAni->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditAnimation_Pressed"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditAnimation_Pressed.animation"), BtnState::PRESSED);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\EditAnimation_Pressed.animation"), BtnState::PRESSED);
 	AddObject(EditAni, LayerType::UI);
 	EditAni->SetScale(Vec2D(219, 47));
 	EditAni->SetLocation(Vec2D(833, 120));

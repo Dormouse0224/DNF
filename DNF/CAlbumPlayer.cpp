@@ -101,7 +101,7 @@ void CAlbumPlayer::ChangeAlbum(string _AlbumPath, wstring _NpkPath)
 	m_CurrentAlbum = CTextureMgr::GetInst()->LoadAlbum(_AlbumPath, _NpkPath);
 }
 
-CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, string _filepath)
+CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, wstring _filepath)
 {
 	ifstream animation;
 	AnimationInfo desc;

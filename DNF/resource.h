@@ -66,6 +66,8 @@
 #define EDIT_EditAngle                  1028
 #define EDIT_StageName                  1030
 #define STATIC_BGMPath                  1031
+#define EDIT_HorizPixel                 1032
+#define EDIT_VertPixel                  1033
 #define ID_32773                        32773
 #define ID_32774                        32774
 #define ID_32775                        32775
@@ -81,7 +83,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1032
+#define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

@@ -4,6 +4,8 @@
 class CBackground;
 class CMonster;
 class CNPC;
+class CSound;
+class CObj;
 
 class CStageMaker :
     public CLevel
@@ -13,9 +15,10 @@ public:
     ~CStageMaker();
 
 private:
+    StageInfo* m_StageInfo;
     CBackground* m_Background;
-    vector<CMonster*> m_MonsterVec;
-    vector<CNPC*> m_NPCVec;
+    CSound* m_BGM;
+    vector<CObj*> m_StageObject;
 
 
 public:

@@ -33,7 +33,7 @@ public:
     void NextScene();
     void SetCurrentScene(int _SceneIndex);
     void ChangeAlbum(string _AlbumPath, wstring _NpkPath);
-    static CAlbumPlayer* CreatePlayerFromFile(wstring _Name, string _filepath);
+    static CAlbumPlayer* CreatePlayerFromFile(wstring _Name, wstring _filepath);
     void SwitchLoop() { m_Loop = !m_Loop; }
 };
 

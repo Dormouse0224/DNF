@@ -47,11 +47,11 @@ void CDungeonMaker::Begin()
 	CButton* pAddStageBTN = new CButton(L"AddStage");
 	pAddStageBTN->SetDelegate(this, (DELEGATE_0)&CDungeonMaker::CreateStageCallback);
 	pAddStageBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"AddStage_Idle"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\AddStage_Idle.animation"), BtnState::IDLE);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\AddStage_Idle.animation"), BtnState::IDLE);
 	pAddStageBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"AddStage_CursorOn"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\AddStage_CursorOn.animation"), BtnState::CURSOR_ON);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\AddStage_CursorOn.animation"), BtnState::CURSOR_ON);
 	pAddStageBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"AddStage_Pressed"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\AddStage_Pressed.animation"), BtnState::PRESSED);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\AddStage_Pressed.animation"), BtnState::PRESSED);
 	AddObject(pAddStageBTN, LayerType::UI);
 	pAddStageBTN->SetScale(Vec2D(219, 47));
 	pAddStageBTN->SetLocation(Vec2D(833, 10));
@@ -59,11 +59,11 @@ void CDungeonMaker::Begin()
 	CButton* pEditStageBTN = new CButton(L"EditStage");
 	pEditStageBTN->SetDelegate(this, (DELEGATE_0)&CDungeonMaker::EditStageCallback);
 	pEditStageBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditStage_Idle"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditStage_Idle.animation"), BtnState::IDLE);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\EditStage_Idle.animation"), BtnState::IDLE);
 	pEditStageBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditStage_CursorOn"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditStage_CursorOn.animation"), BtnState::CURSOR_ON);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\EditStage_CursorOn.animation"), BtnState::CURSOR_ON);
 	pEditStageBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditStage_Pressed"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\EditStage_Pressed.animation"), BtnState::PRESSED);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\EditStage_Pressed.animation"), BtnState::PRESSED);
 	AddObject(pEditStageBTN, LayerType::UI);
 	pEditStageBTN->SetScale(Vec2D(219, 47));
 	pEditStageBTN->SetLocation(Vec2D(833, 65));
@@ -71,11 +71,11 @@ void CDungeonMaker::Begin()
 	CButton* pDeleteStageBTN = new CButton(L"DeleteStage");
 	pDeleteStageBTN->SetDelegate(this, (DELEGATE_0)&CDungeonMaker::DeleteStageCallback);
 	pDeleteStageBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"DeleteStage_Idle"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\DeleteStage_Idle.animation"), BtnState::IDLE);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\DeleteStage_Idle.animation"), BtnState::IDLE);
 	pDeleteStageBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"DeleteStage_CursorOn"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\DeleteStage_CursorOn.animation"), BtnState::CURSOR_ON);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\DeleteStage_CursorOn.animation"), BtnState::CURSOR_ON);
 	pDeleteStageBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"DeleteStage_Pressed"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\DeleteStage_Pressed.animation"), BtnState::PRESSED);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\DeleteStage_Pressed.animation"), BtnState::PRESSED);
 	AddObject(pDeleteStageBTN, LayerType::UI);
 	pDeleteStageBTN->SetScale(Vec2D(219, 47));
 	pDeleteStageBTN->SetLocation(Vec2D(833, 120));
@@ -83,11 +83,11 @@ void CDungeonMaker::Begin()
 	CButton* pToggleFinalBTN = new CButton(L"ToggleFinal");
 	pToggleFinalBTN->SetDelegate(this, (DELEGATE_0)&CDungeonMaker::ToggleFinalCallback);
 	pToggleFinalBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"ToggleFinal_Idle"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\ToggleFinal_Idle.animation"), BtnState::IDLE);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\ToggleFinal_Idle.animation"), BtnState::IDLE);
 	pToggleFinalBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"ToggleFinal_CursorOn"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\ToggleFinal_CursorOn.animation"), BtnState::CURSOR_ON);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\ToggleFinal_CursorOn.animation"), BtnState::CURSOR_ON);
 	pToggleFinalBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"ToggleFinal_Pressed"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\ToggleFinal_Pressed.animation"), BtnState::PRESSED);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\ToggleFinal_Pressed.animation"), BtnState::PRESSED);
 	AddObject(pToggleFinalBTN, LayerType::UI);
 	pToggleFinalBTN->SetScale(Vec2D(219, 47));
 	pToggleFinalBTN->SetLocation(Vec2D(833, 430));
@@ -95,11 +95,11 @@ void CDungeonMaker::Begin()
 	CButton* pSaveDungeonBTN = new CButton(L"SaveDungeon");
 	pSaveDungeonBTN->SetDelegate(this, (DELEGATE_0)&CDungeonMaker::SaveDungeonCallback);
 	pSaveDungeonBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"SaveDungeon_Idle"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\SaveDungeon_Idle.animation"), BtnState::IDLE);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\SaveDungeon_Idle.animation"), BtnState::IDLE);
 	pSaveDungeonBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"SaveDungeon_CursorOn"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\SaveDungeon_CursorOn.animation"), BtnState::CURSOR_ON);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\SaveDungeon_CursorOn.animation"), BtnState::CURSOR_ON);
 	pSaveDungeonBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"SaveDungeon_Pressed"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\SaveDungeon_Pressed.animation"), BtnState::PRESSED);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\SaveDungeon_Pressed.animation"), BtnState::PRESSED);
 	AddObject(pSaveDungeonBTN, LayerType::UI);
 	pSaveDungeonBTN->SetScale(Vec2D(219, 47));
 	pSaveDungeonBTN->SetLocation(Vec2D(833, 485));
@@ -107,11 +107,11 @@ void CDungeonMaker::Begin()
 	CButton* pLoadDungeonBTN = new CButton(L"LoadDungeon");
 	pLoadDungeonBTN->SetDelegate(this, (DELEGATE_0)&CDungeonMaker::LoadDungeonCallback);
 	pLoadDungeonBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadDungeon_Idle"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\LoadDungeon_Idle.animation"), BtnState::IDLE);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\LoadDungeon_Idle.animation"), BtnState::IDLE);
 	pLoadDungeonBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadDungeon_CursorOn"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\LoadDungeon_CursorOn.animation"), BtnState::CURSOR_ON);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\LoadDungeon_CursorOn.animation"), BtnState::CURSOR_ON);
 	pLoadDungeonBTN->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadDungeon_Pressed"
-		, CEngine::GetInst()->GetResourcePathA() + "\\animation\\LoadDungeon_Pressed.animation"), BtnState::PRESSED);
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\LoadDungeon_Pressed.animation"), BtnState::PRESSED);
 	AddObject(pLoadDungeonBTN, LayerType::UI);
 	pLoadDungeonBTN->SetScale(Vec2D(219, 47));
 	pLoadDungeonBTN->SetLocation(Vec2D(833, 540));
@@ -215,8 +215,12 @@ void CDungeonMaker::CreateStageCallback()
 			// 스테이지 생성
 			DialogBox(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AddStage), CEngine::GetInst()->GetMainWnd(), &AddStageProc);
 
-			// 스테이지를 시작 스테이지로 세팅
-			m_StageInfoMap.find(m_SelectedTile)->second->StageType = StageType::START;
+			// 해당 타일에 스테이지가 정상적으로 추가된 경우, 스테이지를 시작 스테이지로 세팅
+			map<Vec2D, StageInfo*>::iterator iter = m_StageInfoMap.find(m_SelectedTile);
+			if (iter != m_StageInfoMap.end())
+			{
+				iter->second->StageType = StageType::START;
+			}
 		}
 		else
 		{
@@ -270,8 +274,8 @@ void CDungeonMaker::CreateStageCallback()
 					map<Vec2D, StageInfo*>::iterator targetStage = m_StageInfoMap.find(m_SelectedTile + offset);
 					if (targetStage != m_StageInfoMap.end())
 					{
-						targetStage->second->PortalInfo[(int)direction.first] = m_SelectedTile;
-						middleStage->second->PortalInfo[3 - (int)direction.first] = (m_SelectedTile + offset);
+						targetStage->second->arrPortalInfo[(int)direction.first].PointTile = m_SelectedTile;
+						middleStage->second->arrPortalInfo[3 - (int)direction.first].PointTile = (m_SelectedTile + offset);
 					}
 				}
 			}
@@ -285,7 +289,11 @@ void CDungeonMaker::CreateStageCallback()
 
 void CDungeonMaker::EditStageCallback()
 {
-
+	// 선택된 스테이지 정보를 바탕으로 스테이지 메이커로 이동
+	if (m_StageInfoMap.find(m_SelectedTile) != m_StageInfoMap.end())
+	{
+		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"StageMaker"));
+	}
 }
 
 void CDungeonMaker::DeleteStageCallback()
@@ -309,7 +317,7 @@ void CDungeonMaker::DeleteStageCallback()
 			map<Vec2D, StageInfo*>::iterator targetStage = m_StageInfoMap.find(m_SelectedTile + offset);
 			if (targetStage != m_StageInfoMap.end())
 			{
-				targetStage->second->PortalInfo[(int)direction.first] = Vec2D(-1, -1);
+				targetStage->second->arrPortalInfo[(int)direction.first].PointTile = Vec2D(-1, -1);
 			}
 		}
 
@@ -344,8 +352,12 @@ void CDungeonMaker::ToggleFinalCallback()
 
 void CDungeonMaker::SaveDungeonCallback()
 {
+	// 던전 정보를 파일로 저장
+
 }
 
 void CDungeonMaker::LoadDungeonCallback()
 {
+	// 파일로부터 던전 정보를 불러와 로드
+
 }

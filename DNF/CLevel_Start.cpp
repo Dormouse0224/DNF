@@ -27,10 +27,10 @@ void CLevel_Start::Begin()
 	// 시작 레벨의 배경 생성
 	CBackground* pStartBackground = new CBackground(L"StartBackground");
 
-	pStartBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"temp", CEngine::GetInst()->GetResourcePathA() + "\\animation\\start_background.animation"));
-	pStartBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"temp", CEngine::GetInst()->GetResourcePathA() + "\\animation\\archer_walk_30.animation"));
-	pStartBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"temp", CEngine::GetInst()->GetResourcePathA() + "\\animation\\archer_walk_-30.animation"));
-	pStartBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"temp", CEngine::GetInst()->GetResourcePathA() + "\\animation\\archer_walk_0.animation"));
+	pStartBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"temp", CEngine::GetInst()->GetResourcePathW() + L"\\animation\\start_background.animation"));
+	pStartBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"temp", CEngine::GetInst()->GetResourcePathW() + L"\\animation\\archer_walk_30.animation"));
+	pStartBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"temp", CEngine::GetInst()->GetResourcePathW() + L"\\animation\\archer_walk_-30.animation"));
+	pStartBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"temp", CEngine::GetInst()->GetResourcePathW() + L"\\animation\\archer_walk_0.animation"));
 	pStartBackground->SetScale(Vec2D(1066, 600));
 	AddObject(pStartBackground, LayerType::Background);
 

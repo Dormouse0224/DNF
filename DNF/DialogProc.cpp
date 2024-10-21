@@ -470,13 +470,11 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
                 }
 
                 // 읽은 파일 정보를 토대로 애니메이션 프리뷰
-                char cFilepath[255] = {};
-                WideCharToMultiByte(CP_ACP, 0, filepath, -1, cFilepath, 255, NULL, NULL);
                 CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
                 CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
                 if (pEditLv)
                 {
-                    CAlbumPlayer* pAlbPlayer = CAlbumPlayer::CreatePlayerFromFile(L"PreviewAnimation", cFilepath);
+                    CAlbumPlayer* pAlbPlayer = CAlbumPlayer::CreatePlayerFromFile(L"PreviewAnimation", filepath);
                     pEditLv->SetPreviewPlayer(pAlbPlayer);
                 }
             }
@@ -669,20 +667,26 @@ INT_PTR AddStageProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
         else if (LOWORD(_wParam) == IDOK)
         {
             WCHAR wStageName[255] = {};
+            WCHAR wHorizPixel[255] = {};
+            WCHAR wVertPixel[255] = {};
             WCHAR wBGMPath[255] = {};
             HWND hStageName = GetDlgItem(hDlg, EDIT_StageName);
+            HWND hHorizPixel = GetDlgItem(hDlg, EDIT_HorizPixel);
+            HWND hVertPixel = GetDlgItem(hDlg, EDIT_VertPixel);
             HWND hBGMPath = GetDlgItem(hDlg, STATIC_BGMPath);
             HWND hBGAList = GetDlgItem(hDlg, LBX_BGAList);
             GetWindowText(hStageName, wStageName, 255);
+            GetWindowText(hHorizPixel, wHorizPixel, 255);
+            GetWindowText(hVertPixel, wVertPixel, 255);
             GetWindowText(hBGMPath, wBGMPath, 255);
 
             CDungeonMaker* pDungeonMakerLv = dynamic_cast<CDungeonMaker*>(CLevelMgr::GetInst()->GetCurrentLevel());
             assert(pDungeonMakerLv);
 
             // 입력값 예외처리
-            if (wstring(wStageName).empty() || wstring(wBGMPath).empty() || !SendMessage(hBGAList, LB_GETCOUNT, 0, 0))
+            if (wstring(wStageName).empty() || wstring(wHorizPixel).empty() || wstring(wVertPixel).empty() || !SendMessage(hBGAList, LB_GETCOUNT, 0, 0))
             {
-                // 해당 이름으로 등록된 스테이지가 이미 있음
+                // 필수 입력값이 전부 입력되지 않았음
                 MessageBox(hDlg, L"입력값이 필요합니다.", L"입력 오류", MB_ICONWARNING | MB_OK);
                 break;
             }
@@ -690,6 +694,7 @@ INT_PTR AddStageProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             // 스테이지 정보 작성
             StageInfo* pStage = new StageInfo;
             pStage->StageName = wStageName;
+            pStage->StageSize = Vec2D(std::stoi(wHorizPixel), std::stoi(wVertPixel));
             pStage->BGMPath = wBGMPath;
             for (int i = 0; i < SendMessage(hBGAList, LB_GETCOUNT, 0, 0); ++i)
             {

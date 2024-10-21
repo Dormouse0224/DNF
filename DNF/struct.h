@@ -219,29 +219,40 @@ struct AnimationInfo
 };
 #pragma pack(pop)
 
+struct NPCInfo
+{
+
+};
+
 struct MonsterInfo
 {
 
 };
 
-struct ObstacleInfo
+struct WallInfo
 {
 
+};
+
+struct PortalInfo
+{
+	Vec2D Location = Vec2D(-1, -1);
+	Vec2D PointTile = Vec2D(-1, -1);
 };
 
 struct StageInfo
 {
 	wstring StageName;
 	StageType StageType;
+	Vec2D StageSize;
 	Vec2D GridLoc;
 	wstring BGMPath;
 	vector<wstring> vecBGA;
-	Vec2D PortalInfo[(int)PortalDirection::END] = { Vec2D(-1, -1), Vec2D(-1, -1) , Vec2D(-1, -1) , Vec2D(-1, -1) };
-	int MonsterCount = 0;
-	int ObstacleCount = 0;
 	int UpperBound = 0;
-	vector<MonsterInfo> vecMonsterInfo = {};
-	vector<ObstacleInfo> vecObstacleInfo = {};
+	PortalInfo arrPortalInfo[(int)PortalDirection::END];
+	vector<MonsterInfo*> vecMonsterInfo = {};
+	vector<WallInfo*> vecWallInfo = {};
+	vector<NPCInfo*> vecNPCInfo = {};
 };
 
 struct DungeonInfo

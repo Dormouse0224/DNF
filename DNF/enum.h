@@ -30,11 +30,6 @@ enum class TaskType
 enum class LayerType
 {
 	Background,
-	MapObject,
-	Player,
-	PlayerObject,
-	Monseter,
-	MonsterObject,
 
 
 	UI = 63,
