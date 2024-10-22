@@ -67,7 +67,7 @@ void CNpkMgr::WriteNpk(ofstream& _file, string _AlbumName)
 
 	// 앨범 내 텍스처를 바이너리 데이터로 변경
 	LONGLONG IndexLen = 36 * TempAlbum->GetCount();
-	int AlbumLength = 32 + IndexLen;
+	int AlbumLength = (int)(32 + IndexLen);
 	for (int i = 0; i < TempAlbum->GetCount(); ++i)
 	{
 		CTextureMgr::GetInst()->BitmapToArray(TempAlbum->GetScene(i));

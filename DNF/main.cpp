@@ -147,10 +147,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (CEngine::GetInst()->GetWindowSize() != Vec2D(0, 0))
         // 윈도우의 최소 및 최대 크기를 설정
         {
-            minMaxInfo->ptMinTrackSize.x = CEngine::GetInst()->GetWindowSize().x;
-            minMaxInfo->ptMinTrackSize.y = CEngine::GetInst()->GetWindowSize().y;
-            minMaxInfo->ptMaxTrackSize.x = CEngine::GetInst()->GetWindowSize().x;
-            minMaxInfo->ptMaxTrackSize.y = CEngine::GetInst()->GetWindowSize().y;
+            minMaxInfo->ptMinTrackSize.x = (LONG)CEngine::GetInst()->GetWindowSize().x;
+            minMaxInfo->ptMinTrackSize.y = (LONG)CEngine::GetInst()->GetWindowSize().y;
+            minMaxInfo->ptMaxTrackSize.x = (LONG)CEngine::GetInst()->GetWindowSize().x;
+            minMaxInfo->ptMaxTrackSize.y = (LONG)CEngine::GetInst()->GetWindowSize().y;
         }
     }
         break;

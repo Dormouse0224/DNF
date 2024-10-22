@@ -30,7 +30,7 @@ enum class TaskType
 enum class LayerType
 {
 	Background,
-
+	Object,
 
 	UI = 63,
 	END = 64

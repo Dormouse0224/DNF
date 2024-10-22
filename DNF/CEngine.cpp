@@ -169,7 +169,7 @@ void CEngine::ChangeWindowSize(Vec2D _vResolution)
 
 	AdjustWindowRect(&rt, WS_OVERLAPPEDWINDOW, !!hMenu);
 
-	bool res = SetWindowPos(m_hMainWnd, nullptr, m_MainWndPos.x, m_MainWndPos.y, rt.right - rt.left, rt.bottom - rt.top, 0);
+	bool res = SetWindowPos(m_hMainWnd, nullptr, (int)m_MainWndPos.x, (int)m_MainWndPos.y, rt.right - rt.left, rt.bottom - rt.top, 0);
 	m_WindowSize = Vec2D(rt.right - rt.left, rt.bottom - rt.top);
 	MINMAXINFO minMaxInfo = {};
 	SendMessage(m_hMainWnd, WM_GETMINMAXINFO, 0, (LPARAM)&minMaxInfo); // 윈도우 창 강제 재조정

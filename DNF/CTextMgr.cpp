@@ -31,6 +31,6 @@ void CTextMgr::Render(UINT _x, UINT _y, wstring _Text, Color _color, bool bCamer
 	if (bCameraFallow)
 		CameraPos = Vec2D(0, 0);
 	SolidBrush brush(_color);
-	graphics.DrawString(_Text.c_str(), _Text.size(), m_Font, PointF(_x - CameraPos.x, _y - CameraPos.y), &brush);
+	graphics.DrawString(_Text.c_str(), (INT)_Text.size(), m_Font, PointF(_x - CameraPos.x, _y - CameraPos.y), &brush);
 }
 

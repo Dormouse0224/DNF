@@ -28,8 +28,8 @@ public:
     void SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D m_Offset, float _angle);
     void SetFPS(int _FPS) { m_FPS = _FPS; }
     void FinalTick() override;
-    void Render(CObj* _thisObj, bool bCameraFallow = false);
-    void DirectRender(bool bCameraFallow = false);
+    void Render(CObj* _thisObj, bool bCameraFallow = false, bool bLinearDodge = false);
+    void DirectRender(bool bCameraFallow = false, bool bLinearDodge = false);
     void NextScene();
     void SetCurrentScene(int _SceneIndex);
     void ChangeAlbum(string _AlbumPath, wstring _NpkPath);

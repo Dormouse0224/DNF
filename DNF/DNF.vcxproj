@@ -146,11 +146,13 @@
     <ClInclude Include="CBase.h" />
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CDungeonMaker.h" />
+    <ClInclude Include="CPortal.h" />
     <ClInclude Include="CStageMaker.h" />
     <ClInclude Include="CMonster.h" />
     <ClInclude Include="CNPC.h" />
     <ClInclude Include="CSound.h" />
     <ClInclude Include="CSoundMgr.h" />
+    <ClInclude Include="CWall.h" />
     <ClInclude Include="DialogProc.h" />
     <ClInclude Include="CCameraMgr.h" />
     <ClInclude Include="CCollider.h" />
@@ -195,11 +197,13 @@
     <ClCompile Include="CBase.cpp" />
     <ClCompile Include="CButton.cpp" />
     <ClCompile Include="CDungeonMaker.cpp" />
+    <ClCompile Include="CPortal.cpp" />
     <ClCompile Include="CStageMaker.cpp" />
     <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CNPC.cpp" />
     <ClCompile Include="CSound.cpp" />
     <ClCompile Include="CSoundMgr.cpp" />
+    <ClCompile Include="CWall.cpp" />
     <ClCompile Include="DialogProc.cpp" />
     <ClCompile Include="CCameraMgr.cpp" />
     <ClCompile Include="CCollider.cpp" />

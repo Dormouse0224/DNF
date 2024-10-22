@@ -88,7 +88,7 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
 
             SendMessage(hTexLBX, LB_RESETCONTENT, 0, 0);    // 텍스처 리스트박스 초기화
 
-            int index = SendMessage(hAlbumLBX, LB_GETCURSEL, 0, 0);
+            LRESULT index = SendMessage(hAlbumLBX, LB_GETCURSEL, 0, 0);
             TCHAR buffer[255] = {};
             SendMessage(hAlbumLBX, LB_GETTEXT, index, (LPARAM)buffer);
             wstring filename = buffer;
@@ -119,7 +119,7 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             WCHAR npkdir[255] = {};
             GetWindowText(hNPKDir, npkdir, 255);
 
-            int index = SendMessage(hTexLBX, LB_GETCURSEL, 0, 0);
+            LRESULT index = SendMessage(hTexLBX, LB_GETCURSEL, 0, 0);
 
             CAlbum* pAlbum = CTextureMgr::GetInst()->GetAlbum(string(wstr.begin(), wstr.end()));
             WCHAR buffer[255] = {};
@@ -223,8 +223,8 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
 
                 // 입력된 정보를 구조체로 저장
                 AnimationInfo animationInfo;
-                animationInfo.NPKDirLen = NPKDir.size();
-                animationInfo.AlbumPathLen = OwnerAlbum.size();
+                animationInfo.NPKDirLen = (int)NPKDir.size();
+                animationInfo.AlbumPathLen = (int)OwnerAlbum.size();
                 WCHAR buffer[255] = {};
                 WCHAR buffer1[255] = {};
                 GetDlgItemText(hDlg, EDIT_IndexBegin, buffer, 255);
@@ -237,7 +237,7 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
                 GetDlgItemText(hDlg, EDIT_OffsetY, buffer1, 255);
                 animationInfo.Offset = Vec2D(stof(wstring(buffer)), stof(wstring(buffer1)));
                 GetDlgItemText(hDlg, EDIT_Angle, buffer, 255);
-                animationInfo.angle = stoi(wstring(buffer));
+                animationInfo.angle = stof(wstring(buffer));
 
                 HWND hLoop = GetDlgItem(hDlg, CHECK_LOOP);
                 if (SendMessage(hLoop, BM_GETCHECK, 0, 0) == BST_CHECKED)
@@ -317,7 +317,7 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
                 HWND hAlbumLBX = GetDlgItem(hDlg, LBX_CustomAlbum);
                 wstring ImageDir = filepath;
                 CTexture* pTex = CTextureMgr::GetInst()->LoadFromFile(filepath);
-                int index = SendMessage(hAlbumLBX, LB_ADDSTRING, 0, (LPARAM)pTex->GetName().c_str());
+                LRESULT index = SendMessage(hAlbumLBX, LB_ADDSTRING, 0, (LPARAM)pTex->GetName().c_str());
             }
         }
         else if (HIWORD(_wParam) == LBN_SELCHANGE && LOWORD(_wParam) == LBX_CustomAlbum)
@@ -325,7 +325,7 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             // 앨범 리스트박스 항목을 클릭했을 경우
             HWND hAlbumLBX = GetDlgItem(hDlg, LBX_CustomAlbum);
 
-            int index = SendMessage(hAlbumLBX, LB_GETCURSEL, 0, 0);
+            LRESULT index = SendMessage(hAlbumLBX, LB_GETCURSEL, 0, 0);
             WCHAR buffer[255] = {};
             SendMessage(hAlbumLBX, LB_GETTEXT, index, (LPARAM)buffer);
             CTexture* pTex = CTextureMgr::GetInst()->GetTempAlbum()->GetScene(buffer);
@@ -380,7 +380,7 @@ INT_PTR CALLBACK CreateAlbumProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
         {
             HWND hLBX = GetDlgItem(hDlg, LBX_CustomAlbum);
 
-            int index = SendMessage(hLBX, LB_GETCURSEL, 0, 0);
+            LRESULT index = SendMessage(hLBX, LB_GETCURSEL, 0, 0);
             WCHAR buffer[255] = {};
             SendMessage(hLBX, LB_GETTEXT, index, (LPARAM)buffer);
             CTexture* pTex = CTextureMgr::GetInst()->GetTempAlbum()->GetScene(buffer);

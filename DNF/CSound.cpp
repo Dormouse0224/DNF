@@ -129,7 +129,7 @@ bool CSound::LoadOGGSound(const wstring& _strPath)
 	ifstream oggfile(_strPath, ios::binary);
 	assert(oggfile.is_open());
 	oggfile.seekg(0, ios::end);
-	int filesize = oggfile.tellg();
+	int filesize = (int)oggfile.tellg();
 	oggfile.seekg(0, ios::beg);
 	vector<char> buffer(filesize);
 	oggfile.read(buffer.data(), filesize);
@@ -200,7 +200,7 @@ bool CSound::LoadOGGSound(const wstring& _strPath)
 
 	m_tBuffInfo.dwSize = sizeof(DSBUFFERDESC);
 	m_tBuffInfo.dwFlags = DSBCAPS_CTRLVOLUME;
-	m_tBuffInfo.dwBufferBytes = pcmData.size();
+	m_tBuffInfo.dwBufferBytes = (DWORD)pcmData.size();
 	m_tBuffInfo.lpwfxFormat = &waveFormat;
 
 	HRESULT hr = CSoundMgr::GetInst()->GetSoundDevice()->CreateSoundBuffer(&m_tBuffInfo, &m_pSoundBuffer, NULL);
@@ -211,7 +211,7 @@ bool CSound::LoadOGGSound(const wstring& _strPath)
 	void* pAudioPtr2 = nullptr;
 	DWORD audioBytes1 = 0;
 	DWORD audioBytes2 = 0;
-	hr = m_pSoundBuffer->Lock(0, pcmData.size(), &pAudioPtr1, &audioBytes1, &pAudioPtr2, &audioBytes2, 0);
+	hr = m_pSoundBuffer->Lock(0, (DWORD)pcmData.size(), &pAudioPtr1, &audioBytes1, &pAudioPtr2, &audioBytes2, 0);
 	if (FAILED(hr)) return false;
 
 	// PCM 데이터를 버퍼에 복사

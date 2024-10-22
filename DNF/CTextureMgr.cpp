@@ -337,7 +337,7 @@ Bitmap* CTextureMgr::ConvertToBitmapV5(CTexture* _pTexture)
 Bitmap* CTextureMgr::ConvertToBitmapV6(CTexture* _pTexture)
 {
 	char* data1 = _pTexture->Data;
-	int size = _pTexture->m_Size.x * _pTexture->m_Size.y;
+	int size = (int)(_pTexture->m_Size.x * _pTexture->m_Size.y);
 	if (_pTexture->Type == ColorBits::ARGB_1555 && _pTexture->CompressMode == CompressMode::ZLIB)
 	{
 		char* data2 = (char*)UncompressZlib(data1, size, _pTexture->Length);
@@ -374,7 +374,7 @@ Bytef* CTextureMgr::UncompressZlib(const char* _data, int size, int _dataSize)
 
 Bitmap* CTextureMgr::BitmapFromArray(const char* _data, Vec2D _size, ColorBits _bits)
 {
-	char* temp = new char[_size.x * _size.y * 4];
+	char* temp = new char[(size_t)(_size.x * _size.y * 4)];
 	for (int index = 0; index < _size.x * _size.y; ++index)
 	{
 		char* src = nullptr;
@@ -680,8 +680,8 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	DecompImg = DecompressedScratchImage.GetImage(0, 0, 0);
 
 	// 텍스처 데이터를 GDI+ Bitmap으로 변환
-	UINT width = DecompImg->width;
-	UINT height = DecompImg->height;
+	UINT width = (UINT)DecompImg->width;
+	UINT height = (UINT)DecompImg->height;
 	Bitmap* pBitmap = new Bitmap(width, height, PixelFormat32bppARGB);
 	Gdiplus::BitmapData bmpData;
 	Gdiplus::Rect rect(0, 0, width, height);
@@ -728,7 +728,7 @@ HDC CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Co
 	CTexture* pTex = new CTexture(_Name, m_SysReservedAlbum);
 	pTex->m_Size = _size;
 	pTex->m_Offset = _offset;
-	pTex->m_Bitmap = new Bitmap(_size.x + _offset.x, _size.y + _offset.y, PixelFormat32bppARGB);
+	pTex->m_Bitmap = new Bitmap((INT)(_size.x + _offset.x), (INT)(_size.y + _offset.y), PixelFormat32bppARGB);
 
 	Graphics graphics(pTex->m_Bitmap);
 	graphics.Clear(Color(0, 0, 0, 0));
@@ -777,7 +777,7 @@ CAlbum* CTextureMgr::GetAlbum(string _AlbumPath)
 
 void CTextureMgr::DrawLine(Color _color, int _width, Vec2D _begin, Vec2D _end, bool bCameraFallow)
 {
-	Pen pen(_color, _width);
+	Pen pen(_color, (REAL)_width);
 	Graphics graphics(CEngine::GetInst()->GetSubDC());
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	if (bCameraFallow)
@@ -794,7 +794,7 @@ void CTextureMgr::DrawLine(Color _color, int _width, Vec2D _begin, Vec2D _end, b
 
 void CTextureMgr::DrawRect(Color _color, int _width, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow)
 {
-	Pen pen(_color, _width);
+	Pen pen(_color, (REAL)_width);
 	Graphics graphics(CEngine::GetInst()->GetSubDC());
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	if (bCameraFallow)

@@ -116,6 +116,12 @@
     <Filter Include="main\04. Level\StageMaker">
       <UniqueIdentifier>{c068a962-1a84-475e-9732-1635aead4e3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\05. Object\02. Map\02. Portal">
+      <UniqueIdentifier>{7c96b146-2c04-480b-8c13-abda92255f1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\02. Map\03. Wall">
+      <UniqueIdentifier>{72730b0e-24d6-4111-b8f9-280d2f34cdce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -259,6 +265,12 @@
     <ClInclude Include="CSound.h">
       <Filter>main\07. Resource\03. Sound</Filter>
     </ClInclude>
+    <ClInclude Include="CPortal.h">
+      <Filter>main\05. Object\02. Map\02. Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="CWall.h">
+      <Filter>main\05. Object\02. Map\03. Wall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -372,6 +384,12 @@
     </ClCompile>
     <ClCompile Include="CSound.cpp">
       <Filter>main\07. Resource\03. Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="CPortal.cpp">
+      <Filter>main\05. Object\02. Map\02. Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="CWall.cpp">
+      <Filter>main\05. Object\02. Map\03. Wall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

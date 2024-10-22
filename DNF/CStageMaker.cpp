@@ -8,6 +8,10 @@
 #include "CSoundMgr.h"
 #include "CEngine.h"
 #include "CTextMgr.h"
+#include "CPortal.h"
+#include "CMonster.h"
+#include "CWall.h"
+#include "CNPC.h"
 
 
 CStageMaker::CStageMaker()
@@ -71,7 +75,15 @@ void CStageMaker::Begin()
 
 	// 포탈, 벽, 몬스터, NPC 오브젝트 추가
 	// Tick을 무시하고 Render만 되어야 하므로 레벨에서 직접 관리
+	for (int i = 0; i < (int)PortalDirection::END; ++i)
+	{
+		if (m_StageInfo->arrPortalInfo[i].PointTile != Vec2D(-1, -1))
+		{
+			CPortal* pPortal = new CPortal(L"Dir_" + std::to_wstring(i));
+			pPortal->SetLocation(m_StageInfo->arrPortalInfo[i].Location);
 
+		}
+	}
 
 }
 

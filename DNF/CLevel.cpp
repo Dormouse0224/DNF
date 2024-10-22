@@ -2,6 +2,7 @@
 #include "CLevel.h"
 #include "CLevelMgr.h"
 #include "CCollider.h"
+#include "CObj.h"
 
 CLevel::CLevel(wstring _Name)
 	: CBase(_Name)
@@ -74,7 +75,24 @@ void CLevel::Render()
 		{
 			if (m_hObj[i][j]->GetDead() == false)
 			{
-				m_hObj[i][j]->Render();
+				if ((LayerType)i == LayerType::Object)
+				{
+					std::sort(m_hObj[i].begin(), m_hObj[i].end(), [](const CObj* a, const CObj* b)
+						{
+							if (a->GetLocation().y == b->GetLocation().y)
+							{
+								return a->GetLocation().x < b->GetLocation().x;
+							}
+							else
+							{
+								return a->GetLocation().y < b->GetLocation().y;
+							}
+						});
+				}
+				else
+				{
+					m_hObj[i][j]->Render();
+				}
 			}
 		}
 	}

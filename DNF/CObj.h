@@ -30,8 +30,8 @@ protected:
 public:
     void SetLocation(Vec2D _Location) { m_Location = _Location; }
     void SetScale(Vec2D _Scale) { m_Scale = _Scale; }
-    Vec2D GetLocation() { return m_Location; }
-    Vec2D GetScale() { return m_Scale; }
+    Vec2D GetLocation() const { return m_Location; }
+    Vec2D GetScale() const { return m_Scale; }
     void SetDead(bool _dead) { m_Dead = _dead; }
     bool GetDead() { return m_Dead; }
 
@@ -45,16 +45,16 @@ public:
 
 
     // 충돌 함수
-    void BeginOverlap(CCollider* _Self, CCollider* _Other);
-    void Overlap(CCollider* _Self, CCollider* _Other);
-    void EndOverlap(CCollider* _Self, CCollider* _Other);
+    virtual void BeginOverlap(CCollider* _Self, CCollider* _Other);
+    virtual void Overlap(CCollider* _Self, CCollider* _Other);
+    virtual void EndOverlap(CCollider* _Self, CCollider* _Other);
 
 
-public:
     virtual void Begin();       // 처음 시작할 때 할 일
     virtual void Tick() = 0;    // 반복적으로 할 일
-    virtual void FinalTick() final;   // 오브젝트가 소유한 Component 가 할 일
     virtual void Render();      // 오브젝트를 그리기
+
+    virtual void FinalTick() final;   // 오브젝트가 소유한 Component 가 할 일
 
 
 };

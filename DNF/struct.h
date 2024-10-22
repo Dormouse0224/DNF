@@ -101,14 +101,19 @@ public:
 		return Vec2D(x / _Other, y / _Other);
 	}
 
-	float Dot(Vec2D _other)
+	float Dot(const Vec2D& _other) const
 	{
-		return (this->x * _other.x) + (this->y * _other.y);
+		return (x * _other.x) + (y * _other.y);
 	}
 
-	float Cross(Vec2D _other)
+	float Cross(const Vec2D& _other) const
 	{
-		return (this->x * _other.y) - (this->x * _other.y);
+		return (x * _other.y) - (y * _other.x);
+	}
+
+	Vec2D Clockwise(float _angle)
+	{
+		return Vec2D(x * cosf(_angle / 180.f * PI) - y * sinf(_angle / 180.f * PI), y * cosf(_angle / 180.f * PI) + x * sinf(_angle / 180.f * PI));
 	}
 };
 
@@ -184,7 +189,7 @@ struct ProgramInfo
 public:
 	Vec2D Resolution;
 	Vec2D WindowPos;
-	float Scale;
+	float Scale = 1.f;
 };
 #pragma pack(pop)
 
@@ -195,7 +200,11 @@ struct TextInfo
 	wstring Text;
 	COLORREF Color;
 
-	TextInfo() {}
+	TextInfo()
+		: Color(RGB(0, 0, 0))
+		, x(0)
+		, y(0)
+	{}
 	TextInfo(UINT _x, UINT _y, wstring _Text, COLORREF _Color)
 	{
 		x = _x;

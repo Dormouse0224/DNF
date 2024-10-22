@@ -34,4 +34,4 @@
 #define _SysNPK			L"__SysReservedNPK__"
 #define _SysAlbum		"__SysReservedAlbum__"
 
-#define PI = 3.141592
+#define PI 3.141592f

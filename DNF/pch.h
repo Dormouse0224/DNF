@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 // GDI+
 //#include <ole2.h>
@@ -37,6 +38,7 @@ using namespace Gdiplus;
 #endif
 
 // 사운드
+#define DIRECTINPUT_VERSION 0x0800 // DirectInput 8.0 버전 사용
 #include <mmsystem.h>
 #include <dsound.h>
 #include <dinput.h>

@@ -168,11 +168,11 @@ void CDungeonMaker::Render()
 		CTextureMgr::GetInst()->DrawRect(Color(255, 51, 153, 255), 3, iter->first * 100, Vec2D(100, 100));
 		if (iter->second->StageType == StageType::START)
 		{
-			CTextMgr::GetInst()->Render(iter->first.x * 100, iter->first.y * 100, L"Start", Color(0, 0, 0));
+			CTextMgr::GetInst()->Render((UINT)(iter->first.x * 100), (UINT)(iter->first.y * 100), L"Start", Color(0, 0, 0));
 		}
 		else if (iter->second->StageType == StageType::FINAL)
 		{
-			CTextMgr::GetInst()->Render(iter->first.x * 100, iter->first.y * 100, L"Final", Color(0, 0, 0));
+			CTextMgr::GetInst()->Render((UINT)(iter->first.x * 100), (UINT)(iter->first.y * 100), L"Final", Color(0, 0, 0));
 		}
 	}
 

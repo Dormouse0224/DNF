@@ -5,7 +5,6 @@ class CTextMgr
 private:
 	wstring m_FontName;
 	wstring m_FontPath;
-	HDC m_TextDC;
 	Font* m_Font;
 
 public:
