@@ -2,6 +2,7 @@
 #include "CTextMgr.h"
 #include "CEngine.h"
 #include "CCameraMgr.h"
+#include "CTexture.h"
 #include <windows.h>
 
 CTextMgr::CTextMgr()
@@ -27,7 +28,7 @@ void CTextMgr::Init()
 void CTextMgr::Render(UINT _x, UINT _y, wstring _Text, Color _color, bool bCameraFallow)
 {
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
-	Graphics graphics(CEngine::GetInst()->GetSubDC());
+	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
 	if (bCameraFallow)
 		CameraPos = Vec2D(0, 0);
 	SolidBrush brush(_color);

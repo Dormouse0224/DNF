@@ -1,4 +1,6 @@
 
+class CTexture;
+
 class CEngine
 {
 	SINGLETON(CEngine);
@@ -14,8 +16,9 @@ private:
 
 	wstring m_ResourcePath;
 
-	HDC m_hSubDC;
-	HBITMAP	m_hSubBitmap;
+	HDC	m_hSubDC;
+	HBITMAP m_hSubBitmap;
+	CTexture* m_Backbuffer;
 
 	HPEN		m_Pen[(UINT)PEN_TYPE::END];
 	HBRUSH		m_Brush[(UINT)BRUSH_TYPE::END];
@@ -48,7 +51,8 @@ public:
 	void ChangeWindowSize(Vec2D _vResolution);
 
 
-	HDC GetSubDC() { return m_hSubDC; }
+	//HDC GetSubDC() { return m_hSubDC; }
 	HDC GetMainDC() { return m_hMainDC; }
-	HBITMAP	GetSubBitmap() { return m_hSubBitmap; }
+	//Bitmap*	GetSubBitmap() { return m_SubBitmap; }
+	CTexture* GetBackbuffer() { return m_Backbuffer; }
 };

@@ -88,6 +88,7 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
 
             SendMessage(hTexLBX, LB_RESETCONTENT, 0, 0);    // 텍스처 리스트박스 초기화
 
+            // 선택한 항목 파일명 가져오기
             LRESULT index = SendMessage(hAlbumLBX, LB_GETCURSEL, 0, 0);
             TCHAR buffer[255] = {};
             SendMessage(hAlbumLBX, LB_GETTEXT, index, (LPARAM)buffer);
@@ -98,7 +99,6 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             for (int i = 0; i < pAlbum->GetCount(); ++i)
             {
                 CTexture* pTex = pAlbum->GetScene(i);
-                pTex->Load();
                 SendMessage(hTexLBX, LB_ADDSTRING, 0, (LPARAM)pTex->GetName().c_str());
             }
 
@@ -135,6 +135,7 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
         }
         else if (LOWORD(_wParam) == BTN_CreateAni)
         {
+            // 애니메이션 생성 버튼
             HWND hNPKDir = GetDlgItem(hDlg, STATIC_NPKDir);
             HWND hOwnerAlbum = GetDlgItem(hDlg, STATIC_OwnerAlbum);
             HWND hSelectedNPK = GetDlgItem(hDlg, STATIC_SelectedNpk);
@@ -144,8 +145,17 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             WCHAR buffer2[255] = {};
             GetWindowText(hNPKDir, buffer1, 255);
             GetWindowText(hOwnerAlbum, buffer2, 255);
-            SendMessage(hSelectedNPK, WM_SETTEXT, 0, (LPARAM)buffer1);
-            SendMessage(hSelectedAlbum, WM_SETTEXT, 0, (LPARAM)buffer2);
+
+            // 입력값 예외처리
+            if (wstring(buffer1).empty() || wstring(buffer2).empty())
+            {
+                // 필수 입력값이 전부 입력되지 않았음
+                MessageBox(hDlg, L"입력값이 필요합니다.", L"입력 오류", MB_ICONWARNING | MB_OK);
+                break;
+            }
+
+            //SendMessage(hSelectedNPK, WM_SETTEXT, 0, (LPARAM)buffer1);
+            //SendMessage(hSelectedAlbum, WM_SETTEXT, 0, (LPARAM)buffer2);
 
             DialogBox(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_CreateAni), hDlg, &CreateAniProc);
         }
@@ -192,6 +202,34 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
         }
         else if (LOWORD(_wParam) == IDOK)
         {
+            char cNPKPath[255] = {};
+            char cOwnerAlbum[255] = {};
+            GetDlgItemTextA(hDlg, STATIC_SelectedNpk, cNPKPath, 255);
+            GetDlgItemTextA(hDlg, STATIC_SelectedAlbum, cOwnerAlbum, 255);
+
+            WCHAR IndexBegin[255] = {};
+            WCHAR IndexEnd[255] = {};
+            WCHAR FPS[255] = {};
+            WCHAR OffsetX[255] = {};
+            WCHAR OffsetY[255] = {};
+            WCHAR angle[255] = {};
+            GetDlgItemText(hDlg, EDIT_IndexBegin, IndexBegin, 255);
+            GetDlgItemText(hDlg, EDIT_IndexEnd, IndexEnd, 255);
+            GetDlgItemText(hDlg, EDIT_FPS, FPS, 255);
+            GetDlgItemText(hDlg, EDIT_OffsetX, OffsetX, 255);
+            GetDlgItemText(hDlg, EDIT_OffsetY, OffsetY, 255);
+            GetDlgItemText(hDlg, EDIT_Angle, angle, 255);
+
+            // 입력값 예외처리
+            if (string(cNPKPath).empty() || string(cOwnerAlbum).empty() || wstring(IndexBegin).empty()
+                || wstring(IndexEnd).empty() || wstring(FPS).empty() || wstring(OffsetX).empty()
+                || wstring(OffsetY).empty() || wstring(angle).empty())
+            {
+                // 필수 입력값이 전부 입력되지 않았음
+                MessageBox(hDlg, L"입력값이 필요합니다.", L"입력 오류", MB_ICONWARNING | MB_OK);
+                break;
+            }
+
             WCHAR filepath[255] = {};
             WCHAR filename[255] = {};
             WCHAR buff[255] = {};
@@ -213,10 +251,7 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
             if (GetSaveFileName(&Desc))
             {
                 // 다이얼로그 윈도우의 에디트 컨트롤 값과 NPK, Album 정보를 기반으로 애니메이션 인포 파일 작성
-                char cNPKPath[255] = {};
-                char cOwnerAlbum[255] = {};
-                GetDlgItemTextA(hDlg, STATIC_SelectedNpk, cNPKPath, 255);
-                GetDlgItemTextA(hDlg, STATIC_SelectedAlbum, cOwnerAlbum, 255);
+                
                 string NPKDir = cNPKPath;
                 string OwnerAlbum = cOwnerAlbum;
                 NPKDir = NPKDir.substr(CEngine::GetInst()->GetResourcePathA().size());
@@ -225,19 +260,11 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
                 AnimationInfo animationInfo;
                 animationInfo.NPKDirLen = (int)NPKDir.size();
                 animationInfo.AlbumPathLen = (int)OwnerAlbum.size();
-                WCHAR buffer[255] = {};
-                WCHAR buffer1[255] = {};
-                GetDlgItemText(hDlg, EDIT_IndexBegin, buffer, 255);
-                animationInfo.IndexBegin = stoi(wstring(buffer));
-                GetDlgItemText(hDlg, EDIT_IndexEnd, buffer, 255);
-                animationInfo.IndexEnd = stoi(wstring(buffer));
-                GetDlgItemText(hDlg, EDIT_FPS, buffer, 255);
-                animationInfo.FPS = stoi(wstring(buffer));
-                GetDlgItemText(hDlg, EDIT_OffsetX, buffer, 255);
-                GetDlgItemText(hDlg, EDIT_OffsetY, buffer1, 255);
-                animationInfo.Offset = Vec2D(stof(wstring(buffer)), stof(wstring(buffer1)));
-                GetDlgItemText(hDlg, EDIT_Angle, buffer, 255);
-                animationInfo.angle = stof(wstring(buffer));
+                animationInfo.IndexBegin = stoi(wstring(IndexBegin));
+                animationInfo.IndexEnd = stoi(wstring(IndexEnd));
+                animationInfo.FPS = stoi(wstring(FPS));
+                animationInfo.Offset = Vec2D(stof(wstring(OffsetX)), stof(wstring(OffsetY)));
+                animationInfo.angle = stof(wstring(angle));
 
                 HWND hLoop = GetDlgItem(hDlg, CHECK_LOOP);
                 if (SendMessage(hLoop, BM_GETCHECK, 0, 0) == BST_CHECKED)
@@ -247,6 +274,15 @@ INT_PTR CALLBACK CreateAniProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _
                 else
                 {
                     animationInfo.bLoop = false;
+                }
+                HWND hDodge = GetDlgItem(hDlg, CHECK_Dodge);
+                if (SendMessage(hDodge, BM_GETCHECK, 0, 0) == BST_CHECKED)
+                {
+                    animationInfo.bDodge = true;
+                }
+                else
+                {
+                    animationInfo.bDodge = false;
                 }
                 
                 // 구조체로 저장된 정보를 파일로 쓰기
@@ -468,6 +504,14 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
                 {
                     SendMessage(GetDlgItem(hDlg, CHECK_EditLOOP), BM_SETCHECK, BST_UNCHECKED, 0);
                 }
+                if (info.bDodge)
+                {
+                    SendMessage(GetDlgItem(hDlg, CHECK_Dodge), BM_SETCHECK, BST_CHECKED, 0);
+                }
+                else
+                {
+                    SendMessage(GetDlgItem(hDlg, CHECK_Dodge), BM_SETCHECK, BST_UNCHECKED, 0);
+                }
 
                 // 읽은 파일 정보를 토대로 애니메이션 프리뷰
                 CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
@@ -500,6 +544,7 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             WCHAR filepath[255] = {};
             bool bCheck = false;
             WCHAR wAngle[255] = {};
+            bool bDodge = false;
             GetWindowText(GetDlgItem(hDlg, EDIT_EditFPS), wFPS, 255);
             GetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetX), wOffsetX, 255);
             GetWindowText(GetDlgItem(hDlg, EDIT_EditOffsetY), wOffsetY, 255);
@@ -512,6 +557,14 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             else
             {
                 bCheck = false;
+            }
+            if (SendMessage(GetDlgItem(hDlg, CHECK_Dodge), BM_GETCHECK, 0, 0) == BST_CHECKED)
+            {
+                bDodge = true;
+            }
+            else
+            {
+                bDodge = false;
             }
 
             // 입력값이 없는경우 중단
@@ -530,6 +583,7 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             infofile.write((char*)&FPS, sizeof(FPS));
             infofile.write((char*)&Offset, sizeof(Offset));
             infofile.write((char*)&Angle, sizeof(Angle));
+            infofile.write((char*)&bDodge, sizeof(bDodge));
             infofile.close();
 
             CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
@@ -551,6 +605,7 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             WCHAR wOffsetY[255] = {};
             bool bCheck = false;
             WCHAR wAngle[255] = {};
+            bool bDodge = false;
             GetWindowText(GetDlgItem(hDlg, STATIC_IndexBegin), wIndexBegin, 255);
             GetWindowText(GetDlgItem(hDlg, STATIC_IndexEnd), wIndexEnd, 255);
             GetWindowText(GetDlgItem(hDlg, EDIT_EditFPS), wFPS, 255);
@@ -565,6 +620,14 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             {
                 bCheck = false;
             }
+            if (SendMessage(GetDlgItem(hDlg, CHECK_Dodge), BM_GETCHECK, 0, 0) == BST_CHECKED)
+            {
+                bDodge = true;
+            }
+            else
+            {
+                bDodge = false;
+            }
 
             // 입력값이 없는경우 중단
             if (wstring(wIndexBegin) == L"Static")
@@ -576,7 +639,7 @@ INT_PTR EditAlimationProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPara
             if (pEditLv)
             {
                 pEditLv->GetPreviewPlayer()->SetPlayInfo(std::stoi(wIndexBegin), std::stoi(wIndexEnd), bCheck
-                    , std::stoi(wFPS), Vec2D(std::stof(wOffsetX), std::stof(wOffsetY)), std::stof(wAngle));
+                    , std::stoi(wFPS), Vec2D(std::stof(wOffsetX), std::stof(wOffsetY)), std::stof(wAngle), bDodge);
             }
         }
         break;

@@ -209,7 +209,8 @@ void CTextureMgr::CreateFromNpkV5(ifstream& _file, CAlbum* _Album)
 				textureInfo.LeftTop = point1;
 				textureInfo.RightBottom = point2;
 				textureInfo.Top = num3;
-				_Album->m_Map.insert(make_pair(pTexture->Index, textureInfo));
+				int index = pTexture->Index;
+				_Album->m_Map.insert(make_pair(index, textureInfo));
 			}
 		}
 	}
@@ -522,11 +523,12 @@ vector<CAlbum*> CTextureMgr::LoadNPK(wstring _NpkPath)
 
 CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 {
+	CAlbum* result = nullptr;
 	// 앨범 데이터 가져왔는지 검사
 	map<string, CAlbum*>::iterator iter = m_Albums.find(_AlbumPath);
 	if (_NpkPath != L"__TempNPK__" && _NpkPath != L"__SysReservedNPK__")
 	{
-		// 앨범을 가져온 적 없는 경우 - 앨범이 속한 NPK 파일 로드 후 앨범 데이터 저장
+		// 앨범을 가져온 적 없는 경우 - 앨범이 속한 NPK 파일 로드 후 앨범 데이터 저장, 요청된 앨범은 텍스처를 메모리에 로드
 		if (iter == m_Albums.end())
 		{
 			ifstream readfile;
@@ -538,18 +540,27 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 			for (CAlbum* _album : AlbumList)
 			{
 				m_Albums.insert(make_pair(_album->GetPath(), _album));
+				if (_album->GetPath() == _AlbumPath)
+				{
+					for (int i = 0; i < _album->GetSceneCount(); ++i)
+					{
+						_album->GetScene(i)->Load();
+					}
+					result = _album;
+				}
 			}
-			// 재검색
-			iter = m_Albums.find(_AlbumPath);
-
-			// 메모리에 앨범 이미지 로드
+		}
+		// 앨범을 가져온 적이 있으면 엘범 정보를 바탕으로 메모리에 로드 (Texture 로드 호출 시 이미 메모리에 로드된 경우 다시 로드하지 않고 무시됨)
+		else
+		{
 			for (int i = 0; i < iter->second->GetSceneCount(); ++i)
 			{
 				iter->second->GetScene(i)->Load();
 			}
+			result = iter->second;
 		}
 	}
-	return iter->second;
+	return result;
 }
 
 void CTextureMgr::SaveAlbum(string _AlbumName, string _Directory)
@@ -719,7 +730,7 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	return pBitmap;
 }
 
-HDC CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color, bool _IsAddedBySys)
+CTexture* CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color, bool _IsAddedBySys)
 {
 	// 같은 이름의 텍스쳐가 시스템 예약 앨범 또는 임시 앨범에 없어야함
 	assert(m_SysReservedAlbum->GetScene(_Name) == nullptr);
@@ -728,14 +739,12 @@ HDC CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Co
 	CTexture* pTex = new CTexture(_Name, m_SysReservedAlbum);
 	pTex->m_Size = _size;
 	pTex->m_Offset = _offset;
-	pTex->m_Bitmap = new Bitmap((INT)(_size.x + _offset.x), (INT)(_size.y + _offset.y), PixelFormat32bppARGB);
+	pTex->m_Bitmap = new Bitmap((INT)(_size.x), (INT)(_size.y), PixelFormat32bppARGB);
 
 	Graphics graphics(pTex->m_Bitmap);
 	graphics.Clear(Color(0, 0, 0, 0));
 	Pen pen(_color);
 	graphics.DrawRectangle(&pen, _offset.x, _offset.y, _size.x, _size.y);
-
-	pTex->m_DC = graphics.GetHDC();
 
 	if (_IsAddedBySys)
 	{
@@ -746,7 +755,7 @@ HDC CTextureMgr::CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Co
 		m_TempAlbum->AddScene(pTex);
 	}
 
-	return pTex->m_DC;
+	return pTex;
 }
 
 CTexture* CTextureMgr::LoadFromFile(wstring _filepath)
@@ -760,8 +769,6 @@ CTexture* CTextureMgr::LoadFromFile(wstring _filepath)
 	newTex->m_Bitmap = Bitmap::FromFile(_filepath.c_str());
 	newTex->m_Size = Vec2D(newTex->m_Bitmap->GetWidth(), newTex->m_Bitmap->GetHeight());
 	newTex->m_Offset = Vec2D(0, 0);
-	Graphics graphics(newTex->m_Bitmap);
-	newTex->m_DC = graphics.GetHDC();
 	return newTex;
 }
 
@@ -778,7 +785,7 @@ CAlbum* CTextureMgr::GetAlbum(string _AlbumPath)
 void CTextureMgr::DrawLine(Color _color, int _width, Vec2D _begin, Vec2D _end, bool bCameraFallow)
 {
 	Pen pen(_color, (REAL)_width);
-	Graphics graphics(CEngine::GetInst()->GetSubDC());
+	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	if (bCameraFallow)
 	{
@@ -795,7 +802,7 @@ void CTextureMgr::DrawLine(Color _color, int _width, Vec2D _begin, Vec2D _end, b
 void CTextureMgr::DrawRect(Color _color, int _width, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow)
 {
 	Pen pen(_color, (REAL)_width);
-	Graphics graphics(CEngine::GetInst()->GetSubDC());
+	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	if (bCameraFallow)
 	{
@@ -813,7 +820,7 @@ void CTextureMgr::DrawRect(Color _color, int _width, Vec2D _LeftTop, Vec2D _size
 void CTextureMgr::FillRect(Color _color, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow)
 {
 	SolidBrush brush(_color);
-	Graphics graphics(CEngine::GetInst()->GetSubDC());
+	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	if (bCameraFallow)
 	{

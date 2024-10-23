@@ -15,6 +15,7 @@ CAlbumPlayer::CAlbumPlayer(wstring _Name, string _AlbumPath, wstring _NpkPath)
 	, m_FPS(0)
 	, m_SceneNumber(0)
 	, m_SceneTime(0)
+	, m_Dodge(false)
 {
 	m_CurrentAlbum = CTextureMgr::GetInst()->LoadAlbum(_AlbumPath, _NpkPath);
 }
@@ -24,7 +25,7 @@ CAlbumPlayer::~CAlbumPlayer()
 
 }
 
-void CAlbumPlayer::SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D _Offset, float _angle)
+void CAlbumPlayer::SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D _Offset, float _angle, bool _Dodge)
 {
 	assert(!(_End >= m_CurrentAlbum->m_SceneVector.size() || _Begin >= m_CurrentAlbum->m_SceneVector.size() || _Begin < 0 || _End < 0));
 	m_SceneNumber = 0;
@@ -35,6 +36,7 @@ void CAlbumPlayer::SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D
 	m_FPS = _FPS;
 	m_Offset = _Offset;
 	m_angle = _angle;
+	m_Dodge = _Dodge;
 }
 
 void CAlbumPlayer::FinalTick()
@@ -62,17 +64,17 @@ void CAlbumPlayer::FinalTick()
 
 }
 
-void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraFallow, bool bLinearDodge)
+void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraFallow)
 {
 	// 현재 씬을 재생
 	m_CurrentAlbum->m_Owner = _thisObj;
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, m_angle, bCameraFallow, bLinearDodge);
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, m_angle, bCameraFallow, m_Dodge);
 }
 
 // 오브젝트를 거치지 않고 직접 렌더링
-void CAlbumPlayer::DirectRender(bool bCameraFallow, bool bLinearDodge)
+void CAlbumPlayer::DirectRender(bool bCameraFallow)
 {
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->DirectRender(m_Offset, m_angle, bCameraFallow, bLinearDodge);
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->DirectRender(m_Offset, m_angle, bCameraFallow, m_Dodge);
 }
 
 void CAlbumPlayer::NextScene()
@@ -125,7 +127,7 @@ CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, wstring _filepat
 
 
 		CAlbumPlayer* pNewPlayer = new CAlbumPlayer(_Name, strAlbumPath, wstrNPKDir);
-		pNewPlayer->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset, desc.angle);
+		pNewPlayer->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset, desc.angle, desc.bDodge);
 		return pNewPlayer;
 	}
 	else

@@ -10,7 +10,6 @@ CTexture::CTexture(wstring _RelativPath, CAlbum* _Owner)
 	: CResource(_RelativPath, ResourceType::Texture)
 	, m_Owner(_Owner)
 	, m_Bitmap(nullptr)
-	, m_DC(nullptr)
 	, m_Size(Vec2D(0.f, 0.f))
 	, m_Offset(Vec2D(0.f, 0.f))
 	, Index(0)
@@ -41,9 +40,8 @@ CTexture::~CTexture()
 
 int CTexture::Load()
 {
-	m_Bitmap = CTextureMgr::GetInst()->ConvertToBitmap(this);
-	Graphics graphics(m_Bitmap);
-	m_DC = graphics.GetHDC();
+	if (!m_Bitmap)
+		m_Bitmap = CTextureMgr::GetInst()->ConvertToBitmap(this);
 	return S_OK;
 }
 
@@ -52,25 +50,59 @@ int CTexture::Load()
 void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, bool bLinearDodge)
 {
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
+	Vec2D Resolution = CEngine::GetInst()->GetResolution();
 	Vec2D FinalPos(m_Owner->GetOwner()->GetLocation() + m_Offset + _RenderOffset);
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	if (bCameraFallow)
+	{
+		CameraPos = Vec2D(0, 0);
+	}
 	Vec2D ObjCenter = m_Owner->GetOwner()->GetLocation() + (m_Owner->GetOwner()->GetScale() / 2) - CameraPos;		// 오브젝트 중심점 계산
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
-	if (((abs((CameraPos.x + 1066 / 2) - (FinalPos.x + m_Size.x / 2)) < ((CEngine::GetInst()->GetResolution().x + m_Size.x) / 2)
-		&& abs((CameraPos.y + 600 / 2) - (FinalPos.y + m_Size.y / 2)) < ((CEngine::GetInst()->GetResolution().y + m_Size.y) / 2))) || bCameraFallow)
+	if (CameraIntersectCheck(CameraPos, Resolution, 0.f, FinalPos, m_Size, _angle) || bCameraFallow)
 	{
-		if (bCameraFallow)
-		{
-			CameraPos = Vec2D(0, 0);
-		}
 		// 로드된 이미지를 해상도 비율에 맞춰 렌더링
-		m_DC = CEngine::GetInst()->GetSubDC();
+		//m_DC = CEngine::GetInst()->GetSubDC();
 		if (bLinearDodge)
 		{
+			// 원본 비트맵 이미지를 회전시킨 새 비트맵 생성
+			int newWidth = (int)(abs(m_Size.x * cos(_angle / 180 * PI)) + abs(m_Size.y * sin(_angle / 180 * PI)));
+			int newHeight = (int)(abs(m_Size.x * sin(_angle / 180 * PI)) + abs(m_Size.y * cos(_angle / 180 * PI)));
+			Bitmap RotatedBitmap(newWidth, newHeight);
+			Graphics graphics(&RotatedBitmap);
+			graphics.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+			graphics.TranslateTransform(newWidth / 2.0f, newHeight / 2.0f);
+			graphics.RotateTransform(_angle);
+			graphics.TranslateTransform(-m_Size.x / 2.0f, -m_Size.y / 2.0f);
+			graphics.DrawImage(m_Bitmap, Point(0, 0));
+
+			// 회전된 비트맵의 최종 렌더 좌표 계산
+			Vec2D RFinalPosLT = CameraPos + FinalPos.Clockwise(_angle) + (m_Size.Clockwise(_angle) / 2) - Vec2D(newWidth / 2, newHeight / 2);
+			Vec2D RFinalPosRB = RFinalPosLT + Vec2D(newWidth, newHeight);
+
+			Bitmap* backbuffer = CEngine::GetInst()->GetBackbuffer()->GetBitmap();
+			BitmapData BufferBitmapdata;
+			BitmapData RotatedBitmapdata;
+			Rect BufferRect(max(RFinalPosLT.x, 0)
+				, max(RFinalPosLT.y, 0)
+				, min(RFinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(RFinalPosLT.x, 0)
+				, min(RFinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(RFinalPosLT.y, 0));
+			Rect RotatedRect(max(-RFinalPosLT.x, 0)
+				, max(-RFinalPosLT.y, 0)
+				, min(RFinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(RFinalPosLT.x, 0)
+				, min(RFinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(RFinalPosLT.y, 0));
+			backbuffer->LockBits(&BufferRect, ImageLockModeWrite, PixelFormat32bppARGB, &BufferBitmapdata);
+			RotatedBitmap.LockBits(&RotatedRect, ImageLockModeRead, PixelFormat32bppARGB, &RotatedBitmapdata);
+			LinearDodge(&BufferBitmapdata, &RotatedBitmapdata
+				, min(RFinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(RFinalPosLT.x, 0)
+				, min(RFinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(RFinalPosLT.y, 0));
+			RotatedBitmap.UnlockBits(&RotatedBitmapdata);
+			backbuffer->UnlockBits(&BufferBitmapdata);
 		}
 		else
 		{
-			Graphics graphics(m_DC);
+			Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+			graphics.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 			graphics.TranslateTransform(ObjCenter.x, ObjCenter.y);		// 소속 오브젝트 중심점으로 회전중심 이동
 			graphics.RotateTransform(_angle);							// 회전 적용
 			graphics.TranslateTransform(-ObjCenter.x, -ObjCenter.y);	// 원래 위치로 이동
@@ -88,22 +120,60 @@ void CTexture::DirectRender(Vec2D _RenderOffset, float _angle, bool bCameraFallo
 	Vec2D Resolution = CEngine::GetInst()->GetResolution();
 	Vec2D FinalPos(m_Offset + _RenderOffset);
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	if (bCameraFallow)
+	{
+		CameraPos = Vec2D(0, 0);
+	}
 	Vec2D AbsCenter = CameraPos * (-1);		// 죄표계 원점 계산
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
-	bool tf = CameraIntersectCheck(CameraPos, Resolution, 0.f, FinalPos, m_Size, _angle);
 	if (CameraIntersectCheck(CameraPos, Resolution, 0.f, FinalPos, m_Size, _angle) || bCameraFallow)
 	{
-		if (bCameraFallow)
-		{
-			CameraPos = Vec2D(0, 0);
-		}
 		// 로드된 이미지를 해상도 비율에 맞춰 렌더링
-		m_DC = CEngine::GetInst()->GetSubDC();
-		Graphics graphics(m_DC);
-		graphics.TranslateTransform(AbsCenter.x, AbsCenter.y);		// 죄표계 원점으로 회전중심 이동
-		graphics.RotateTransform(_angle);							// 회전 적용
-		graphics.TranslateTransform(-AbsCenter.x, -AbsCenter.y);	// 원래 위치로 이동
-		Status st = graphics.DrawImage(m_Bitmap, (int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y), (int)m_Size.x, (int)m_Size.y);
+		//m_DC = CEngine::GetInst()->GetSubDC();
+		if (bLinearDodge)
+		{
+			// 원본 비트맵 이미지를 회전시킨 새 비트맵 생성
+			int newWidth = (int)(abs(m_Size.x * cos(_angle / 180 * PI)) + abs(m_Size.y * sin(_angle / 180 * PI)));
+			int newHeight = (int)(abs(m_Size.x * sin(_angle / 180 * PI)) + abs(m_Size.y * cos(_angle / 180 * PI)));
+			Bitmap RotatedBitmap(newWidth, newHeight);
+			Graphics graphics(&RotatedBitmap);
+			graphics.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+			graphics.TranslateTransform(newWidth / 2.0f, newHeight / 2.0f);
+			graphics.RotateTransform(_angle);
+			graphics.TranslateTransform(-m_Size.x / 2.0f, -m_Size.y / 2.0f);
+			graphics.DrawImage(m_Bitmap, Point(0, 0));
+
+			// 회전된 비트맵의 최종 렌더 좌표 계산
+			Vec2D RFinalPosLT = AbsCenter + FinalPos.Clockwise(_angle) + (m_Size.Clockwise(_angle) / 2) - Vec2D(newWidth / 2, newHeight / 2);
+			Vec2D RFinalPosRB = RFinalPosLT + Vec2D(newWidth, newHeight);
+
+			Bitmap* backbuffer = CEngine::GetInst()->GetBackbuffer()->GetBitmap();
+			BitmapData BufferBitmapdata;
+			BitmapData RotatedBitmapdata;
+			Rect BufferRect(max(RFinalPosLT.x, 0)
+				, max(RFinalPosLT.y, 0)
+				, min(RFinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(RFinalPosLT.x, 0)
+				, min(RFinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(RFinalPosLT.y, 0));
+			Rect RotatedRect(max(-RFinalPosLT.x, 0)
+				, max(-RFinalPosLT.y, 0)
+				, min(RFinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(RFinalPosLT.x, 0)
+				, min(RFinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(RFinalPosLT.y, 0));
+			backbuffer->LockBits(&BufferRect, ImageLockModeWrite, PixelFormat32bppARGB, &BufferBitmapdata);
+			RotatedBitmap.LockBits(&RotatedRect, ImageLockModeRead, PixelFormat32bppARGB, &RotatedBitmapdata);
+			LinearDodge(&BufferBitmapdata, &RotatedBitmapdata
+				, min(RFinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(RFinalPosLT.x, 0)
+				, min(RFinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(RFinalPosLT.y, 0));
+			RotatedBitmap.UnlockBits(&RotatedBitmapdata);
+			backbuffer->UnlockBits(&BufferBitmapdata);
+		}
+		else
+		{
+			Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+			graphics.TranslateTransform(AbsCenter.x, AbsCenter.y);		// 죄표계 원점으로 회전중심 이동
+			graphics.RotateTransform(_angle);							// 회전 적용
+			graphics.TranslateTransform(-AbsCenter.x, -AbsCenter.y);	// 원래 위치로 이동
+			Status st = graphics.DrawImage(m_Bitmap, (int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y), (int)m_Size.x, (int)m_Size.y);
+		}
 	}
 }
 
@@ -179,4 +249,22 @@ bool CTexture::LineOverlapCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _q1, Vec2D& _q2)
 	if (min(_p1.x, _p2.x) <= _q2.x && max(_p1.x, _p2.x) >= _q2.x && min(_p1.y, _p2.y) <= _q2.y && max(_p1.y, _p2.y) >= _q2.y)
 		return true;
 	return false;
+}
+
+void CTexture::LinearDodge(BitmapData* _dest, BitmapData* _src, int _width, int _height)
+{
+	byte* Dest = (byte*)_dest->Scan0;
+	byte* Src = (byte*)_src->Scan0;
+	for (int y = 0; y < _height; ++y)
+	{
+		for (int x = 0; x < _width; ++x)
+		{
+			int destIndex = _dest->Stride * y + x * 4;
+			int srcIndex = _src->Stride * y + x * 4;
+			Dest[destIndex + 0] = min(Dest[destIndex + 0] + Src[srcIndex + 0], 255);	// B
+			Dest[destIndex + 1] = min(Dest[destIndex + 1] + Src[srcIndex + 1], 255);	// G
+			Dest[destIndex + 2] = min(Dest[destIndex + 2] + Src[srcIndex + 2], 255);	// R
+			Dest[destIndex + 3] = min(Dest[destIndex + 3] + Src[srcIndex + 3], 255);	// A
+		}
+	}
 }

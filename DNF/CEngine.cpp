@@ -10,6 +10,7 @@
 #include "CCameraMgr.h"
 #include "CUIMgr.h"
 #include "CSoundMgr.h"
+#include "CTexture.h"
 
 #include "CSelectGDI.h"
 #include "CDbgRender.h"
@@ -19,8 +20,7 @@ CEngine::CEngine()
 	: m_hInst(nullptr)
 	, m_hMainDC(nullptr)
 	, m_hMainWnd(nullptr)
-	, m_hSubBitmap(nullptr)
-	, m_hSubDC(nullptr)
+	, m_Backbuffer(nullptr)
 	, m_Resolution(1066.f, 600.f)
 	, m_ScreenScale(1.f)
 	, m_MainWndPos(0, 0)
@@ -115,14 +115,18 @@ void CEngine::Progress()
 
 	// 백버퍼 화면 초기화
 	{
-		SELECT_BRUSH(BRUSH_TYPE::GRAY);
-		Rectangle(m_hSubDC, -1, -1, (int)m_Resolution.x + 1, (int)m_Resolution.y + 1);
+		CTextureMgr::GetInst()->FillRect(Color(255, 100, 100, 100), Vec2D(0, 0), m_Resolution, true);
+		//SELECT_BRUSH(BRUSH_TYPE::GRAY);
+		//Rectangle(m_hSubDC, -1, -1, (int)m_Resolution.x + 1, (int)m_Resolution.y + 1);
 	}
 	// 레벨 렌더링
 	CLevelMgr::GetInst()->Render();
 	// 디버그 렌더링
 	CDbgRender::GetInst()->Render();
 	// 백버퍼 비트맵을 프런트버퍼 비트맵으로 복사
+	//BitBlt(m_hMainDC, 0, 0, (int)m_Resolution.x, (int)m_Resolution.y, m_hSubDC, 0, 0, SRCCOPY);
+	m_Backbuffer->GetBitmap()->GetHBITMAP(Color::White, &m_hSubBitmap);
+	DeleteObject(SelectObject(m_hSubDC, m_hSubBitmap));
 	BitBlt(m_hMainDC, 0, 0, (int)m_Resolution.x, (int)m_Resolution.y, m_hSubDC, 0, 0, SRCCOPY);
 
 
@@ -135,12 +139,10 @@ void CEngine::Progress()
 void CEngine::CreateBackBuffer()
 {
 	// 더블버퍼링용 DC 와 비트맵 생성, 기존 비트맵 삭제
-	//m_hSubBitmap = CreateCompatibleBitmap(m_hMainDC, (int)m_Resolution.x, (int)m_Resolution.y);
-	m_hSubDC = CTextureMgr::GetInst()->CreateRectTexture(L"BackBuffer", m_Resolution, Vec2D(0, 0), Color(255, 0, 0, 0), true);
-	SetBkMode(m_hSubDC, TRANSPARENT);
-	//m_hSubDC = CreateCompatibleDC(m_hMainDC);
-	
-	//DeleteObject(SelectObject(m_hSubDC, m_hSubBitmap));
+	m_Backbuffer = CTextureMgr::GetInst()->CreateRectTexture(L"BackBuffer", m_Resolution, Vec2D(0, 0), Color(255, 0, 0, 0), true);
+	m_hSubDC = CreateCompatibleDC(m_hMainDC);
+	//m_SubBitmap = CTextureMgr::GetInst()->GetAlbum(_SysAlbum)->GetScene(L"BackBuffer")->GetBitmap();
+	//SetBkMode(m_hSubDC, TRANSPARENT);
 }
 
 void CEngine::CreateGDIObject()
@@ -173,9 +175,5 @@ void CEngine::ChangeWindowSize(Vec2D _vResolution)
 	m_WindowSize = Vec2D(rt.right - rt.left, rt.bottom - rt.top);
 	MINMAXINFO minMaxInfo = {};
 	SendMessage(m_hMainWnd, WM_GETMINMAXINFO, 0, (LPARAM)&minMaxInfo); // 윈도우 창 강제 재조정
-
-	// 새 해상도의 비트맵 작성 후 백버퍼와 연결, 기존 비트맵 삭제
-	m_hSubBitmap = CreateCompatibleBitmap(m_hMainDC, (int)m_Resolution.x, (int)m_Resolution.y);
-	DeleteObject(SelectObject(m_hSubDC, m_hSubBitmap));
 }
 

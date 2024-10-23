@@ -54,6 +54,7 @@
 #define EDIT_IndexEnd3                  1017
 #define CHECK_LOOP                      1018
 #define STATIC_IndexBegin               1019
+#define CHECK_LOOP2                     1019
 #define STATIC_IndexEnd                 1020
 #define EDIT_EditFPS                    1021
 #define CHECK_EditLOOP                  1022
@@ -64,6 +65,7 @@
 #define STATIC_TargetAlbum2             1027
 #define STATIC_TargetFile               1027
 #define EDIT_EditAngle                  1028
+#define CHECK_Dodge                     1029
 #define EDIT_StageName                  1030
 #define STATIC_BGMPath                  1031
 #define EDIT_HorizPixel                 1032

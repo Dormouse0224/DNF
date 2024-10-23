@@ -24,6 +24,14 @@ CAlbum::~CAlbum()
 {
 	Delete_Vector(m_SceneVector);
 	Delete_Vector(AtlasVec);
+	//for (map<int, TextureInfo>::iterator iter = m_Map.begin(); iter != m_Map.end(); ++iter)
+	//{
+	//	if (iter->second.Texture)
+	//	{
+	//		delete iter->second.Texture;
+	//		iter->second.Texture = nullptr;
+	//	}
+	//}
 }
 
 int CAlbum::Load()

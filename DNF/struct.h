@@ -134,12 +134,15 @@ struct DbgRenderInfo
 	float m_Time;
 	float m_Duration;
 
-	DbgRenderInfo(DbgRenderShape _Shape, Vec2D _Coord0, Vec2D _Coord1, float _Duration)
+	Color m_Color;
+
+	DbgRenderInfo(DbgRenderShape _Shape, Vec2D _Coord0, Vec2D _Coord1, float _Duration, Color _color)
 		: m_Shape(_Shape)
 		, m_Coord0(_Coord0)
 		, m_Coord1(_Coord1)
 		, m_Time(0)
 		, m_Duration(_Duration)
+		, m_Color(_color)
 	{}
 };
 
@@ -225,6 +228,7 @@ struct AnimationInfo
 	int FPS;
 	Vec2D Offset;
 	float angle;
+	bool bDodge;
 };
 #pragma pack(pop)
 
