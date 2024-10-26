@@ -32,9 +32,11 @@ public:
     void Render(CObj* _thisObj, bool bCameraFallow = false);
     void DirectRender(bool bCameraFallow = false);
     void NextScene();
+    int GetCurSceneNum() { return m_SceneNumber; }
     void SetCurrentScene(int _SceneIndex);
     void ChangeAlbum(string _AlbumPath, wstring _NpkPath);
     static CAlbumPlayer* CreatePlayerFromFile(wstring _Name, wstring _filepath);
     void SwitchLoop() { m_Loop = !m_Loop; }
+
 };
 

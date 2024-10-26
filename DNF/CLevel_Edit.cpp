@@ -93,7 +93,7 @@ void CLevel_Edit::Begin()
 void CLevel_Edit::Tick()
 {
 	// ESC 누르면 시작레벨로
-	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::ESC) == Key_state::PRESSED)
+	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::ESC) == Key_state::TAP)
 	{
 		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"Level_Start"));
 	}
@@ -115,12 +115,15 @@ void CLevel_Edit::Render()
 		m_PreviewTexture->DirectRender();
 	if (m_PreviewPlayer != nullptr)
 		m_PreviewPlayer->DirectRender();
+	CTextureMgr::GetInst()->DrawLine(Color(255, 255, 0, 0), 3, Vec2D(-25, 0), Vec2D(25, 0));
+	CTextureMgr::GetInst()->DrawLine(Color(255, 255, 0, 0), 3, Vec2D(0, -25), Vec2D(0, 25));
+
 	CLevel::Render();
 }
 
 void CLevel_Edit::End()
 {
-	ClearObject();
+	ClearAll();
 	SetPreviewPlayer(nullptr);
 	if (m_hAlbumViewerWnd)
 		DestroyWindow(m_hAlbumViewerWnd);

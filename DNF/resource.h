@@ -4,6 +4,7 @@
 //
 #define IDC_MYICON                      2
 #define DBGRENDER_TOGGLE                3
+#define DLG_Wall                        9
 #define IDD_DNF_DIALOG                  102
 #define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    103
@@ -20,6 +21,9 @@
 #define DLG_AnimationEditor             133
 #define DLG_AddStage_Start              134
 #define DLG_AddStage                    134
+#define DLG_StageMakerPanel             135
+#define DLG_AddMonster                  136
+#define DLG_AddNPC                      137
 #define IDC_LIST1                       1000
 #define LBX_CustomAlbum                 1000
 #define LBX_BGAList                     1000
@@ -31,15 +35,21 @@
 #define BTN_AniPreview                  1002
 #define BTN_LoadAni                     1002
 #define BTN_AddBGM                      1002
+#define BTN_AddMonster                  1002
+#define BTN_SetIdle                     1002
 #define IDC_BUTTON2                     1003
 #define BTN_LoadImg                     1003
 #define LBX_TextureList                 1003
 #define BTN_ChangeOffset                1003
 #define BTN_Preview                     1003
 #define BTN_AddBGA                      1003
+#define BTN_AddNPC                      1003
 #define STATIC_NPKDir                   1004
+#define BTN_AddWall                     1004
 #define STATIC_OwnerAlbum               1005
+#define BTN_EditSelObj                  1005
 #define PROG_NPKSave                    1006
+#define BTN_DelSelObj                   1006
 #define STATIC_AlbumImg                 1007
 #define BTN_SaveAlbum                   1008
 #define EDIT_OffsetX                    1009
@@ -54,7 +64,6 @@
 #define EDIT_IndexEnd3                  1017
 #define CHECK_LOOP                      1018
 #define STATIC_IndexBegin               1019
-#define CHECK_LOOP2                     1019
 #define STATIC_IndexEnd                 1020
 #define EDIT_EditFPS                    1021
 #define CHECK_EditLOOP                  1022
@@ -70,6 +79,18 @@
 #define STATIC_BGMPath                  1031
 #define EDIT_HorizPixel                 1032
 #define EDIT_VertPixel                  1033
+#define STATIC_Width                    1033
+#define STATIC_Height                   1034
+#define STATIC_SelectedObj              1036
+#define EDIT_PosX                       1039
+#define EDIT_PosY                       1040
+#define EDIT_Name                       1041
+#define EDIT_SizeX                      1042
+#define STATIC_IdleAni                  1042
+#define EDIT_SizeY                      1043
+#define EDIT_NPCSizeX                   1043
+#define EDIT_SizeY2                     1044
+#define EDIT_NPCSizeY                   1044
 #define ID_32773                        32773
 #define ID_32774                        32774
 #define ID_32775                        32775
@@ -83,9 +104,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        135
+#define _APS_NEXT_RESOURCE_VALUE        137
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1033
+#define _APS_NEXT_CONTROL_VALUE         1043
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

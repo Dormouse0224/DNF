@@ -9,6 +9,12 @@
 #include "CLevel_Edit.h"
 #include "CAlbumPlayer.h"
 #include "CDungeonMaker.h"
+#include "CWall.h"
+#include "CNPC.h"
+#include "CMonster.h"
+#include "CSticker.h"
+#include "CMonster.h"
+#include "CStageMaker.h"
 
 
 
@@ -109,6 +115,8 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             HWND hTexLBX = GetDlgItem(hDlg, LBX_TextureList);
             HWND hOwnALbum = GetDlgItem(hDlg, STATIC_OwnerAlbum);
             HWND hNPKDir = GetDlgItem(hDlg, STATIC_NPKDir);
+            HWND hWidth = GetDlgItem(hDlg, STATIC_Width);
+            HWND hHeight = GetDlgItem(hDlg, STATIC_Height);
 
             // album path
             WCHAR ownalb[255] = {};
@@ -125,6 +133,10 @@ INT_PTR CALLBACK AlbumViewerProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM
             WCHAR buffer[255] = {};
             SendMessage(hTexLBX, LB_GETTEXT, index, (LPARAM)buffer);
             CTexture* pTex = pAlbum->GetScene(buffer);
+
+            // 텍스처 크기정보 표시
+            SetWindowText(hWidth, std::to_wstring(pTex->GetSize().x).c_str());
+            SetWindowText(hHeight, std::to_wstring(pTex->GetSize().y).c_str());
 
             CLevel* pLevel = CLevelMgr::GetInst()->GetCurrentLevel();
             CLevel_Edit* pEditLv = dynamic_cast<CLevel_Edit*>(pLevel);
@@ -683,8 +695,8 @@ INT_PTR AddStageProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
                 wstr = wstr.substr(wstr.rfind('.'));
                 if (wstr == L".wav" || wstr == L".ogg")
                 {
-                    HWND hBGMPath = GetDlgItem(hDlg, STATIC_BGMPath);
-                    SetWindowText(hBGMPath, filepath);
+                    HWND hBGMName = GetDlgItem(hDlg, STATIC_BGMPath);
+                    SetWindowText(hBGMName, filename);
                 }
                 else
                 {
@@ -775,6 +787,237 @@ INT_PTR AddStageProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
         }
         break;
     }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR StageMakerPanelProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(_wParam) == BTN_AddMonster)
+        {
+            DialogBox(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AddMonster), hDlg, &AddMonsterProc);
+        }
+        else if (LOWORD(_wParam) == BTN_AddNPC)
+        {
+            DialogBox(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_AddNPC), hDlg, &AddNPCProc);
+        }
+        else if (LOWORD(_wParam) == BTN_AddWall)
+        {
+            DialogBox(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_Wall), hDlg, &AddWallProc);
+        }
+        else if (LOWORD(_wParam) == BTN_EditSelObj)
+        {
+
+        }
+        else if (LOWORD(_wParam) == BTN_DelSelObj)
+        {
+            CLevelMgr::GetInst()->GetCurrentLevel()->DeleteSelectedObj();
+        }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR AddWallProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(_wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(_wParam) == IDOK)
+        {
+            // 입력값 가져오기
+            HWND hName  = GetDlgItem(hDlg, EDIT_Name);
+            HWND hPosX  = GetDlgItem(hDlg, EDIT_PosX);
+            HWND hPosY  = GetDlgItem(hDlg, EDIT_PosY);
+            HWND hSizeX = GetDlgItem(hDlg, EDIT_SizeX);
+            HWND hSizeY = GetDlgItem(hDlg, EDIT_SizeY);
+            WCHAR wName [255] = {};
+            WCHAR wPosX [255] = {};
+            WCHAR wPosY [255] = {};
+            WCHAR wSizeX[255] = {};
+            WCHAR wSizeY[255] = {};
+            GetWindowText(hName , wName , 255);
+            GetWindowText(hPosX , wPosX , 255);
+            GetWindowText(hPosY , wPosY , 255);
+            GetWindowText(hSizeX, wSizeX, 255);
+            GetWindowText(hSizeY, wSizeY, 255);
+
+            // 입력값 예외처리
+            if (wstring(wName).empty() || wstring(wPosX).empty() || wstring(wPosY).empty() || wstring(wSizeX).empty() || wstring(wSizeY).empty())
+            {
+                // 필수 입력값이 전부 입력되지 않았음
+                MessageBox(hDlg, L"입력값이 필요합니다.", L"입력 오류", MB_ICONWARNING | MB_OK);
+                break;
+            }
+
+            WCHAR* stopstr;
+            CWall* pWall = new CWall(wName);
+            pWall->SetLocation(Vec2D(wcstof(wPosX, &stopstr), wcstof(wPosY, &stopstr)));
+            pWall->SetScale(Vec2D(wcstof(wSizeX, &stopstr), wcstof(wSizeY, &stopstr)));
+            CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pWall, LayerType::Object);
+            pWall->AddComponent(new CSticker(wName));
+
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR AddMonsterProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(_wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(_wParam) == IDOK)
+        {
+            // 입력값 가져오기
+            HWND hName = GetDlgItem(hDlg, EDIT_Name);
+            HWND hPosX = GetDlgItem(hDlg, EDIT_PosX);
+            HWND hPosY = GetDlgItem(hDlg, EDIT_PosY);
+            WCHAR wName[255] = {};
+            WCHAR wPosX[255] = {};
+            WCHAR wPosY[255] = {};
+            GetWindowText(hName, wName, 255);
+            GetWindowText(hPosX, wPosX, 255);
+            GetWindowText(hPosY, wPosY, 255);
+
+            // 입력값 예외처리
+            if (wstring(wName).empty() || wstring(wPosX).empty() || wstring(wPosY).empty())
+            {
+                // 필수 입력값이 전부 입력되지 않았음
+                MessageBox(hDlg, L"입력값이 필요합니다.", L"입력 오류", MB_ICONWARNING | MB_OK);
+                break;
+            }
+
+            WCHAR* stopstr;
+            CMonster* pMonster = new CMonster(wName);
+            CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pMonster, LayerType::Object);
+            pMonster->AddComponent(new CSticker(L"dominatedunnaturals_Stk"));
+            pMonster->SetLocation(Vec2D(wcstof(wPosX, &stopstr), wcstof(wPosY, &stopstr)));
+            pMonster->SetScale(Vec2D(100, 150));
+            pMonster->AddAnimation(MonsterState::Idle, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Idle"
+                , CEngine::GetInst()->GetResourcePathW() + L"\\animation\\monster_dominatedunnaturals_Idle.animation"));
+            pMonster->AddAnimation(MonsterState::Move, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Move"
+                , CEngine::GetInst()->GetResourcePathW() + L"\\animation\\monster_dominatedunnaturals_Move.animation"));
+            pMonster->AddAnimation(MonsterState::Attack, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Attack0"
+                , CEngine::GetInst()->GetResourcePathW() + L"\\animation\\monster_dominatedunnaturals_Attack0.animation"));
+            pMonster->AddAnimation(MonsterState::Attack, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Attack1"
+                , CEngine::GetInst()->GetResourcePathW() + L"\\animation\\monster_dominatedunnaturals_Attack1.animation"));
+            pMonster->AddAnimation(MonsterState::Hurt, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Hurt"
+                , CEngine::GetInst()->GetResourcePathW() + L"\\animation\\monster_dominatedunnaturals_Hurt.animation"));
+            pMonster->SetDetectRange(250);
+            pMonster->SetAttackRange(100);
+            pMonster->SetAttackFrame(make_pair(2, 3));
+
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR AddNPCProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(_wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(_wParam) == IDOK)
+        {
+            // 입력값 가져오기
+            HWND hName = GetDlgItem(hDlg, EDIT_Name);
+            HWND hPosX = GetDlgItem(hDlg, EDIT_PosX);
+            HWND hPosY = GetDlgItem(hDlg, EDIT_PosY);
+            HWND hNPCSizeX = GetDlgItem(hDlg, EDIT_NPCSizeX);
+            HWND hNPCSizeY = GetDlgItem(hDlg, EDIT_NPCSizeY);
+            HWND hIdleAni = GetDlgItem(hDlg, STATIC_IdleAni);
+            WCHAR wName[255] = {};
+            WCHAR wPosX[255] = {};
+            WCHAR wPosY[255] = {};
+            WCHAR wNPCSizeX[255] = {};
+            WCHAR wNPCSizeY[255] = {};
+            WCHAR wIdleAni[255] = {};
+            GetWindowText(hName, wName, 255);
+            GetWindowText(hPosX, wPosX, 255);
+            GetWindowText(hPosY, wPosY, 255);
+            GetWindowText(hNPCSizeX, wNPCSizeX, 255);
+            GetWindowText(hNPCSizeY, wNPCSizeY, 255);
+            GetWindowText(hIdleAni, wIdleAni, 255);
+
+            // 입력값 예외처리
+            if (wstring(wName).empty() || wstring(wPosX).empty() || wstring(wPosY).empty() 
+                || wstring(wNPCSizeX).empty() || wstring(wNPCSizeY).empty() || wstring(wIdleAni).empty())
+            {
+                // 필수 입력값이 전부 입력되지 않았음
+                MessageBox(hDlg, L"입력값이 필요합니다.", L"입력 오류", MB_ICONWARNING | MB_OK);
+                break;
+            }
+
+            WCHAR* stopstr;
+            CNPC* pNPC = new CNPC(wName);
+            pNPC->SetLocation(Vec2D(wcstof(wPosX, &stopstr), wcstof(wPosY, &stopstr)));
+            pNPC->SetScale(Vec2D(wcstof(wNPCSizeX, &stopstr), wcstof(wNPCSizeY, &stopstr)));
+            CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pNPC, LayerType::Object);
+            pNPC->AddComponent(new CSticker(wName));
+            pNPC->AddComponent(CAlbumPlayer::CreatePlayerFromFile(wName, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + wIdleAni));
+
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(_wParam) == BTN_SetIdle)
+        {
+
+            // 파일 탐색기 초기화
+            WCHAR filepath[255] = {};
+            WCHAR filename[255] = {};
+            wstring initpath = CEngine::GetInst()->GetResourcePathW() + L"\\animation";
+            OPENFILENAME desc = {};
+            desc.lStructSize = sizeof(OPENFILENAME);
+            desc.hwndOwner = hDlg;
+            desc.lpstrFilter = L"animation\0*.animation\0ALL\0*.*\0";
+            desc.lpstrFile = filepath;
+            desc.nMaxFile = 255;
+            desc.lpstrFileTitle = filename;
+            desc.nMaxFileTitle = 255;
+            desc.lpstrTitle = L"애니메이션 파일 불러오기";
+            desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+            desc.lpstrInitialDir = initpath.c_str();
+
+            if (GetOpenFileName(&desc))
+            {
+                HWND hIdleAni = GetDlgItem(hDlg, STATIC_IdleAni);
+                SetWindowText(hIdleAni, filename);
+            }
+        }
     }
     return (INT_PTR)FALSE;
 }

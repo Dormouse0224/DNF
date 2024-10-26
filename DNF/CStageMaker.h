@@ -1,25 +1,18 @@
 #pragma once
-#include "CLevel.h"
+#include "CStage.h"
 
-class CBackground;
-class CMonster;
-class CNPC;
-class CSound;
 class CObj;
 
 class CStageMaker :
-    public CLevel
+    public CStage
 {
 public:
     CStageMaker();
     ~CStageMaker();
 
 private:
-    StageInfo* m_StageInfo;
-    CBackground* m_Background;
-    CSound* m_BGM;
-    vector<CObj*> m_StageObject;
-
+    HWND m_hControlPanel;
+    HWND m_hSelectedObj;
 
 public:
     virtual void Begin() override;
@@ -27,7 +20,6 @@ public:
     virtual void FinalTick() override;
     virtual void Render() override;
     virtual void End() override;
-
 
 };
 

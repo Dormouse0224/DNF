@@ -33,6 +33,7 @@ public:
 	void DrawLine(Color _color, int _width, Vec2D _begin, Vec2D _end, bool bCameraFallow = false);
 	void DrawRect(Color _color, int _width, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow = false);
 	void FillRect(Color _color, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow = false);
+	void DrawEllipse(Color _color, int _width, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow);
 
 
 private:

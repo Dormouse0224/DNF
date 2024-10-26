@@ -24,23 +24,19 @@ void CDbgRender::AddDbgRender(DbgRenderShape _Shape, Vec2D _Coord0, Vec2D _Coord
 
 void CDbgRender::Render()
 {
-	//HDC dc = CEngine::GetInst()->GetSubDC();
 
-	for (list<DbgRenderInfo>::iterator iter = m_DbgRenderList.begin(); iter != m_DbgRenderList.end(); ++iter)
+	for (list<DbgRenderInfo>::iterator iter = m_DbgRenderList.begin(); iter != m_DbgRenderList.end();)
 	{
 		switch (iter->m_Shape)
 		{
 		case DbgRenderShape::Rectangle:
 			CTextureMgr::GetInst()->DrawRect(iter->m_Color, 2, iter->m_Coord0, iter->m_Coord1, false);
-			//Rectangle(dc, (int)iter->m_Coord0.x, (int)iter->m_Coord0.y, (int)iter->m_Coord1.x, (int)iter->m_Coord1.y);
 			break;
 		case DbgRenderShape::Circle:
-			//Ellipse(dc, (int)iter->m_Coord0.x, (int)iter->m_Coord0.y, (int)iter->m_Coord1.x, (int)iter->m_Coord1.y);
+			CTextureMgr::GetInst()->DrawEllipse(iter->m_Color, 2, iter->m_Coord0, iter->m_Coord1, false);
 			break;
 		case DbgRenderShape::Line:
 			CTextureMgr::GetInst()->DrawLine(iter->m_Color, 2, iter->m_Coord0, iter->m_Coord1, false);
-			//MoveToEx(dc, (int)iter->m_Coord0.x, (int)iter->m_Coord0.y, nullptr);
-			//LineTo(dc, (int)iter->m_Coord1.x, (int)iter->m_Coord1.y);
 			break;
 		}
 

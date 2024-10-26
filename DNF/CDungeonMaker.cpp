@@ -135,7 +135,7 @@ void CDungeonMaker::Tick()
 	}
 
 	// ESC 누르면 시작레벨로
-	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::ESC) == Key_state::PRESSED)
+	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::ESC) == Key_state::TAP)
 	{
 		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"Level_Start"));
 	}
@@ -191,7 +191,7 @@ void CDungeonMaker::Render()
 
 void CDungeonMaker::End()
 {
-
+	ClearAll();
 }
 
 
@@ -207,6 +207,20 @@ StageInfo* CDungeonMaker::FindStageInfo(Vec2D _GridLocation)
 
 void CDungeonMaker::CreateStageCallback()
 {
+	// Final 이 지정되어있는경우 생성 불가
+	if (m_bFinalExist)
+	{
+		MessageBox(CEngine::GetInst()->GetMainWnd(), L"Final 스테이지가 지정되어 있습니다.\n해제 후 추가해주세요.", L"타일 오류", MB_ICONWARNING | MB_OK);
+		return;
+	}
+
+	// 이미 스테이지 타일이 할당된 위치인 경우 생성 불가
+	if (m_StageInfoMap.find(m_SelectedTile) != m_StageInfoMap.end())
+	{
+		MessageBox(CEngine::GetInst()->GetMainWnd(), L"이미 스테이지가 할당되어 있습니다.\n제거 후 추가해주세요.", L"타일 오류", MB_ICONWARNING | MB_OK);
+		return;
+	}
+
 	// 스테이지가 하나도 없는 경우 시작 스테이지 생성
 	if (m_StageInfoMap.empty())
 	{
@@ -274,8 +288,8 @@ void CDungeonMaker::CreateStageCallback()
 					map<Vec2D, StageInfo*>::iterator targetStage = m_StageInfoMap.find(m_SelectedTile + offset);
 					if (targetStage != m_StageInfoMap.end())
 					{
-						targetStage->second->arrPortalInfo[(int)direction.first].PointTile = m_SelectedTile;
-						middleStage->second->arrPortalInfo[3 - (int)direction.first].PointTile = (m_SelectedTile + offset);
+						targetStage->second->arrPortalInfo[(int)direction.first].PointStageName = middleStage->second->StageName;
+						middleStage->second->arrPortalInfo[3 - (int)direction.first].PointStageName = targetStage->second->StageName;
 					}
 				}
 			}
@@ -317,7 +331,7 @@ void CDungeonMaker::DeleteStageCallback()
 			map<Vec2D, StageInfo*>::iterator targetStage = m_StageInfoMap.find(m_SelectedTile + offset);
 			if (targetStage != m_StageInfoMap.end())
 			{
-				targetStage->second->arrPortalInfo[(int)direction.first].PointTile = Vec2D(-1, -1);
+				targetStage->second->arrPortalInfo[(int)direction.first].PointStageName = L"";
 			}
 		}
 

@@ -11,6 +11,7 @@
 #include "CUIMgr.h"
 #include "CSoundMgr.h"
 #include "CTexture.h"
+#include "CStickerMgr.h"
 
 #include "CSelectGDI.h"
 #include "CDbgRender.h"
@@ -107,6 +108,7 @@ void CEngine::Progress()
 	CTimeMgr::GetInst()->Tick();
 	CCameraMgr::GetInst()->Tick();
 	CUIMgr::GetInst()->Tick();
+	CStickerMgr::GetInst()->Tick();
 
 
 	// 레벨 프레임 행동 수행

@@ -26,8 +26,8 @@ void CUI::Tick()
 
 	// 마우스 커서가 영역 내에 있는지 검사
 	Vec2D Cursor = CKeyMgr::GetInst()->GetMousePos();
-	Vec2D LT = Vec2D(GetLocation().x, GetLocation().y) * CEngine::GetInst()->GetScreenScale();
-	Vec2D RB = Vec2D(GetLocation().x + GetScale().x, GetLocation().y + GetScale().y) * CEngine::GetInst()->GetScreenScale();
+	Vec2D LT = GetLocation();
+	Vec2D RB = GetLocation() + GetScale();
 	if (Cursor >> LT && Cursor << RB)
 	{
 		m_IsCursorOn = true;

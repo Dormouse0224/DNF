@@ -113,14 +113,47 @@
     <Filter Include="main\07. Resource\03. Sound">
       <UniqueIdentifier>{644f2d16-49c7-46c6-af28-6fbfca0ef955}</UniqueIdentifier>
     </Filter>
-    <Filter Include="main\04. Level\StageMaker">
-      <UniqueIdentifier>{c068a962-1a84-475e-9732-1635aead4e3b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="main\05. Object\02. Map\02. Portal">
       <UniqueIdentifier>{7c96b146-2c04-480b-8c13-abda92255f1e}</UniqueIdentifier>
     </Filter>
     <Filter Include="main\05. Object\02. Map\03. Wall">
       <UniqueIdentifier>{72730b0e-24d6-4111-b8f9-280d2f34cdce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Stage">
+      <UniqueIdentifier>{c068a962-1a84-475e-9732-1635aead4e3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Stage\StageMaker">
+      <UniqueIdentifier>{4b44a1ef-018d-4488-9bc8-c0a43eb3562b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\06. Component\03. Sticker">
+      <UniqueIdentifier>{a8a9fc03-6eba-4ec0-bd73-a7de767c1ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\03. Manager\14. Sticker">
+      <UniqueIdentifier>{831362ad-58f0-4d08-845b-eddba49616b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\06. Component\04. FSM">
+      <UniqueIdentifier>{22928379-ab95-4cdf-9ef7-15e19678dbb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State">
+      <UniqueIdentifier>{f2df4090-a2a1-478d-afe1-c2ecc4e806b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Monster">
+      <UniqueIdentifier>{560a90b4-e0f8-4231-a25b-3bfbd63855eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Monster\Idle">
+      <UniqueIdentifier>{c247bbed-d7b2-4c14-adc1-4824101bc2e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Monster\Move">
+      <UniqueIdentifier>{407b1121-f7c3-4600-a888-3bae75976949}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\05. Player">
+      <UniqueIdentifier>{fefdfcbc-947f-4471-9076-b27d6493553b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Monster\Attack">
+      <UniqueIdentifier>{0be96157-79f7-48dd-a8ca-e5bc05baae13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Monster\Hurt">
+      <UniqueIdentifier>{8a211e2b-18fb-428f-8ffd-303e2e8d0206}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -250,8 +283,8 @@
     <ClInclude Include="CDungeonMaker.h">
       <Filter>main\04. Level\DungeonMaker</Filter>
     </ClInclude>
-    <ClInclude Include="CStageMaker.h">
-      <Filter>main\04. Level\StageMaker</Filter>
+    <ClInclude Include="CStage.h">
+      <Filter>main\04. Level\Stage</Filter>
     </ClInclude>
     <ClInclude Include="CMonster.h">
       <Filter>main\05. Object\03. Monster</Filter>
@@ -270,6 +303,36 @@
     </ClInclude>
     <ClInclude Include="CWall.h">
       <Filter>main\05. Object\02. Map\03. Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="CStageMaker.h">
+      <Filter>main\04. Level\Stage\StageMaker</Filter>
+    </ClInclude>
+    <ClInclude Include="CSticker.h">
+      <Filter>main\06. Component\03. Sticker</Filter>
+    </ClInclude>
+    <ClInclude Include="CStickerMgr.h">
+      <Filter>main\03. Manager\14. Sticker</Filter>
+    </ClInclude>
+    <ClInclude Include="CFSM.h">
+      <Filter>main\06. Component\04. FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="CState.h">
+      <Filter>main\08. State</Filter>
+    </ClInclude>
+    <ClInclude Include="CMonster_Idle.h">
+      <Filter>main\08. State\Monster\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayer.h">
+      <Filter>main\05. Object\05. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="CMonster_Move.h">
+      <Filter>main\08. State\Monster\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="CMonster_Attack.h">
+      <Filter>main\08. State\Monster\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="CMonster_Hurt.h">
+      <Filter>main\08. State\Monster\Hurt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -370,8 +433,8 @@
     <ClCompile Include="CDungeonMaker.cpp">
       <Filter>main\04. Level\DungeonMaker</Filter>
     </ClCompile>
-    <ClCompile Include="CStageMaker.cpp">
-      <Filter>main\04. Level\StageMaker</Filter>
+    <ClCompile Include="CStage.cpp">
+      <Filter>main\04. Level\Stage</Filter>
     </ClCompile>
     <ClCompile Include="CMonster.cpp">
       <Filter>main\05. Object\03. Monster</Filter>
@@ -390,6 +453,36 @@
     </ClCompile>
     <ClCompile Include="CWall.cpp">
       <Filter>main\05. Object\02. Map\03. Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="CStageMaker.cpp">
+      <Filter>main\04. Level\Stage\StageMaker</Filter>
+    </ClCompile>
+    <ClCompile Include="CSticker.cpp">
+      <Filter>main\06. Component\03. Sticker</Filter>
+    </ClCompile>
+    <ClCompile Include="CStickerMgr.cpp">
+      <Filter>main\03. Manager\14. Sticker</Filter>
+    </ClCompile>
+    <ClCompile Include="CFSM.cpp">
+      <Filter>main\06. Component\04. FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="CState.cpp">
+      <Filter>main\08. State</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonster_Idle.cpp">
+      <Filter>main\08. State\Monster\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer.cpp">
+      <Filter>main\05. Object\05. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonster_Move.cpp">
+      <Filter>main\08. State\Monster\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonster_Attack.cpp">
+      <Filter>main\08. State\Monster\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonster_Hurt.cpp">
+      <Filter>main\08. State\Monster\Hurt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

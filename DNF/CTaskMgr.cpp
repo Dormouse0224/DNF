@@ -47,10 +47,14 @@ void CTaskMgr::Tick()
 			break;
 		}			
 		case TaskType::ChangeLevel:
+		{
+			CLevelMgr::GetInst()->GetCurrentLevel()->End();
+			CLevelMgr::GetInst()->SetCurrentLevel((CLevel*)m_TaskQueue[i].m_param0);
+			CLevelMgr::GetInst()->GetCurrentLevel()->Begin();
+		}
 			break;
 		}
 	}
-
 	// 요청된 태스크 모두 제거
 	m_TaskQueue.clear();
 }

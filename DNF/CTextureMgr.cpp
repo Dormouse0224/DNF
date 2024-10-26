@@ -275,6 +275,7 @@ Bitmap* CTextureMgr::ConvertToBitmap(CTexture* _pTexture)
 
 Bitmap* CTextureMgr::ConvertToBitmapV2(CTexture* _pTexture)
 {
+	bool bUncomped = false;
 	char* data = _pTexture->Data;
 	ColorBits type = _pTexture->Type;
 	if (type == ColorBits::LINK)
@@ -285,8 +286,11 @@ Bitmap* CTextureMgr::ConvertToBitmapV2(CTexture* _pTexture)
 	if (_pTexture->CompressMode == CompressMode::ZLIB)
 	{
 		data = (char*)UncompressZlib(_pTexture->Data, size, _pTexture->Length);
+		bUncomped = true;
 	}
 	Bitmap* pBitmap = BitmapFromArray(data, _pTexture->m_Size, type);
+	if (bUncomped)
+		delete[] data;
 	return pBitmap;
 }
 
@@ -313,9 +317,12 @@ Bitmap* CTextureMgr::ConvertToBitmapV4(CTexture* _pTexture)
 				WriteColor(data2 + (index * 4), argb, ColorBits::ARGB_8888);
 			}
 			delete[] data;
-			return BitmapFromArray(data2, _pTexture->m_Size, ColorBits::ARGB_8888);
+			Bitmap* bitmap = BitmapFromArray(data2, _pTexture->m_Size, ColorBits::ARGB_8888);
+			delete[] data2;
+			return bitmap;
 		}
 	}
+	delete[] data2;
 	return ConvertToBitmapV2(_pTexture);
 }
 
@@ -393,10 +400,6 @@ Bitmap* CTextureMgr::BitmapFromArray(const char* _data, Vec2D _size, ColorBits _
 	memcpy(bitmapdata.Scan0, temp, (size_t)(_size.x * _size.y * 4));
 	bitmap->UnlockBits(&bitmapdata);
 	delete[] temp;
-
-	// 픽셀 데이터 배열의 메모리 해제
-	delete[] _data;
-	_data = nullptr;
 
 	return bitmap;
 }
@@ -792,8 +795,8 @@ void CTextureMgr::DrawLine(Color _color, int _width, Vec2D _begin, Vec2D _end, b
 		CameraPos = Vec2D(0, 0);
 	}
 	Vec2D vec = _end - _begin;
-	if ((vec.Cross(CameraPos) >= 0 && vec.Cross(CameraPos + Vec2D(1066, 0)) >= 0 && vec.Cross(CameraPos + Vec2D(1066, 600)) >= 0 && vec.Cross(CameraPos + Vec2D(0, 600)) >= 0)
-		|| (vec.Cross(CameraPos) <= 0 && vec.Cross(CameraPos + Vec2D(1066, 0)) <= 0 && vec.Cross(CameraPos + Vec2D(1066, 600)) <= 0 && vec.Cross(CameraPos + Vec2D(0, 600)) <= 0))
+	if (!((vec.Cross(CameraPos) > 0 && vec.Cross(CameraPos + Vec2D(1066, 0)) > 0 && vec.Cross(CameraPos + Vec2D(1066, 600)) > 0 && vec.Cross(CameraPos + Vec2D(0, 600)) > 0)
+		|| (vec.Cross(CameraPos) < 0 && vec.Cross(CameraPos + Vec2D(1066, 0)) < 0 && vec.Cross(CameraPos + Vec2D(1066, 600)) < 0 && vec.Cross(CameraPos + Vec2D(0, 600)) < 0)))
 	{
 		graphics.DrawLine(&pen, _begin.x - CameraPos.x, _begin.y - CameraPos.y, _end.x - CameraPos.x, _end.y - CameraPos.y);
 	}
@@ -831,5 +834,22 @@ void CTextureMgr::FillRect(Color _color, Vec2D _LeftTop, Vec2D _size, bool bCame
 		|| (RectCenter.y - (CameraPos.y + CEngine::GetInst()->GetResolution().y / 2)) < ((CEngine::GetInst()->GetResolution().y / 2) + _size.y))
 	{
 		graphics.FillRectangle(&brush, _LeftTop.x - CameraPos.x, _LeftTop.y - CameraPos.y, _size.x, _size.y);
+	}
+}
+
+void CTextureMgr::DrawEllipse(Color _color, int _width, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow)
+{
+	Pen pen(_color, (REAL)_width);
+	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	if (bCameraFallow)
+	{
+		CameraPos = Vec2D(0, 0);
+	}
+	Vec2D RectCenter = _LeftTop + (_size / 2);
+	if ((RectCenter.x - (CameraPos.x + CEngine::GetInst()->GetResolution().x / 2)) < ((CEngine::GetInst()->GetResolution().x / 2) + _size.x)
+		|| (RectCenter.y - (CameraPos.y + CEngine::GetInst()->GetResolution().y / 2)) < ((CEngine::GetInst()->GetResolution().y / 2) + _size.y))
+	{
+		graphics.DrawEllipse(&pen, (int)(_LeftTop.x - CameraPos.x), (int)(_LeftTop.y - CameraPos.y), (int)(_size.x), (int)(_size.y));
 	}
 }

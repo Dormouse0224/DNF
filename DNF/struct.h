@@ -115,6 +115,11 @@ public:
 	{
 		return Vec2D(x * cosf(_angle / 180.f * PI) - y * sinf(_angle / 180.f * PI), y * cosf(_angle / 180.f * PI) + x * sinf(_angle / 180.f * PI));
 	}
+
+	float Length() const
+	{
+		return sqrt((x * x) + (y * y));
+	}
 };
 
 
@@ -234,23 +239,27 @@ struct AnimationInfo
 
 struct NPCInfo
 {
-
+	NPCTemplate NPCTemplate;
+	Vec2D pos;
 };
 
 struct MonsterInfo
 {
-
+	MonsterTemplate MonsterTemplate;
+	Vec2D pos;
 };
 
 struct WallInfo
 {
-
+	Vec2D Pos;
+	Vec2D Size;
 };
 
 struct PortalInfo
 {
 	Vec2D Location = Vec2D(-1, -1);
-	Vec2D PointTile = Vec2D(-1, -1);
+	wstring PointStageName = L"";
+	//Vec2D PointTile = Vec2D(-1, -1);
 };
 
 struct StageInfo

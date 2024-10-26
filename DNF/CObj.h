@@ -21,6 +21,9 @@ private:
     Vec2D m_Scale;
     vector<CComponent*> m_ComponentVector;
     LayerType m_LayerType;
+    Vec2D m_GroundPos;
+
+    int m_State;
 
     bool m_Dead;
 
@@ -28,12 +31,15 @@ protected:
     vector<CAlbumPlayer*> m_AlbumPlayerVector;
 
 public:
-    void SetLocation(Vec2D _Location) { m_Location = _Location; }
-    void SetScale(Vec2D _Scale) { m_Scale = _Scale; }
+    void SetLocation(Vec2D _Location) { m_Location = _Location; m_GroundPos = Vec2D(m_Location.x + (m_Scale.x / 2.f), m_Location.y + m_Scale.y); }
+    void SetScale(Vec2D _Scale) { m_Scale = _Scale; m_GroundPos = Vec2D(m_Location.x + (m_Scale.x / 2.f), m_Location.y + m_Scale.y); }
     Vec2D GetLocation() const { return m_Location; }
     Vec2D GetScale() const { return m_Scale; }
+    Vec2D GetGroundPos() const { return m_GroundPos; }
     void SetDead(bool _dead) { m_Dead = _dead; }
     bool GetDead() { return m_Dead; }
+    int GetState() { return m_State; }
+    void SetState(int _state) { m_State = _state; }
 
     // ÄÄÆ÷³ÍÆ®
     virtual void AddComponent(CComponent* _Component);

@@ -35,6 +35,7 @@ private:
 
 
 public:
+    Vec2D GetSize() { return m_Size; }
     void SetSize(float _x, float _y) { m_Size.x = _x; m_Size.y = _y; }
     Vec2D GetOffset() { return m_Offset; }
     void SetOffset(float _x, float _y) { m_Offset.x = _x; m_Offset.y = _y; }

@@ -31,6 +31,10 @@ void CLevel_Start::Begin()
 	pStartBackground->SetScale(Vec2D(1066, 600));
 	AddObject(pStartBackground, LayerType::Background);
 
+
+
+
+
 	// 시작 레벨 BGM 세팅
 	CSound* pStartBGM = CSoundMgr::GetInst()->GetSound(L"StartBGM", L"\\music\\character_stage.ogg");
 	pStartBGM->PlayToBGM(true);
@@ -69,5 +73,5 @@ void CLevel_Start::Render()
 
 void CLevel_Start::End()
 {
-	ClearObject();
+	ClearAll();
 }

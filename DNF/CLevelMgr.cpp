@@ -5,10 +5,12 @@
 #include "CBackground.h"
 #include "CEngine.h"
 #include "CNpkMgr.h"
+#include "CTaskMgr.h"
 
 #include "CLevel_Start.h"
 #include "CLevel_Edit.h"
 #include "CDungeonMaker.h"
+#include "CStageMaker.h"
 
 #include "CAlbum.h"
 #include "CAlbumPlayer.h"
@@ -40,6 +42,7 @@ void CLevelMgr::Init()
 	CLevel_Start* pStartLevel = new CLevel_Start;
 	CLevel_Edit* pEditLevel = new CLevel_Edit;
 	CDungeonMaker* pDungeonMaker = new CDungeonMaker;
+	CStageMaker* pStageMaker = new CStageMaker;
 	m_CurrentLevel = pStartLevel;
 	m_CurrentLevel->Begin();
 }
@@ -83,8 +86,8 @@ void CLevelMgr::Render()
 
 void CLevelMgr::ChangeLevel(CLevel* _Dest)
 {
-	assert(_Dest);
-	m_CurrentLevel->End();
-	m_CurrentLevel = _Dest;
-	m_CurrentLevel->Begin();
+	StTask changeLevel;
+	changeLevel.m_TaskType = TaskType::ChangeLevel;
+	changeLevel.m_param0 = (DWORD_PTR)_Dest;
+	CTaskMgr::GetInst()->AddTask(changeLevel);
 }

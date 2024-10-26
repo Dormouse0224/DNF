@@ -3,9 +3,14 @@
 #include "CLevelMgr.h"
 #include "CCollider.h"
 #include "CObj.h"
+#include "CTaskMgr.h"
+#include "CDbgRender.h"
+#include "CSticker.h"
 
 CLevel::CLevel(wstring _Name)
 	: CBase(_Name)
+	, m_SelectedObj(nullptr)
+	, m_Player(nullptr)
 {
 	CLevelMgr::GetInst()->AddLevel(_Name, this);
 }
@@ -15,11 +20,6 @@ CLevel::~CLevel()
 	for (int i = 0; i < (int)LayerType::END; ++i)
 	{
 		Delete_Vector(m_hObj[i]);
-	}
-
-	for (int i = 0; i < (int)LayerType::END; ++i)
-	{
-		Delete_Vector(m_hCollider[i]);
 	}
 }
 
@@ -34,6 +34,8 @@ void CLevel::Begin()
 		for (int j = 0; j < m_hObj[i].size(); ++j)
 		{
 			m_hObj[i][j]->Begin();
+			if (m_hObj[i][j]->GetName() == L"Player")
+				m_Player = (CPlayer*)m_hObj[i][j];
 		}
 	}
 }
@@ -54,6 +56,9 @@ void CLevel::Tick()
 			m_hObj[i][j]->Tick();
 		}
 	}
+
+	// 맵오브젝트 정렬
+	std::sort(m_hObj[(int)LayerType::Object].begin(), m_hObj[(int)LayerType::Object].end(), ObjectSort);
 }
 
 void CLevel::FinalTick()
@@ -75,46 +80,80 @@ void CLevel::Render()
 		{
 			if (m_hObj[i][j]->GetDead() == false)
 			{
-				if ((LayerType)i == LayerType::Object)
-				{
-					std::sort(m_hObj[i].begin(), m_hObj[i].end(), [](const CObj* a, const CObj* b)
-						{
-							if (a->GetLocation().y == b->GetLocation().y)
-							{
-								return a->GetLocation().x < b->GetLocation().x;
-							}
-							else
-							{
-								return a->GetLocation().y < b->GetLocation().y;
-							}
-						});
-				}
-				else
-				{
-					m_hObj[i][j]->Render();
-				}
+				m_hObj[i][j]->Render();
+				if (i == (int)LayerType::Object)
+					CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Rectangle, m_hObj[i][j]->GetLocation(), m_hObj[i][j]->GetScale(), 0, Color(255, 0, 0, 255));
 			}
 		}
 	}
 }
 
-void CLevel::DeleteObject()
+void CLevel::DeleteObject(LayerType _layer, UINT _ObjectID)
 {
-	for (int i = 0; i < (int)LayerType::END; ++i)
+	for (int i = 0; i < m_hObj[(int)_layer].size(); ++i)
 	{
-		for (int j = 0; j < m_hObj[i].size(); ++j)
+		if (m_hObj[(int)_layer][i]->GetID() == _ObjectID)
 		{
-			if (m_hObj[i][j]->GetDead())
-			{
-				delete m_hObj[i][j];
-				m_hObj[i].erase(m_hObj[i].begin() + j);
-			}
+			StTask deleteobj;
+			deleteobj.m_TaskType = TaskType::ObjectDelete;
+			deleteobj.m_param0 = (DWORD_PTR)m_hObj[(int)_layer][i];
+			CTaskMgr::GetInst()->AddTask(deleteobj);
 		}
 	}
 	
 }
 
-void CLevel::ClearObject()
+void CLevel::EraseCollider(int _ID, LayerType _Layer)
+{
+	for (vector<CCollider*>::iterator iter = m_hCollider[(int)_Layer].begin(); iter != m_hCollider[(int)_Layer].end();)
+	{
+		if ((*iter)->GetID() == _ID)
+		{
+			iter = m_hCollider[(int)_Layer].erase(iter);
+		}
+		else
+		{
+			++iter;
+		}
+	}
+}
+
+void CLevel::EraseSticker(int _ID)
+{
+	for (vector<CSticker*>::iterator iter = m_hSticker.begin(); iter != m_hSticker.end();)
+	{
+		if ((*iter)->GetID() == _ID)
+		{
+			iter = m_hSticker.erase(iter);
+		}
+		else
+		{
+			++iter;
+		}
+	}
+}
+
+
+
+
+void CLevel::DeleteSelectedObj()
+{
+	if (m_SelectedObj)
+	{
+		for (vector<CObj*>::iterator iter = m_hObj[(int)LayerType::Object].begin(); iter != m_hObj[(int)LayerType::Object].end(); ++iter)
+		{
+			if (m_SelectedObj->GetID() == (*iter)->GetID())
+			{
+				delete (*iter);
+				m_hObj[(int)LayerType::Object].erase(iter);
+				m_SelectedObj = nullptr;
+				break;
+			}
+		}
+	}
+}
+
+void CLevel::ClearAll()
 {
 	for (int i = 0; i < (int)LayerType::END; ++i)
 	{
@@ -128,6 +167,11 @@ void CLevel::ClearObject()
 		}
 		m_hObj[i].clear();
 	}
+	for (int i = 0; i < (int)LayerType::END; ++i)
+	{
+		m_hCollider[i].clear();
+	}
+	m_hSticker.clear();
 }
 
 

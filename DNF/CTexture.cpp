@@ -77,7 +77,7 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 			graphics.DrawImage(m_Bitmap, Point(0, 0));
 
 			// È¸ÀüµÈ ºñÆ®¸ÊÀÇ ÃÖÁ¾ ·»´õ ÁÂÇ¥ °è»ê
-			Vec2D RFinalPosLT = CameraPos + FinalPos.Clockwise(_angle) + (m_Size.Clockwise(_angle) / 2) - Vec2D(newWidth / 2, newHeight / 2);
+			Vec2D RFinalPosLT = FinalPos.Clockwise(_angle) + (m_Size.Clockwise(_angle) / 2) - Vec2D(newWidth / 2, newHeight / 2) - CameraPos;
 			Vec2D RFinalPosRB = RFinalPosLT + Vec2D(newWidth, newHeight);
 
 			Bitmap* backbuffer = CEngine::GetInst()->GetBackbuffer()->GetBitmap();

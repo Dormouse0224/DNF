@@ -30,7 +30,9 @@ enum class TaskType
 enum class LayerType
 {
 	Background,
+	Far,
 	Object,
+	Near,
 
 	UI = 63,
 	END = 64
@@ -108,6 +110,33 @@ enum class PortalDirection
 	LEFT,
 	RIGHT,
 	BOTTOM,
+
+	END
+};
+
+enum class MonsterTemplate
+{
+	bloatedfat,
+	dominatedunnaturals,
+
+};
+
+enum class NPCTemplate
+{
+	seria,
+	chestbox,
+
+};
+
+enum class MonsterState
+{
+	Idle,
+	Move,
+	Attack,
+	Hurt,
+	JumpUp,
+	JumpDown,
+	
 
 	END
 };
