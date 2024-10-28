@@ -794,9 +794,9 @@ void CTextureMgr::DrawLine(Color _color, int _width, Vec2D _begin, Vec2D _end, b
 	{
 		CameraPos = Vec2D(0, 0);
 	}
-	Vec2D vec = _end - _begin;
-	if (!((vec.Cross(CameraPos) > 0 && vec.Cross(CameraPos + Vec2D(1066, 0)) > 0 && vec.Cross(CameraPos + Vec2D(1066, 600)) > 0 && vec.Cross(CameraPos + Vec2D(0, 600)) > 0)
-		|| (vec.Cross(CameraPos) < 0 && vec.Cross(CameraPos + Vec2D(1066, 0)) < 0 && vec.Cross(CameraPos + Vec2D(1066, 600)) < 0 && vec.Cross(CameraPos + Vec2D(0, 600)) < 0)))
+	Vec2D pt1 = CameraPos;
+	Vec2D pt2 = CameraPos + Vec2D(1066, 600);
+	if (LineInRectCheck(_begin, _end, pt1, pt2))
 	{
 		graphics.DrawLine(&pen, _begin.x - CameraPos.x, _begin.y - CameraPos.y, _end.x - CameraPos.x, _end.y - CameraPos.y);
 	}
@@ -852,4 +852,21 @@ void CTextureMgr::DrawEllipse(Color _color, int _width, Vec2D _LeftTop, Vec2D _s
 	{
 		graphics.DrawEllipse(&pen, (int)(_LeftTop.x - CameraPos.x), (int)(_LeftTop.y - CameraPos.y), (int)(_size.x), (int)(_size.y));
 	}
+}
+
+bool CTextureMgr::LineInRectCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _LT, Vec2D& _RB)
+{
+	Vec2D rect[4] = { _LT, Vec2D(_RB.x, _LT.y), _RB, Vec2D(_LT.x, _RB.y)};
+	for (int i = 0; i < 4; ++i)
+	{
+		if (CTexture::LineCrossCheck(_p1, _p2, rect[i], rect[(i + 1) % 4]))
+			return true;
+	}
+
+	if (_LT << _p1 && _RB >> _p1)
+		return true;
+	if (_LT << _p2 && _RB >> _p2)
+		return true;
+
+	return false;
 }

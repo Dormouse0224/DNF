@@ -29,15 +29,7 @@ CObj::~CObj()
 {
 	for (int i = 0; i < m_ComponentVector.size(); ++i)
 	{
-		if (dynamic_cast<CCollider*>(m_ComponentVector[i]))
-		{
-			CLevelMgr::GetInst()->GetCurrentLevel()->EraseCollider(m_ComponentVector[i]->GetID(), m_LayerType);
-		}
-		else if (dynamic_cast<CSticker*>(m_ComponentVector[i]))
-		{
-			CLevelMgr::GetInst()->GetCurrentLevel()->EraseSticker(m_ComponentVector[i]->GetID());
-		}
-
+		m_ComponentVector[i]->EraseFromLevelVec();
 		delete m_ComponentVector[i];
 	}
 	m_ComponentVector.clear();

@@ -49,9 +49,9 @@ public:
 
 private:
     bool CameraIntersectCheck(Vec2D& _locationA, Vec2D& _SizeA, float _AngleA, Vec2D& _locationB, Vec2D& _SizeB, float _AngleB);
-    bool LineCrossCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _q1, Vec2D& _q2);
-    int PointDirectionCheck(Vec2D& _p, Vec2D& _q, Vec2D& _r);
-    bool LineOverlapCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _q1, Vec2D& _q2);
+    static bool LineCrossCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _q1, Vec2D& _q2);
+    static int PointDirectionCheck(Vec2D& _p, Vec2D& _q, Vec2D& _r);
+    static bool LineOverlapCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _q1, Vec2D& _q2);
     void LinearDodge(BitmapData* _dest, BitmapData* src, int _width, int _height);
 };
 

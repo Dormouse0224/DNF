@@ -19,5 +19,7 @@ public:
 
 	// 프레임 안에서 컴포넌트가 할 일
 	virtual void FinalTick() = 0;
+
+	virtual void EraseFromLevelVec() {}
 };
 

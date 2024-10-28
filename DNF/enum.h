@@ -119,6 +119,7 @@ enum class MonsterTemplate
 	bloatedfat,
 	dominatedunnaturals,
 
+	NONE
 };
 
 enum class NPCTemplate
@@ -126,6 +127,7 @@ enum class NPCTemplate
 	seria,
 	chestbox,
 
+	NONE
 };
 
 enum class MonsterState

@@ -16,6 +16,7 @@
 #include "CMonster.h"
 #include "CStageMaker.h"
 
+#include <Commctrl.h>
 
 
 // 앨범 뷰어 다이얼로그 프로시저 함수
@@ -796,7 +797,9 @@ INT_PTR StageMakerPanelProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPa
     switch (message)
     {
     case WM_INITDIALOG:
+    {
         return (INT_PTR)TRUE;
+    }
 
     case WM_COMMAND:
         if (LOWORD(_wParam) == BTN_AddMonster)
@@ -813,11 +816,19 @@ INT_PTR StageMakerPanelProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lPa
         }
         else if (LOWORD(_wParam) == BTN_EditSelObj)
         {
-
+            DialogBox(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_EditObj), hDlg, &EditObjProc);
         }
         else if (LOWORD(_wParam) == BTN_DelSelObj)
         {
+            int ID = CLevelMgr::GetInst()->GetCurrentLevel()->GetSelectedObj()->GetID();
+            CStageMaker* pStageMaker = dynamic_cast<CStageMaker*>(CLevelMgr::GetInst()->GetCurrentLevel());
+            if (pStageMaker)
+                pStageMaker->EraseObjFromMap(ID);
             CLevelMgr::GetInst()->GetCurrentLevel()->DeleteSelectedObj();
+        }
+        else if (LOWORD(_wParam) == BTN_EditStageSize)
+        {
+            DialogBox(CEngine::GetInst()->GetProgramInst(), MAKEINTRESOURCE(DLG_EditStageSize), hDlg, &EditStageSizeProc);
         }
     }
     return (INT_PTR)FALSE;
@@ -870,6 +881,9 @@ INT_PTR AddWallProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pWall, LayerType::Object);
             pWall->AddComponent(new CSticker(wName));
 
+            CStageMaker* pStageMaker = dynamic_cast<CStageMaker*>(CLevelMgr::GetInst()->GetCurrentLevel());
+            pStageMaker->GetWallMap().insert(make_pair(pWall->GetID(), pWall));
+
             EndDialog(hDlg, LOWORD(_wParam));
             return (INT_PTR)TRUE;
         }
@@ -916,7 +930,8 @@ INT_PTR AddMonsterProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pMonster, LayerType::Object);
             pMonster->AddComponent(new CSticker(L"dominatedunnaturals_Stk"));
             pMonster->SetLocation(Vec2D(wcstof(wPosX, &stopstr), wcstof(wPosY, &stopstr)));
-            pMonster->SetScale(Vec2D(100, 150));
+            pMonster->SetScale(Vec2D(100, 140));
+            pMonster->SetMonsterTemplate(MonsterTemplate::dominatedunnaturals);
             pMonster->AddAnimation(MonsterState::Idle, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Idle"
                 , CEngine::GetInst()->GetResourcePathW() + L"\\animation\\monster_dominatedunnaturals_Idle.animation"));
             pMonster->AddAnimation(MonsterState::Move, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Move"
@@ -930,6 +945,9 @@ INT_PTR AddMonsterProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             pMonster->SetDetectRange(250);
             pMonster->SetAttackRange(100);
             pMonster->SetAttackFrame(make_pair(2, 3));
+
+            CStageMaker* pStageMaker = dynamic_cast<CStageMaker*>(CLevelMgr::GetInst()->GetCurrentLevel());
+            pStageMaker->GetMonsterMap().insert(make_pair(pMonster->GetID(), pMonster));
 
             EndDialog(hDlg, LOWORD(_wParam));
             return (INT_PTR)TRUE;
@@ -988,7 +1006,174 @@ INT_PTR AddNPCProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             pNPC->SetScale(Vec2D(wcstof(wNPCSizeX, &stopstr), wcstof(wNPCSizeY, &stopstr)));
             CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pNPC, LayerType::Object);
             pNPC->AddComponent(new CSticker(wName));
-            pNPC->AddComponent(CAlbumPlayer::CreatePlayerFromFile(wName, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + wIdleAni));
+            pNPC->AddComponent(CAlbumPlayer::CreatePlayerFromFile(wstring(wName) + L"_IdleAni"
+                , CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + wIdleAni));
+            pNPC->SetIdleAni(wIdleAni);
+
+            CStageMaker* pStageMaker = dynamic_cast<CStageMaker*>(CLevelMgr::GetInst()->GetCurrentLevel());
+            pStageMaker->GetNPCMap().insert(make_pair(pNPC->GetID(), pNPC));
+
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(_wParam) == BTN_SetIdle)
+        {
+
+            // 파일 탐색기 초기화
+            WCHAR filepath[255] = {};
+            WCHAR filename[255] = {};
+            wstring initpath = CEngine::GetInst()->GetResourcePathW() + L"\\animation";
+            OPENFILENAME desc = {};
+            desc.lStructSize = sizeof(OPENFILENAME);
+            desc.hwndOwner = hDlg;
+            desc.lpstrFilter = L"animation\0*.animation\0ALL\0*.*\0";
+            desc.lpstrFile = filepath;
+            desc.nMaxFile = 255;
+            desc.lpstrFileTitle = filename;
+            desc.nMaxFileTitle = 255;
+            desc.lpstrTitle = L"애니메이션 파일 불러오기";
+            desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+            desc.lpstrInitialDir = initpath.c_str();
+
+            if (GetOpenFileName(&desc))
+            {
+                HWND hIdleAni = GetDlgItem(hDlg, STATIC_IdleAni);
+                SetWindowText(hIdleAni, filename);
+            }
+        }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR EditObjProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+    {
+        // 개체값 세팅
+        CObj* pObj = CLevelMgr::GetInst()->GetCurrentLevel()->GetSelectedObj();
+        if (pObj)
+        {
+            HWND hName = GetDlgItem(hDlg, STATIC_EditObjName);
+            HWND hPosX = GetDlgItem(hDlg, EDIT_PosX);
+            HWND hPosY = GetDlgItem(hDlg, EDIT_PosY);
+            HWND hSizeX = GetDlgItem(hDlg, EDIT_SizeX);
+            HWND hSizeY = GetDlgItem(hDlg, EDIT_SizeY);
+            SetWindowText(hName, pObj->GetName().c_str());
+            SetWindowText(hPosX, std::to_wstring(pObj->GetLocation().x).c_str());
+            SetWindowText(hPosY, std::to_wstring(pObj->GetLocation().y).c_str());
+            SetWindowText(hSizeX, std::to_wstring(pObj->GetScale().x).c_str());
+            SetWindowText(hSizeY, std::to_wstring(pObj->GetScale().y).c_str());
+        }
+        else
+        {
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+    }
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(_wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(_wParam) == IDOK)
+        {
+            // 입력값 가져오기
+            HWND hName = GetDlgItem(hDlg, STATIC_EditObjName);
+            HWND hPosX = GetDlgItem(hDlg, EDIT_PosX);
+            HWND hPosY = GetDlgItem(hDlg, EDIT_PosY);
+            HWND hSizeX = GetDlgItem(hDlg, EDIT_SizeX);
+            HWND hSizeY = GetDlgItem(hDlg, EDIT_SizeY);
+            WCHAR wName[255] = {};
+            WCHAR wPosX[255] = {};
+            WCHAR wPosY[255] = {};
+            WCHAR wSizeX[255] = {};
+            WCHAR wSizeY[255] = {};
+            GetWindowText(hName, wName, 255);
+            GetWindowText(hPosX, wPosX, 255);
+            GetWindowText(hPosY, wPosY, 255);
+            GetWindowText(hSizeX, wSizeX, 255);
+            GetWindowText(hSizeY, wSizeY, 255);
+
+            // 입력값 예외처리
+            if (wstring(wName).empty() || wstring(wPosX).empty() || wstring(wPosY).empty() || wstring(wSizeX).empty() || wstring(wSizeY).empty())
+            {
+                // 필수 입력값이 전부 입력되지 않았음
+                MessageBox(hDlg, L"입력값이 필요합니다.", L"입력 오류", MB_ICONWARNING | MB_OK);
+                break;
+            }
+
+            // 개체값 세팅
+            WCHAR* stopstr;
+            CObj* pObj = CLevelMgr::GetInst()->GetCurrentLevel()->GetSelectedObj();
+            pObj->SetLocation(Vec2D(wcstof(wPosX, &stopstr), wcstof(wPosY, &stopstr)));
+            pObj->SetScale(Vec2D(wcstof(wSizeX, &stopstr), wcstof(wSizeY, &stopstr)));
+
+
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR EditStageSizeProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+    {
+        HWND hWidth = GetDlgItem(hDlg, EDIT_Width);
+        HWND hHeight = GetDlgItem(hDlg, EDIT_Height);
+        Vec2D Size;
+        CStageMaker* pStageMaker = dynamic_cast<CStageMaker*>(CLevelMgr::GetInst()->GetCurrentLevel());
+        if (pStageMaker)
+            Size = pStageMaker->GetStageInfo()->StageSize;
+        SetWindowText(hWidth, std::to_wstring(Size.x).c_str());
+        SetWindowText(hHeight, std::to_wstring(Size.y).c_str());
+        return (INT_PTR)TRUE;
+    }
+
+    case WM_COMMAND:
+        if (LOWORD(_wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(_wParam));
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(_wParam) == IDOK)
+        {
+            // 입력값 가져오기
+            HWND hWidth = GetDlgItem(hDlg, EDIT_Width);
+            HWND hHeight = GetDlgItem(hDlg, EDIT_Height);
+            WCHAR wWidth[255] = {};
+            WCHAR wHeight[255] = {};
+            GetWindowText(hWidth, wWidth, 255);
+            GetWindowText(hHeight, wHeight, 255);
+
+            // 입력값 예외처리
+            if (wstring(wWidth).empty() || wstring(wHeight).empty())
+            {
+                // 필수 입력값이 전부 입력되지 않았음
+                MessageBox(hDlg, L"입력값이 필요합니다.", L"입력 오류", MB_ICONWARNING | MB_OK);
+                break;
+            }
+
+
+            WCHAR* end = nullptr;
+            CStageMaker* pStageMaker = dynamic_cast<CStageMaker*>(CLevelMgr::GetInst()->GetCurrentLevel());
+            if (pStageMaker)
+            {
+                pStageMaker->GetStageInfo()->StageSize = Vec2D(wcstof(wWidth, &end), wcstof(wHeight, &end));
+            }
+            
+            HWND upperbound = GetDlgItem(GetParent(hDlg), SLIDE_UpperBound);
+            SendMessage(upperbound, TBM_SETRANGE, TRUE, MAKELONG(0, wcstof(wHeight, &end)));
+            SendMessage(upperbound, TBM_SETPOS, TRUE, 0);
+
 
             EndDialog(hDlg, LOWORD(_wParam));
             return (INT_PTR)TRUE;

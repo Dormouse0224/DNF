@@ -36,6 +36,7 @@ public:
 	void DrawEllipse(Color _color, int _width, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow);
 
 
+
 private:
 
 	Bitmap* ConvertToBitmapV2(CTexture* _pTexture);
@@ -50,5 +51,7 @@ private:
 
 	vector<Color> ReadPalette(ifstream& _file, int count);
 	Bitmap* ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize);
+
+	bool LineInRectCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _q1, Vec2D& _q2);
 };
 

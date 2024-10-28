@@ -6,6 +6,7 @@
 #include "CTaskMgr.h"
 #include "CDbgRender.h"
 #include "CSticker.h"
+#include "CPortal.h"
 
 CLevel::CLevel(wstring _Name)
 	: CBase(_Name)
@@ -142,7 +143,7 @@ void CLevel::DeleteSelectedObj()
 	{
 		for (vector<CObj*>::iterator iter = m_hObj[(int)LayerType::Object].begin(); iter != m_hObj[(int)LayerType::Object].end(); ++iter)
 		{
-			if (m_SelectedObj->GetID() == (*iter)->GetID())
+			if (m_SelectedObj->GetID() == (*iter)->GetID() && dynamic_cast<CPortal*>(*iter) == nullptr)
 			{
 				delete (*iter);
 				m_hObj[(int)LayerType::Object].erase(iter);

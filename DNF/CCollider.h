@@ -33,5 +33,7 @@ public:
     void EndOverlap(CCollider* _Other);     // 다른 충돌체와 겹쳐있다가 최초로 떨어지는 순간
 
     virtual void FinalTick() override;
+
+    virtual void EraseFromLevelVec() override;
 };
 

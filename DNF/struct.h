@@ -239,27 +239,32 @@ struct AnimationInfo
 
 struct NPCInfo
 {
-	NPCTemplate NPCTemplate;
-	Vec2D pos;
-};
-
-struct MonsterInfo
-{
-	MonsterTemplate MonsterTemplate;
-	Vec2D pos;
+	wstring Name;
+	Vec2D Pos;
+	Vec2D Size;
+	wstring IdleAnimation;
 };
 
 struct WallInfo
 {
+	wstring Name;
 	Vec2D Pos;
 	Vec2D Size;
 };
+
+struct MonsterInfo
+{
+	wstring Name;
+	MonsterTemplate MonsterTemplate;
+	Vec2D pos;
+};
+
+
 
 struct PortalInfo
 {
 	Vec2D Location = Vec2D(-1, -1);
 	wstring PointStageName = L"";
-	//Vec2D PointTile = Vec2D(-1, -1);
 };
 
 struct StageInfo
@@ -275,6 +280,22 @@ struct StageInfo
 	vector<MonsterInfo*> vecMonsterInfo = {};
 	vector<WallInfo*> vecWallInfo = {};
 	vector<NPCInfo*> vecNPCInfo = {};
+
+	~StageInfo()
+	{
+		auto deletevec = [](auto& vec)
+			{
+				for (int i = 0; i < vec.size(); ++i)
+				{
+					if (vec[i])
+						delete vec[i];
+				}
+				vec.clear();
+			};
+		deletevec(vecMonsterInfo);
+		deletevec(vecWallInfo);
+		deletevec(vecNPCInfo);
+	}
 };
 
 struct DungeonInfo
@@ -282,3 +303,17 @@ struct DungeonInfo
 	wstring DungeonName;
 	int StageCount;
 };
+
+#pragma pack(push, 1)
+struct StageInfoHeader
+{
+	StageType StageType;
+	Vec2D StageSize;
+	Vec2D GridLoc;
+	int UpperBound;
+	int vecBGACount;
+	int vecMonsterInfoCount;
+	int vecWallInfoCount;
+	int vecNPCInfoCount;
+};
+#pragma pack(pop)

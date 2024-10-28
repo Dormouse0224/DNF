@@ -62,6 +62,6 @@ public:
 
     virtual void FinalTick() final;   // 오브젝트가 소유한 Component 가 할 일
 
-
+    virtual void WriteInfo(fstream _stream) {}
 };
 

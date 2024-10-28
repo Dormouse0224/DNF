@@ -24,15 +24,7 @@ CDungeonMaker::CDungeonMaker()
 
 CDungeonMaker::~CDungeonMaker()
 {
-	for (map<Vec2D, StageInfo*>::iterator iter = m_StageInfoMap.begin(); iter != m_StageInfoMap.end(); ++iter)
-	{
-		if (iter->second != nullptr)
-		{
-			delete iter->second;
-			iter->second = nullptr;
-		}
-	}
-	m_StageInfoMap.clear();
+	ClearStageInfoMap();
 }
 
 void CDungeonMaker::Begin()
@@ -195,6 +187,12 @@ void CDungeonMaker::End()
 }
 
 
+void CDungeonMaker::AddStageInfo(Vec2D _GridLocation, StageInfo* _stageinfo)
+{
+	assert(m_StageInfoMap.insert(make_pair(_GridLocation, _stageinfo)).second);
+	_stageinfo->GridLoc = _GridLocation;
+}
+
 StageInfo* CDungeonMaker::FindStageInfo(Vec2D _GridLocation)
 {
 	map<Vec2D, StageInfo*>::iterator iter = m_StageInfoMap.find(_GridLocation);
@@ -204,6 +202,19 @@ StageInfo* CDungeonMaker::FindStageInfo(Vec2D _GridLocation)
 		return iter->second;
 }
 
+
+void CDungeonMaker::ClearStageInfoMap()
+{
+	for (map<Vec2D, StageInfo*>::iterator iter = m_StageInfoMap.begin(); iter != m_StageInfoMap.end(); ++iter)
+	{
+		if (iter->second != nullptr)
+		{
+			delete iter->second;
+			iter->second = nullptr;
+		}
+	}
+	m_StageInfoMap.clear();
+}
 
 void CDungeonMaker::CreateStageCallback()
 {
@@ -254,7 +265,7 @@ void CDungeonMaker::CreateStageCallback()
 			{PortalDirection::LEFT, Vec2D(1, 0)}		// 오른쪽
 		};
 
-		// 포탈 정보가 연결된 타일에만 생성할 수 있는지 확인
+		// 연결된 타일이 있는지 확인
 		bool hasConnectedTile = false;
 
 		for (const pair<PortalDirection, Vec2D>& direction : directions)
@@ -316,6 +327,11 @@ void CDungeonMaker::DeleteStageCallback()
 	// 선택된 타일에 스테이지가 존자하는 경우 삭제
 	if (iter != m_StageInfoMap.end())
 	{
+		// 스타트 스테이지가 마지막에 삭제되어야함
+		if (iter->second->StageType == StageType::START && m_StageInfoMap.size() > 1)
+			return;
+
+
 		// 삭제되는 스테이지 주변의 연결된 스테이지 포탈을 제거
 		pair<PortalDirection, Vec2D> directions[] =
 		{
@@ -366,12 +382,269 @@ void CDungeonMaker::ToggleFinalCallback()
 
 void CDungeonMaker::SaveDungeonCallback()
 {
-	// 던전 정보를 파일로 저장
+	// 던전과 스테이지 정보를 파일로 저장
+	WCHAR filepath[255] = {};
+	WCHAR filename[255] = {};
+	wstring wstr = CEngine::GetInst()->GetResourcePathW() + L"\\dungeon";
+	OPENFILENAME Desc = {};
+	Desc.lStructSize = sizeof(OPENFILENAME);
+	Desc.hwndOwner = CEngine::GetInst()->GetMainWnd();
+	Desc.lpstrFilter = L"dungeon\0*.dungeon\0ALL\0*.*\0";
+	Desc.lpstrFile = filepath;
+	Desc.nMaxFile = 255;
+	Desc.lpstrFileTitle = filename;
+	Desc.nMaxFileTitle = 255;
+	Desc.lpstrInitialDir = wstr.c_str();
+	Desc.lpstrTitle = L"던전 파일 저장";
+	Desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+	Desc.lpstrDefExt = L"dungeon";
 
+	if (GetSaveFileName(&Desc))
+	{
+		int StageCount = m_StageInfoMap.size();
+
+		// 던전의 스테이지 헤더 작성
+		vector<StageInfoHeader> HeaderVec;
+		for (map<Vec2D, StageInfo*>::iterator iter = m_StageInfoMap.begin(); iter != m_StageInfoMap.end(); ++iter)
+		{
+			StageInfoHeader header;
+			header.StageType = iter->second->StageType;
+			header.StageSize = iter->second->StageSize;
+			header.GridLoc = iter->second->GridLoc;
+			header.UpperBound = iter->second->UpperBound;
+			header.vecBGACount = iter->second->vecBGA.size();
+			header.vecMonsterInfoCount = iter->second->vecMonsterInfo.size();
+			header.vecWallInfoCount = iter->second->vecWallInfo.size();
+			header.vecNPCInfoCount = iter->second->vecNPCInfo.size();
+			HeaderVec.push_back(header);
+		}
+
+		ofstream DungeonFile;
+		DungeonFile.open(filepath, ios::binary);
+		// 스테이지 개수
+		DungeonFile.write((char*)&StageCount, sizeof(StageCount));
+		// 스테이지 헤더
+		for (int i = 0; i < StageCount; ++i)
+		{
+			DungeonFile.write((char*)&HeaderVec[i], sizeof(HeaderVec[i]));
+		}
+		// 스테이지 데이터
+		for (map<Vec2D, StageInfo*>::iterator iter = m_StageInfoMap.begin(); iter != m_StageInfoMap.end(); ++iter)
+		{
+			// 스테이지 이름, BGM 정보
+			int stageNameLen = iter->second->StageName.size();
+			wstring stageName = iter->second->StageName;
+			int bgmPathLen = iter->second->BGMPath.size();
+			wstring bgmPath = iter->second->BGMPath;
+			DungeonFile.write((char*)&stageNameLen, sizeof(stageNameLen));
+			DungeonFile.write((char*)stageName.c_str(), stageNameLen * sizeof(wchar_t));
+			DungeonFile.write((char*)&bgmPathLen, sizeof(bgmPathLen));
+			DungeonFile.write((char*)bgmPath.c_str(), bgmPathLen * sizeof(wchar_t));
+			// BGA
+			for (int i = 0; i < iter->second->vecBGA.size(); ++i)
+			{
+				int wstrLen = iter->second->vecBGA[i].size();
+				wstring wstr = iter->second->vecBGA[i];
+				DungeonFile.write((char*)&wstrLen, sizeof(wstrLen));
+				DungeonFile.write((char*)wstr.c_str(), wstrLen * sizeof(wchar_t));
+			}
+			// 포탈
+			for (int i = 0; i < 4; ++i)
+			{
+				Vec2D vec = iter->second->arrPortalInfo[i].Location;
+				int wstrLen = iter->second->arrPortalInfo[i].PointStageName.size();
+				wstring wstr = iter->second->arrPortalInfo[i].PointStageName;
+				DungeonFile.write((char*)&vec, sizeof(vec));
+				DungeonFile.write((char*)&wstrLen, sizeof(wstrLen));
+				DungeonFile.write((char*)wstr.c_str(), wstrLen * sizeof(wchar_t));
+			}
+			// 몬스터
+			for (int i = 0; i < iter->second->vecMonsterInfo.size(); ++i)
+			{
+				int wstrLen = iter->second->vecMonsterInfo[i]->Name.size();
+				wstring wstr = iter->second->vecMonsterInfo[i]->Name;
+				MonsterTemplate monsterTemplate = iter->second->vecMonsterInfo[i]->MonsterTemplate;
+				Vec2D vec = iter->second->vecMonsterInfo[i]->pos;
+				DungeonFile.write((char*)&wstrLen, sizeof(wstrLen));
+				DungeonFile.write((char*)wstr.c_str(), wstrLen * sizeof(wchar_t));
+				DungeonFile.write((char*)&monsterTemplate, sizeof(monsterTemplate));
+				DungeonFile.write((char*)&vec, sizeof(vec));
+			}
+			// 벽
+			for (int i = 0; i < iter->second->vecWallInfo.size(); ++i)
+			{
+				int wstrLen = iter->second->vecWallInfo[i]->Name.size();
+				wstring wstr = iter->second->vecWallInfo[i]->Name;
+				Vec2D vec = iter->second->vecWallInfo[i]->Pos;
+				Vec2D vec1 = iter->second->vecWallInfo[i]->Size;
+				DungeonFile.write((char*)&wstrLen, sizeof(wstrLen));
+				DungeonFile.write((char*)wstr.c_str(), wstrLen * sizeof(wchar_t));
+				DungeonFile.write((char*)&vec, sizeof(vec));
+				DungeonFile.write((char*)&vec1, sizeof(vec1));
+			}
+			// NPC
+			for (int i = 0; i < iter->second->vecNPCInfo.size(); ++i)
+			{
+				int wstrLen = iter->second->vecNPCInfo[i]->Name.size();
+				wstring wstr = iter->second->vecNPCInfo[i]->Name;
+				Vec2D vec = iter->second->vecNPCInfo[i]->Pos;
+				Vec2D vec1 = iter->second->vecNPCInfo[i]->Size;
+				int wstrLen1 = iter->second->vecNPCInfo[i]->IdleAnimation.size();
+				wstring wstr1 = iter->second->vecNPCInfo[i]->IdleAnimation;
+				DungeonFile.write((char*)&wstrLen, sizeof(wstrLen));
+				DungeonFile.write((char*)wstr.c_str(), wstrLen * sizeof(wchar_t));
+				DungeonFile.write((char*)&vec, sizeof(vec));
+				DungeonFile.write((char*)&vec1, sizeof(vec1));
+				DungeonFile.write((char*)&wstrLen1, sizeof(wstrLen1));
+				DungeonFile.write((char*)wstr1.c_str(), wstrLen1 * sizeof(wchar_t));
+			}
+		}
+		DungeonFile.close();
+		MessageBox(CEngine::GetInst()->GetMainWnd(), L"저장되었습니다.", L"알림", MB_ICONINFORMATION | MB_OK);
+	}
 }
 
 void CDungeonMaker::LoadDungeonCallback()
 {
-	// 파일로부터 던전 정보를 불러와 로드
+	ClearStageInfoMap();
 
+	// 파일로부터 던전 정보를 불러와 로드
+	WCHAR filepath[255] = {};
+	WCHAR filename[255] = {};
+	wstring wstr = CEngine::GetInst()->GetResourcePathW() + L"\\dungeon";
+	OPENFILENAME Desc = {};
+	Desc.lStructSize = sizeof(OPENFILENAME);
+	Desc.hwndOwner = CEngine::GetInst()->GetMainWnd();
+	Desc.lpstrFilter = L"dungeon\0*.dungeon\0ALL\0*.*\0";
+	Desc.lpstrFile = filepath;
+	Desc.nMaxFile = 255;
+	Desc.lpstrFileTitle = filename;
+	Desc.nMaxFileTitle = 255;
+	Desc.lpstrInitialDir = wstr.c_str();
+	Desc.lpstrTitle = L"던전 파일 로드";
+	Desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+	Desc.lpstrDefExt = L"dungeon";
+
+	if (GetOpenFileName(&Desc))
+	{
+		ifstream DungeonFile;
+		DungeonFile.open(filepath, ios::binary);
+		int StageCount = 0;
+		DungeonFile.read((char*)&StageCount, sizeof(StageCount));
+
+		// 스테이지 헤더
+		vector<StageInfoHeader> HeaderVec;
+		for (int i = 0; i < StageCount; ++i)
+		{
+			StageInfoHeader header;
+			DungeonFile.read((char*)&header, sizeof(header));
+			HeaderVec.push_back(header);
+		}
+		// 스테이지 데이터
+		for (int j = 0; j < HeaderVec.size(); ++j)
+		{
+			StageInfo* pStageInfo = new StageInfo();
+			pStageInfo->StageType = HeaderVec[j].StageType;
+			pStageInfo->StageSize = HeaderVec[j].StageSize;
+			pStageInfo->GridLoc = HeaderVec[j].GridLoc;
+			pStageInfo->UpperBound = HeaderVec[j].UpperBound;
+
+			// 스테이지 이름, BGM 정보
+			int stageNameLen = 0;
+			WCHAR stageName[255] = {};
+			int bgmPathLen = 0;
+			WCHAR bgmPath[255] = {};
+			DungeonFile.read((char*)&stageNameLen, sizeof(stageNameLen));
+			DungeonFile.read((char*)stageName, stageNameLen * sizeof(wchar_t));
+			DungeonFile.read((char*)&bgmPathLen, sizeof(bgmPathLen));
+			DungeonFile.read((char*)bgmPath, bgmPathLen * sizeof(wchar_t));
+			pStageInfo->StageName = stageName;
+			pStageInfo->BGMPath = bgmPath;
+
+
+			// BGA
+			for (int i = 0; i < HeaderVec[j].vecBGACount; ++i)
+			{
+				int wstrLen = 0;
+				WCHAR wstr[255] = {};
+				DungeonFile.read((char*)&wstrLen, sizeof(wstrLen));
+				DungeonFile.read((char*)wstr, wstrLen * sizeof(wchar_t));
+				pStageInfo->vecBGA.push_back(wstr);
+			}
+			// 포탈
+			for (int i = 0; i < 4; ++i)
+			{
+				Vec2D vec;
+				int wstrLen = 0;
+				WCHAR wstr[255] = {};
+				DungeonFile.read((char*)&vec, sizeof(vec));
+				DungeonFile.read((char*)&wstrLen, sizeof(wstrLen));
+				DungeonFile.read((char*)wstr, wstrLen * sizeof(wchar_t));
+				PortalInfo desc;
+				desc.Location = vec;
+				desc.PointStageName = wstr;
+				pStageInfo->arrPortalInfo[i] = desc;
+			}
+			// 몬스터
+			for (int i = 0; i < HeaderVec[j].vecMonsterInfoCount; ++i)
+			{
+				int wstrLen = 0;
+				WCHAR wstr[255] = {};
+				MonsterTemplate monsterTemplate;
+				Vec2D vec;
+				DungeonFile.read((char*)&wstrLen, sizeof(wstrLen));
+				DungeonFile.read((char*)wstr, wstrLen * sizeof(wchar_t));
+				DungeonFile.read((char*)&monsterTemplate, sizeof(monsterTemplate));
+				DungeonFile.read((char*)&vec, sizeof(vec));
+				MonsterInfo* pDesc = new MonsterInfo;
+				pDesc->Name = wstr;
+				pDesc->MonsterTemplate = monsterTemplate;
+				pDesc->pos = vec;
+				pStageInfo->vecMonsterInfo.push_back(pDesc);
+			}
+			// 벽
+			for (int i = 0; i < HeaderVec[j].vecWallInfoCount; ++i)
+			{
+				int wstrLen = 0;
+				WCHAR wstr[255] = {};
+				Vec2D vec;
+				Vec2D vec1;
+				DungeonFile.read((char*)&wstrLen, sizeof(wstrLen));
+				DungeonFile.read((char*)wstr, wstrLen * sizeof(wchar_t));
+				DungeonFile.read((char*)&vec, sizeof(vec));
+				DungeonFile.read((char*)&vec1, sizeof(vec1));
+				WallInfo* pDesc = new WallInfo;
+				pDesc->Name = wstr;
+				pDesc->Pos = vec;
+				pDesc->Size = vec1;
+				pStageInfo->vecWallInfo.push_back(pDesc);
+			}
+			// NPC
+			for (int i = 0; i < HeaderVec[j].vecNPCInfoCount; ++i)
+			{
+				int wstrLen = 0;
+				WCHAR wstr[255] = {};
+				Vec2D vec;
+				Vec2D vec1;
+				int wstrLen1 = 0;
+				WCHAR wstr1[255] = {};
+				DungeonFile.read((char*)&wstrLen, sizeof(wstrLen));
+				DungeonFile.read((char*)wstr, wstrLen * sizeof(wchar_t));
+				DungeonFile.read((char*)&vec, sizeof(vec));
+				DungeonFile.read((char*)&vec1, sizeof(vec1));
+				DungeonFile.read((char*)&wstrLen1, sizeof(wstrLen1));
+				DungeonFile.read((char*)wstr1, wstrLen1 * sizeof(wchar_t));
+				NPCInfo* pDesc = new NPCInfo;
+				pDesc->Name = wstr;
+				pDesc->Pos = vec;
+				pDesc->Size = vec1;
+				pDesc->IdleAnimation = wstr1;
+				pStageInfo->vecNPCInfo.push_back(pDesc);
+			}
+
+			m_StageInfoMap.insert(make_pair(pStageInfo->GridLoc, pStageInfo));
+			int a = 0;
+		}
+		DungeonFile.close();
+	}
 }

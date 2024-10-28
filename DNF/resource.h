@@ -24,6 +24,9 @@
 #define DLG_StageMakerPanel             135
 #define DLG_AddMonster                  136
 #define DLG_AddNPC                      137
+#define DLG_EditObj                     138
+#define IDD_DIALOG1                     139
+#define DLG_EditStageSize               139
 #define IDC_LIST1                       1000
 #define LBX_CustomAlbum                 1000
 #define LBX_BGAList                     1000
@@ -51,6 +54,7 @@
 #define PROG_NPKSave                    1006
 #define BTN_DelSelObj                   1006
 #define STATIC_AlbumImg                 1007
+#define BTN_EditStageSize               1007
 #define BTN_SaveAlbum                   1008
 #define EDIT_OffsetX                    1009
 #define EDIT_OffsetY                    1010
@@ -89,8 +93,12 @@
 #define STATIC_IdleAni                  1042
 #define EDIT_SizeY                      1043
 #define EDIT_NPCSizeX                   1043
-#define EDIT_SizeY2                     1044
 #define EDIT_NPCSizeY                   1044
+#define STATIC_EditObjName              1044
+#define SLIDE_UpperBound                1045
+#define STATIC_UpperBound               1046
+#define EDIT_Height                     1047
+#define EDIT_Width                      1048
 #define ID_32773                        32773
 #define ID_32774                        32774
 #define ID_32775                        32775
@@ -104,9 +112,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        137
+#define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1043
+#define _APS_NEXT_CONTROL_VALUE         1049
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

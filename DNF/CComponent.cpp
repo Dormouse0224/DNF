@@ -11,3 +11,5 @@ CComponent::CComponent(wstring _Name)
 CComponent::~CComponent()
 {
 }
+
+

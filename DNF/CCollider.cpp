@@ -42,3 +42,8 @@ void CCollider::FinalTick()
 	m_Location = m_Offset + GetOwner()->GetLocation();
 
 }
+
+void CCollider::EraseFromLevelVec()
+{
+	CLevelMgr::GetInst()->GetCurrentLevel()->EraseCollider(GetID(), m_LayerType);
+}

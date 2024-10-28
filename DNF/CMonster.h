@@ -20,6 +20,7 @@ private:
     int m_AttackRange;
     pair<int, int> m_AttackFrame;
     CCollider* m_AttackCol;
+    MonsterTemplate m_MonsterTemplate;
 
 public:
     // 충돌 함수
@@ -43,5 +44,7 @@ public:
     void SetAttackFrame(pair<int, int> _pair) { m_AttackFrame = _pair; }
     CCollider* GetAttackCol() { return m_AttackCol; }
     void SetAttackCol(CCollider* _col) { m_AttackCol = _col; }
+    MonsterTemplate GetMonsterTemplate() { return m_MonsterTemplate; }
+    void SetMonsterTemplate(MonsterTemplate _template) { m_MonsterTemplate = _template; }
 };
 

@@ -26,6 +26,9 @@ CTexture::CTexture(wstring _RelativPath, CAlbum* _Owner)
 
 CTexture::~CTexture()
 {
+	if (Type == ColorBits::LINK)
+		return;
+
 	if (m_Bitmap != nullptr)
 	{
 		delete m_Bitmap;

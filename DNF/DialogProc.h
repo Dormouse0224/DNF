@@ -13,3 +13,5 @@ INT_PTR CALLBACK StageMakerPanelProc(HWND hDlg, UINT message, WPARAM _wParam, LP
 INT_PTR CALLBACK AddWallProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);
 INT_PTR CALLBACK AddMonsterProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);
 INT_PTR CALLBACK AddNPCProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);
+INT_PTR CALLBACK EditObjProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);
+INT_PTR CALLBACK EditStageSizeProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam);

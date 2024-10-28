@@ -22,5 +22,6 @@ public:
     void SetPressed(bool _state) { m_IsPressed = _state; }
     bool IsPressed() { return m_IsPressed; }
 
+    virtual void EraseFromLevelVec() override;
 };
 

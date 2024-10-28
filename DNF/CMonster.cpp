@@ -10,6 +10,7 @@ CMonster::CMonster(wstring _name)
 	, m_AttackRange(0)
 	, m_AttackFrame(0, 0)
 	, m_AttackCol(nullptr)
+	, m_MonsterTemplate(MonsterTemplate::NONE)
 {
 }
 

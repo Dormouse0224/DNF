@@ -29,3 +29,8 @@ void CSticker::FinalTick()
 		m_bCursorOn = false;
 	}
 }
+
+void CSticker::EraseFromLevelVec()
+{
+	CLevelMgr::GetInst()->GetCurrentLevel()->EraseSticker(GetID());
+}

@@ -21,11 +21,12 @@ public:
     virtual void Render() override;
     virtual void End() override;
 
-    void AddStageInfo(Vec2D _GridLocation, StageInfo* _stageinfo) { assert(m_StageInfoMap.insert(make_pair(_GridLocation, _stageinfo)).second); }
+    void AddStageInfo(Vec2D _GridLocation, StageInfo* _stageinfo);
     StageInfo* FindStageInfo(Vec2D _GridLocation);
     Vec2D GetSelectedTile() { return m_SelectedTile; }
 
 private:
+    void ClearStageInfoMap();
 
     void CreateStageCallback();
     void EditStageCallback();
@@ -33,5 +34,6 @@ private:
     void ToggleFinalCallback();
     void SaveDungeonCallback();
     void LoadDungeonCallback();
+
 };
 
