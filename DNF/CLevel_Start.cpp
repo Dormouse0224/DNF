@@ -9,6 +9,7 @@
 #include "CSound.h"
 #include "CEngine.h"
 #include "CCameraMgr.h"
+#include "CButton.h"
 
 CLevel_Start::CLevel_Start()
 	:CLevel(L"Level_Start")
@@ -31,7 +32,44 @@ void CLevel_Start::Begin()
 	pStartBackground->SetScale(Vec2D(1066, 600));
 	AddObject(pStartBackground, LayerType::Background);
 
+	// 게임 시작 버튼 추가
+	CButton* GameStartBtn = new CButton(L"Btn_GameStart");
+	GameStartBtn->SetDelegate(this, (DELEGATE_0)&CLevel_Start::GameStartBtnCallback);
+	GameStartBtn->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"GameStart_Idle"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\GameStart_Idle.animation"), BtnState::IDLE);
+	GameStartBtn->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"GameStart_Pressed"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\GameStart_Pressed.animation"), BtnState::CURSOR_ON);
+	GameStartBtn->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"GameStart_Pressed"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\GameStart_Pressed.animation"), BtnState::PRESSED);
+	AddObject(GameStartBtn, LayerType::UI);
+	GameStartBtn->SetScale(Vec2D(304, 38));
+	GameStartBtn->SetLocation(Vec2D(610, 360));
 
+	// 텍스처 에디터 버튼 추가
+	CButton* TextureEditBtn = new CButton(L"Btn_TextureEdit");
+	TextureEditBtn->SetDelegate(this, (DELEGATE_0)&CLevel_Start::TextureEditBtnCallback);
+	TextureEditBtn->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"TextureEdit_Idle"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\TextureEdit_Idle.animation"), BtnState::IDLE);
+	TextureEditBtn->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"TextureEdit_Pressed"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\TextureEdit_Pressed.animation"), BtnState::CURSOR_ON);
+	TextureEditBtn->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"TextureEdit_Pressed"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\TextureEdit_Pressed.animation"), BtnState::PRESSED);
+	AddObject(TextureEditBtn, LayerType::UI);
+	TextureEditBtn->SetScale(Vec2D(333, 38));
+	TextureEditBtn->SetLocation(Vec2D(610, 430));
+
+	// 던전 메이커 버튼 추가
+	CButton* DungeonMakerBtn = new CButton(L"Btn_DungeonMaker");
+	DungeonMakerBtn->SetDelegate(this, (DELEGATE_0)&CLevel_Start::DungeonMakerBtnCallback);
+	DungeonMakerBtn->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"DungeonMaker_Idle"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\DungeonMaker_Idle.animation"), BtnState::IDLE);
+	DungeonMakerBtn->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"DungeonMaker_Pressed"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\DungeonMaker_Pressed.animation"), BtnState::CURSOR_ON);
+	DungeonMakerBtn->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"DungeonMaker_Pressed"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\DungeonMaker_Pressed.animation"), BtnState::PRESSED);
+	AddObject(DungeonMakerBtn, LayerType::UI);
+	DungeonMakerBtn->SetScale(Vec2D(421, 38));
+	DungeonMakerBtn->SetLocation(Vec2D(610, 500));
 
 
 
@@ -44,18 +82,6 @@ void CLevel_Start::Begin()
 
 void CLevel_Start::Tick()
 {
-	// CTRL + E 누르면 에디터 레벨로
-	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::LCTRL) == Key_state::PRESSED && CKeyMgr::GetInst()->GetKeyState(Keyboard::E) == Key_state::PRESSED)
-	{
-		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"Level_Edit"));
-	}
-
-	// CTRL + D 누르면 던전메이커 레벨로
-	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::LCTRL) == Key_state::PRESSED && CKeyMgr::GetInst()->GetKeyState(Keyboard::D) == Key_state::PRESSED)
-	{
-		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"DungeonMaker"));
-	}
-
 
 	CLevel::Tick();
 
@@ -74,4 +100,19 @@ void CLevel_Start::Render()
 void CLevel_Start::End()
 {
 	ClearAll();
+}
+
+void CLevel_Start::GameStartBtnCallback()
+{
+	CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"seriaroom"));
+}
+
+void CLevel_Start::TextureEditBtnCallback()
+{
+	CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"Level_Edit"));
+}
+
+void CLevel_Start::DungeonMakerBtnCallback()
+{
+	CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"DungeonMaker"));
 }

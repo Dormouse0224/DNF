@@ -12,6 +12,7 @@
 #include "CSoundMgr.h"
 #include "CTexture.h"
 #include "CStickerMgr.h"
+#include "CCollisionMgr.h"
 
 #include "CSelectGDI.h"
 #include "CDbgRender.h"
@@ -113,6 +114,9 @@ void CEngine::Progress()
 
 	// 레벨 프레임 행동 수행
 	CLevelMgr::GetInst()->Progress();
+
+	// 충돌 검사
+	CCollisionMgr::GetInst()->Tick();
 
 
 	// 백버퍼 화면 초기화

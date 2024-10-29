@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CKeyMgr.h"
 #include "CEngine.h"
+#include "CTimeMgr.h"
 
 UINT key_value[(int)Keyboard::Keyboard_end] = 
 {
@@ -105,6 +106,8 @@ UINT key_value[(int)Keyboard::Keyboard_end] =
 
 
 CKeyMgr::CKeyMgr()
+    : m_MousePos(0, 0)
+    , m_CommandTimeout(0)
 {
 
 }
@@ -153,6 +156,8 @@ void CKeyMgr::Tick()
                 {
                     m_keyboardInfo[i].state = Key_state::TAP;
                     m_keyboardInfo[i].isPrevPressed = true;
+                    m_Command.push_back((Keyboard)i);
+                    m_CommandTimeout = 0.f;
                 }
                 // 계속 안눌려있었음
                 else
@@ -167,6 +172,13 @@ void CKeyMgr::Tick()
         GetCursorPos(&point);
         ScreenToClient(CEngine::GetInst()->GetMainWnd(), &point);
         m_MousePos = Vec2D(point.x, point.y);
+
+        m_CommandTimeout += CTimeMgr::GetInst()->GetDeltaTime();
+        if (m_CommandTimeout > 0.2)
+        {
+            m_CommandTimeout = 0.f;
+            m_Command.clear();
+        }
     }
     else
     {
@@ -190,6 +202,8 @@ void CKeyMgr::Tick()
         *((int*)&m_MousePos.x) = 0xffffffff;
         *((int*)&m_MousePos.y) = 0xffffffff;
     }
+
+
 }
 
 bool CKeyMgr::IsMouseOffScreen()

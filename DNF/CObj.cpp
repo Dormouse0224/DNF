@@ -6,6 +6,7 @@
 #include "CAlbumPlayer.h"
 #include "CLevelMgr.h"
 #include "CSticker.h"
+#include "CRigidBody.h"
 
 CObj::CObj(wstring _Name)
 	: CBase(_Name)
@@ -14,6 +15,8 @@ CObj::CObj(wstring _Name)
 	, m_Dead(false)
 	, m_GroundPos(0,0)
 	, m_State(0)
+	, m_BodyCollider(nullptr)
+	, m_RigidBody(nullptr)
 {
 }
 
@@ -35,6 +38,16 @@ CObj::~CObj()
 	m_ComponentVector.clear();
 }
 
+void CObj::SetScale(Vec2D _Scale)
+{
+	m_Scale = _Scale;
+	m_GroundPos = Vec2D(m_Location.x + (m_Scale.x / 2.f), m_Location.y + m_Scale.y);
+	if (m_BodyCollider)
+	{
+		m_BodyCollider->SetSize(m_Scale);
+	}
+}
+
 void CObj::AddComponent(CComponent* _Component)
 {
 	m_ComponentVector.push_back(_Component);
@@ -43,10 +56,21 @@ void CObj::AddComponent(CComponent* _Component)
 	if (dynamic_cast<CAlbumPlayer*>(_Component))
 		m_AlbumPlayerVector.push_back((CAlbumPlayer*)_Component);
 	// 충돌체인경우 충돌체를 현재 레벨의 충돌체 벡터에 등록
-	else if (dynamic_cast<CCollider*>(_Component))
-		CLevelMgr::GetInst()->GetCurrentLevel()->AddCollider((CCollider*)_Component, m_LayerType);
-	else if (dynamic_cast<CSticker*>(_Component))
-		CLevelMgr::GetInst()->GetCurrentLevel()->AddSticker((CSticker*)_Component);
+	//else if (dynamic_cast<CCollider*>(_Component))
+	//	CLevelMgr::GetInst()->GetCurrentLevel()->AddCollider((CCollider*)_Component, m_LayerType);
+	//else if (dynamic_cast<CSticker*>(_Component))
+	//	CLevelMgr::GetInst()->GetCurrentLevel()->AddSticker((CSticker*)_Component);
+}
+
+void CObj::RegisterBodyCollider(CCollider* _Coll)
+{
+	m_BodyCollider = _Coll; m_BodyCollider->SetSize(m_Scale);
+}
+
+void CObj::SetRigidBody(CRigidBody* _RB)
+{
+	m_RigidBody = _RB;
+	AddComponent(_RB);
 }
 
 void CObj::BeginOverlap(CCollider* _Self, CCollider* _Other)

@@ -6,6 +6,7 @@
 CWall::CWall(wstring _name)
 	: CObj(_name)
 {
+	SetLayerType(LayerType::Object);
 }
 
 CWall::~CWall()

@@ -155,6 +155,24 @@
     <Filter Include="main\08. State\Monster\Hurt">
       <UniqueIdentifier>{8a211e2b-18fb-428f-8ffd-303e2e8d0206}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\08. State\Player">
+      <UniqueIdentifier>{1023d5d0-4fdb-4dfc-b524-2004090c139d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Player\Idle">
+      <UniqueIdentifier>{0f42f23e-af63-4637-bb1f-e7d638f464dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Player\Walk">
+      <UniqueIdentifier>{f55181ec-2a77-4d2b-bfa7-1ec69430fbcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Player\Run">
+      <UniqueIdentifier>{d9c72ffe-5fae-4bfc-8654-127da66775a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Player\Attack">
+      <UniqueIdentifier>{21cbed6e-7877-43cc-9a96-82059eb111c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\06. Component\05. RigidBody">
+      <UniqueIdentifier>{1aab1101-b249-4532-9704-1b623d92ca45}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -334,6 +352,21 @@
     <ClInclude Include="CMonster_Hurt.h">
       <Filter>main\08. State\Monster\Hurt</Filter>
     </ClInclude>
+    <ClInclude Include="CPlayer_Idle.h">
+      <Filter>main\08. State\Player\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayer_Attack.h">
+      <Filter>main\08. State\Player\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayer_Run.h">
+      <Filter>main\08. State\Player\Run</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayer_Walk.h">
+      <Filter>main\08. State\Player\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="CRigidBody.h">
+      <Filter>main\06. Component\05. RigidBody</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -483,6 +516,21 @@
     </ClCompile>
     <ClCompile Include="CMonster_Hurt.cpp">
       <Filter>main\08. State\Monster\Hurt</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer_Idle.cpp">
+      <Filter>main\08. State\Player\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer_Attack.cpp">
+      <Filter>main\08. State\Player\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer_Run.cpp">
+      <Filter>main\08. State\Player\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer_Walk.cpp">
+      <Filter>main\08. State\Player\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="CRigidBody.cpp">
+      <Filter>main\06. Component\05. RigidBody</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -142,3 +142,14 @@ enum class MonsterState
 
 	END
 };
+
+enum class PlayerState
+{
+	Idle,
+	Walk,
+	Run,
+	Attack,
+
+
+	END
+};

@@ -24,5 +24,7 @@ public:
 	void SetCurrentLevel(CLevel* _level) { m_CurrentLevel = _level; }
 	void ChangeLevel(CLevel* _Dest);
 
+	void ReadDungeonList();
+	void LoadStage(wstring _fileName, map<Vec2D, StageInfo*>& _StageInfoMap);
 };
 

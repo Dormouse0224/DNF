@@ -2,6 +2,7 @@
 #include "CCollider.h"
 #include "CObj.h"
 #include "CLevelMgr.h"
+#include "CDbgRender.h"
 
 CCollider::CCollider(wstring _Name)
 	: CComponent(_Name)
@@ -41,6 +42,13 @@ void CCollider::FinalTick()
 	// 충돌체 위치 갱신
 	m_Location = m_Offset + GetOwner()->GetLocation();
 
+	// Collider 등록하기
+	LayerType layertype = GetOwner()->GetLayerType();
+	CLevelMgr::GetInst()->GetCurrentLevel()->AddCollider(this, layertype);
+
+	// 충돌체 디버그 렌더링
+	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Rectangle, m_Location
+		, m_Size, 0, Color(255, 255, 0, 0));
 }
 
 void CCollider::EraseFromLevelVec()

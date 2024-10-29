@@ -17,6 +17,8 @@ CSticker::~CSticker()
 
 void CSticker::FinalTick()
 {
+	CLevelMgr::GetInst()->GetCurrentLevel()->AddSticker(this);
+
 	Vec2D Cursor = CKeyMgr::GetInst()->GetMousePos();
 	Vec2D LT = GetOwner()->GetLocation() - CCameraMgr::GetInst()->GetCameraPos();
 	Vec2D RB = GetOwner()->GetLocation() + GetOwner()->GetScale() - CCameraMgr::GetInst()->GetCameraPos();

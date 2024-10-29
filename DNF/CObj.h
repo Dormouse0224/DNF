@@ -5,6 +5,7 @@ class CComponent;
 class CCollider;
 class CLevel;
 class CAlbumPlayer;
+class CRigidBody;
 
 class CObj :
     public CBase
@@ -23,6 +24,9 @@ private:
     LayerType m_LayerType;
     Vec2D m_GroundPos;
 
+    CCollider* m_BodyCollider;
+    CRigidBody* m_RigidBody;
+
     int m_State;
 
     bool m_Dead;
@@ -32,7 +36,7 @@ protected:
 
 public:
     void SetLocation(Vec2D _Location) { m_Location = _Location; m_GroundPos = Vec2D(m_Location.x + (m_Scale.x / 2.f), m_Location.y + m_Scale.y); }
-    void SetScale(Vec2D _Scale) { m_Scale = _Scale; m_GroundPos = Vec2D(m_Location.x + (m_Scale.x / 2.f), m_Location.y + m_Scale.y); }
+    void SetScale(Vec2D _Scale);
     Vec2D GetLocation() const { return m_Location; }
     Vec2D GetScale() const { return m_Scale; }
     Vec2D GetGroundPos() const { return m_GroundPos; }
@@ -43,11 +47,17 @@ public:
 
     // 컴포넌트
     virtual void AddComponent(CComponent* _Component);
+
+    CCollider* GetBodyCollider() { return m_BodyCollider; }
+    void RegisterBodyCollider(CCollider* _Coll);
+    CRigidBody* GetRigidBody() { return m_RigidBody; }
+    void SetRigidBody(CRigidBody* _RB);
     
     template<typename T>
     T* GetComponent(wstring _ComponentName);
 
     LayerType GetLayerType() { return m_LayerType; }
+    void SetLayerType(LayerType _layertype) { m_LayerType = _layertype; }
 
 
     // 충돌 함수

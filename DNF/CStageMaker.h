@@ -19,7 +19,6 @@ private:
     HWND m_hSelectedObj;
     HWND m_hUpperBoundSlide;
     HWND m_hUpperBoundStatic;
-    int m_UpperBound;
 
     CPortal* m_PortalArr[4];
     map<int, CMonster*> m_MonsterMap;

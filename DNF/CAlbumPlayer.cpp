@@ -16,6 +16,7 @@ CAlbumPlayer::CAlbumPlayer(wstring _Name, string _AlbumPath, wstring _NpkPath)
 	, m_SceneNumber(0)
 	, m_SceneTime(0)
 	, m_Dodge(false)
+	, m_bLoadingEnd(false)
 {
 	m_CurrentAlbum = CTextureMgr::GetInst()->LoadAlbum(_AlbumPath, _NpkPath);
 }
@@ -44,6 +45,9 @@ void CAlbumPlayer::FinalTick()
 	if (m_FPS == 0)
 		return;
 
+	if (!m_bLoadingEnd)
+		return;
+
 	if (m_SceneTime > (1 / (float)m_FPS))
 	{
 		if ((m_SceneNumber + m_Begin) == m_End)
@@ -66,6 +70,7 @@ void CAlbumPlayer::FinalTick()
 
 void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraFallow)
 {
+	m_bLoadingEnd = true;
 	// 현재 씬을 재생
 	m_CurrentAlbum->m_Owner = _thisObj;
 	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, m_angle, bCameraFallow, m_Dodge);
@@ -74,6 +79,7 @@ void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraFallow)
 // 오브젝트를 거치지 않고 직접 렌더링
 void CAlbumPlayer::DirectRender(bool bCameraFallow)
 {
+	m_bLoadingEnd = true;
 	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->DirectRender(m_Offset, m_angle, bCameraFallow, m_Dodge);
 }
 

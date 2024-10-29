@@ -4,6 +4,8 @@
 #include "CStage.h"
 #include "CAlbumPlayer.h"
 #include "CDbgRender.h"
+#include "CPlayer.h"
+#include "CCollider.h"
 
 CPortal::CPortal(wstring _name)
 	: CObj(_name)
@@ -11,6 +13,7 @@ CPortal::CPortal(wstring _name)
 	, m_Dest(nullptr)
 	, m_DeactiveAnimation{}
 {
+	SetLayerType(LayerType::Object);
 }
 
 CPortal::~CPortal()
@@ -29,7 +32,9 @@ void CPortal::BeginOverlap(CCollider* _Self, CCollider* _Other)
 {
 	if (m_bActive && m_Dest != nullptr)
 	{
-		CLevelMgr::GetInst()->ChangeLevel(m_Dest);
+		CPlayer* pPlayer = dynamic_cast<CPlayer*>(_Other->GetOwner());
+		if (pPlayer)
+			CLevelMgr::GetInst()->ChangeLevel(m_Dest);
 	}
 }
 

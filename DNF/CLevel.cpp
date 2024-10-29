@@ -49,6 +49,9 @@ void CLevel::Tick()
 		m_hCollider[i].clear();
 	}
 
+	// 이전프레임에 등록된 스티커 등록 해제
+	m_hSticker.clear();
+
 	// 오브젝트 틱 수행
 	for (int i = 0; i < (int)LayerType::END; ++i)
 	{
@@ -82,8 +85,6 @@ void CLevel::Render()
 			if (m_hObj[i][j]->GetDead() == false)
 			{
 				m_hObj[i][j]->Render();
-				if (i == (int)LayerType::Object)
-					CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Rectangle, m_hObj[i][j]->GetLocation(), m_hObj[i][j]->GetScale(), 0, Color(255, 0, 0, 255));
 			}
 		}
 	}

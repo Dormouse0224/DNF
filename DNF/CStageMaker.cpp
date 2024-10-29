@@ -28,13 +28,13 @@ CStageMaker::CStageMaker()
 	, m_hSelectedObj(nullptr)
 	, m_hUpperBoundSlide(nullptr)
 	, m_hUpperBoundStatic(nullptr)
-	, m_UpperBound(0)
 	, m_PortalArr{}
 {
 }
 
 CStageMaker::~CStageMaker()
 {
+	m_StageInfo = nullptr;
 }
 
 void CStageMaker::Begin()
@@ -96,6 +96,7 @@ void CStageMaker::Begin()
 			CCollider* pCollider = new CCollider(L"Portal_Col_" + std::to_wstring(i));
 			pCollider->SetSize(pPortal->GetScale());
 			pPortal->AddComponent(pCollider);
+			pPortal->RegisterBodyCollider(pCollider);
 			// 애니메이션 등록
 			pPortal->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"Portal_AP_" + std::to_wstring(i)
 				, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\gatedown_n.animation"));
@@ -137,6 +138,10 @@ void CStageMaker::Begin()
 			pMonster->AddComponent(new CSticker(L"dominatedunnaturals_Stk"));
 			pMonster->SetLocation(pMonsterInfo->pos);
 			pMonster->SetScale(Vec2D(100, 140));
+			CCollider* pMonCollider = new CCollider(pMonsterInfo->Name + L"_Col");
+			pMonCollider->SetSize(pMonster->GetScale());
+			pMonster->AddComponent(pMonCollider);
+			pMonster->RegisterBodyCollider(pMonCollider);
 			pMonster->SetMonsterTemplate(MonsterTemplate::dominatedunnaturals);
 			pMonster->AddAnimation(MonsterState::Idle, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Idle"
 				, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\monster_dominatedunnaturals_Idle.animation"));
@@ -164,6 +169,10 @@ void CStageMaker::Begin()
 		CWall* pWall = new CWall(pWallInfo->Name);
 		pWall->SetLocation(pWallInfo->Pos);
 		pWall->SetScale(pWallInfo->Size);
+		CCollider* pWallCollider = new CCollider(pWallInfo->Name + L"_Col");
+		pWallCollider->SetSize(pWall->GetScale());
+		pWall->AddComponent(pWallCollider);
+		pWall->RegisterBodyCollider(pWallCollider);
 		CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pWall, LayerType::Object);
 		pWall->AddComponent(new CSticker(pWallInfo->Name));
 
@@ -177,6 +186,10 @@ void CStageMaker::Begin()
 		CNPC* pNPC = new CNPC(pNPCInfo->Name);
 		pNPC->SetLocation(pNPCInfo->Pos);
 		pNPC->SetScale(pNPCInfo->Size);
+		CCollider* pNPCCollider = new CCollider(pNPCInfo->Name + L"_Col");
+		pNPCCollider->SetSize(pNPC->GetScale());
+		pNPC->AddComponent(pNPCCollider);
+		pNPC->RegisterBodyCollider(pNPCCollider);
 		CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pNPC, LayerType::Object);
 		pNPC->AddComponent(new CSticker(pNPCInfo->Name));
 		pNPC->AddComponent(CAlbumPlayer::CreatePlayerFromFile(pNPCInfo->Name + L"_IdleAni"
@@ -299,6 +312,7 @@ void CStageMaker::End()
 	}
 
 	m_StageInfo->UpperBound = m_UpperBound;
+
 
 	CStage::End();
 }

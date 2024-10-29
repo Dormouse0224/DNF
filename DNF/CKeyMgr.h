@@ -126,6 +126,9 @@ private:
     vector<key_info> m_keyboardInfo;
     Vec2D m_MousePos;
 
+    vector<Keyboard> m_Command;
+    float m_CommandTimeout;
+
 public:
     Key_state GetKeyState(const Keyboard& _key) { return m_keyboardInfo[(int)_key].state; }
     Vec2D GetMousePos() { return m_MousePos; }
@@ -135,5 +138,7 @@ public:
 
     bool IsMouseOffScreen();
 
+    const vector<Keyboard>& GetCommand() { return m_Command; }
+    void ClearCommand() { m_Command.clear(); }
 };
 

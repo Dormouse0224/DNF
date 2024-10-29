@@ -34,7 +34,10 @@ public:
     const vector<CObj*>& GetObjLayer(LayerType _layer) { return m_hObj[(int)_layer]; }
 
     void AddCollider(CCollider* _Collider, LayerType _layer) { m_hCollider[(int)_layer].push_back(_Collider); }
-    const vector<CCollider*>& GetCollider(LayerType _layer) { return m_hCollider[(int)_layer]; }
+    const vector<CCollider*>& GetCollider(LayerType _layer) 
+    { 
+        return m_hCollider[(int)_layer]; 
+    }
     void EraseCollider(int _ID, LayerType _Layer);
 
     void EraseSticker(int _ID);

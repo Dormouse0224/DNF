@@ -12,6 +12,7 @@ CFSM::CFSM(wstring _name)
 
 CFSM::~CFSM()
 {
+	Delete_Map(m_mapState);
 }
 
 void CFSM::AddState(const int& _Key, CState* _State)
@@ -19,6 +20,8 @@ void CFSM::AddState(const int& _Key, CState* _State)
 	assert(m_mapState.find(_Key) == m_mapState.end());
 	m_mapState.insert(make_pair(_Key, _State));
 	_State->m_Owner = this;
+	if (m_CurState == nullptr)
+		m_CurState = _State;
 }
 
 CState* CFSM::FindState(const int& _Key)

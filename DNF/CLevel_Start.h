@@ -16,5 +16,10 @@ public:
     virtual void FinalTick() override;
     virtual void Render() override;
     virtual void End() override;
+
+private:
+    void GameStartBtnCallback();
+    void TextureEditBtnCallback();
+    void DungeonMakerBtnCallback();
 };
 

@@ -8,6 +8,7 @@ CNPC::CNPC(wstring _name)
 	: CObj(_name)
 	, m_reactCallback(nullptr)
 {
+	SetLayerType(LayerType::Object);
 }
 
 CNPC::~CNPC()

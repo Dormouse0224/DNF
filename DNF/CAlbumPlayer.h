@@ -25,6 +25,8 @@ private:
     int m_SceneNumber;
     float m_SceneTime;
 
+    bool m_bLoadingEnd;
+
 public:
     void SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D m_Offset, float _angle, bool _Dodge);
     void SetFPS(int _FPS) { m_FPS = _FPS; }

@@ -17,6 +17,7 @@ public:
 protected:
     StageInfo* m_StageInfo;
     CSound* m_BGM;
+    int m_UpperBound;
 
 
 public:
@@ -27,5 +28,6 @@ public:
     virtual void End() override;
 
     StageInfo* GetStageInfo() { return m_StageInfo; }
+    void SetStageInfo(StageInfo* _info) { m_StageInfo = _info; }
 };
 

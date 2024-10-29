@@ -51,7 +51,7 @@ void CCollisionMgr::Tick()
 {
 	for (int i = 0; i < (int)LayerType::END; ++i)
 	{
-		for (int j = i; i < sizeof(ULONGLONG) * 8; ++j)
+		for (int j = i; j < sizeof(ULONGLONG) * 8; ++j)
 		{
 			if (m_CollisionLayer[i] & ((ULONGLONG)1 << j))
 			{

@@ -12,6 +12,7 @@ CMonster::CMonster(wstring _name)
 	, m_AttackCol(nullptr)
 	, m_MonsterTemplate(MonsterTemplate::NONE)
 {
+	SetLayerType(LayerType::Object);
 }
 
 CMonster::~CMonster()
