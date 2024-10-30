@@ -15,6 +15,7 @@ CPlayer::CPlayer()
 	: CObj(L"Player")
 {
 	SetLayerType(LayerType::Object);
+	SetScale(Vec2D(40, 95));
 	AddAnimation(PlayerState::Idle, CAlbumPlayer::CreatePlayerFromFile(L"archer_skin_00_Idle"
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\archer_skin_00_Idle.animation"));
 	AddAnimation(PlayerState::Walk, CAlbumPlayer::CreatePlayerFromFile(L"archer_skin_00_Walk"

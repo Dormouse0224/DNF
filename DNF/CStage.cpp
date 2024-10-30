@@ -13,6 +13,11 @@
 #include "CSound.h"
 #include "CPlayer.h"
 #include "CCollisionMgr.h"
+#include "CFSM.h"
+#include "CMonster_Attack.h"
+#include "CMonster_Idle.h"
+#include "CMonster_Hurt.h"
+#include "CMonster_Move.h"
 
 
 CStage::CStage(wstring _name)
@@ -100,6 +105,11 @@ void CStage::Begin()
 			pMonCollider->SetSize(pMonster->GetScale());
 			pMonster->AddComponent(pMonCollider);
 			pMonster->RegisterBodyCollider(pMonCollider);
+			CCollider* pAttCollider = new CCollider(pMonsterInfo->Name + L"_AttCol");
+			pAttCollider->SetSize(Vec2D(240, 120));
+			pAttCollider->SetOffset(Vec2D(-40, 15));
+			pMonster->AddComponent(pAttCollider);
+			pMonster->SetAttackCol(pAttCollider);
 			pMonster->SetMonsterTemplate(MonsterTemplate::dominatedunnaturals);
 			pMonster->AddAnimation(MonsterState::Idle, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Idle"
 				, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\monster_dominatedunnaturals_Idle.animation"));
@@ -114,6 +124,12 @@ void CStage::Begin()
 			pMonster->SetDetectRange(250);
 			pMonster->SetAttackRange(100);
 			pMonster->SetAttackFrame(make_pair(2, 3));
+			CFSM* pFSM = new CFSM(pMonsterInfo->Name + L"_FSM");
+			pFSM->AddState((int)MonsterState::Idle, new CMonster_Idle(L"Monster_Idle"));
+			pFSM->AddState((int)MonsterState::Move, new CMonster_Move(L"Monster_Move"));
+			pFSM->AddState((int)MonsterState::Attack, new CMonster_Attack(L"Monster_Attack"));
+			pFSM->AddState((int)MonsterState::Hurt, new CMonster_Hurt(L"Monster_Hurt"));
+			pMonster->AddComponent(pFSM);
 			break;
 		}
 		}
@@ -152,6 +168,7 @@ void CStage::Begin()
 	// 플레이어 추가
 	CPlayer* pPlayer = new CPlayer();
 	AddObject(pPlayer, LayerType::Object);
+	SetPlayer(pPlayer);
 
 
 	// BGM이 있으면 재생

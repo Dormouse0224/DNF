@@ -15,6 +15,7 @@
 #include "CSticker.h"
 #include "CMonster.h"
 #include "CStageMaker.h"
+#include "CCollider.h"
 
 #include <Commctrl.h>
 
@@ -878,6 +879,10 @@ INT_PTR AddWallProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             CWall* pWall = new CWall(wName);
             pWall->SetLocation(Vec2D(wcstof(wPosX, &stopstr), wcstof(wPosY, &stopstr)));
             pWall->SetScale(Vec2D(wcstof(wSizeX, &stopstr), wcstof(wSizeY, &stopstr)));
+            CCollider* pWallCollider = new CCollider(wstring(wName)+L"_Col");
+            pWallCollider->SetSize(pWall->GetScale());
+            pWall->AddComponent(pWallCollider);
+            pWall->RegisterBodyCollider(pWallCollider);
             CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pWall, LayerType::Object);
             pWall->AddComponent(new CSticker(wName));
 
@@ -931,6 +936,15 @@ INT_PTR AddMonsterProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             pMonster->AddComponent(new CSticker(L"dominatedunnaturals_Stk"));
             pMonster->SetLocation(Vec2D(wcstof(wPosX, &stopstr), wcstof(wPosY, &stopstr)));
             pMonster->SetScale(Vec2D(100, 140));
+            CCollider* pMonCollider = new CCollider(wstring(wName)+L"_Col");
+            pMonCollider->SetSize(pMonster->GetScale());
+            pMonster->AddComponent(pMonCollider);
+            pMonster->RegisterBodyCollider(pMonCollider);
+            CCollider* pAttCollider = new CCollider(wstring(wName) + L"_AttCol");
+            pAttCollider->SetSize(Vec2D(240, 120));
+            pAttCollider->SetOffset(Vec2D(-40, 15));
+            pMonster->AddComponent(pAttCollider);
+            pMonster->SetAttackCol(pAttCollider);
             pMonster->SetMonsterTemplate(MonsterTemplate::dominatedunnaturals);
             pMonster->AddAnimation(MonsterState::Idle, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Idle"
                 , CEngine::GetInst()->GetResourcePathW() + L"\\animation\\monster_dominatedunnaturals_Idle.animation"));
@@ -1004,6 +1018,10 @@ INT_PTR AddNPCProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             CNPC* pNPC = new CNPC(wName);
             pNPC->SetLocation(Vec2D(wcstof(wPosX, &stopstr), wcstof(wPosY, &stopstr)));
             pNPC->SetScale(Vec2D(wcstof(wNPCSizeX, &stopstr), wcstof(wNPCSizeY, &stopstr)));
+            CCollider* pNPCCollider = new CCollider(wstring(wName)+L"_Col");
+            pNPCCollider->SetSize(pNPC->GetScale());
+            pNPC->AddComponent(pNPCCollider);
+            pNPC->RegisterBodyCollider(pNPCCollider);
             CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pNPC, LayerType::Object);
             pNPC->AddComponent(new CSticker(wName));
             pNPC->AddComponent(CAlbumPlayer::CreatePlayerFromFile(wstring(wName) + L"_IdleAni"

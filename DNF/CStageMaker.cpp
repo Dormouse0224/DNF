@@ -142,6 +142,11 @@ void CStageMaker::Begin()
 			pMonCollider->SetSize(pMonster->GetScale());
 			pMonster->AddComponent(pMonCollider);
 			pMonster->RegisterBodyCollider(pMonCollider);
+			CCollider* pAttCollider = new CCollider(pMonsterInfo->Name + L"_AttCol");
+			pAttCollider->SetSize(Vec2D(240, 120));
+			pAttCollider->SetOffset(Vec2D(-40, 15));
+			pMonster->AddComponent(pAttCollider);
+			pMonster->SetAttackCol(pAttCollider);
 			pMonster->SetMonsterTemplate(MonsterTemplate::dominatedunnaturals);
 			pMonster->AddAnimation(MonsterState::Idle, CAlbumPlayer::CreatePlayerFromFile(L"dominatedunnaturals_Idle"
 				, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\monster_dominatedunnaturals_Idle.animation"));

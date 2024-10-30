@@ -16,7 +16,8 @@ CPlayer_Idle::~CPlayer_Idle()
 void CPlayer_Idle::Enter()
 {
 	GetOwnerObj()->SetState((int)PlayerState::Idle);
-	GetOwnerObj()->GetBodyCollider()->SetSize(Vec2D(33, 97));
+	GetOwnerObj()->GetBodyCollider()->SetSize(Vec2D(33, 95));
+	GetOwnerObj()->GetBodyCollider()->SetOffset(Vec2D(0, 5));
 }
 
 void CPlayer_Idle::FinalTick()

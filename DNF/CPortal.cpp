@@ -28,9 +28,9 @@ CPortal::~CPortal()
 	m_DeactiveAnimation.clear();
 }
 
-void CPortal::BeginOverlap(CCollider* _Self, CCollider* _Other)
+void CPortal::Overlap(CCollider* _Self, CCollider* _Other)
 {
-	if (m_bActive && m_Dest != nullptr)
+	if (m_bActive && m_Dest != nullptr && (_Self->GetOwner()->GetGroundPos() - _Other->GetOwner()->GetGroundPos()).Length() < m_DetectRange)
 	{
 		CPlayer* pPlayer = dynamic_cast<CPlayer*>(_Other->GetOwner());
 		if (pPlayer)

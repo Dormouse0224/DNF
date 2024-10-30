@@ -49,6 +49,7 @@ public:
     void DeleteSelectedObj();
 
     CPlayer* GetPlayer() { return m_Player; }
+    void SetPlayer(CPlayer* _player) { m_Player = _player; }
 
     // 레벨에 있는 모든 객체를 삭제
     void ClearAll();

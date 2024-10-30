@@ -21,6 +21,7 @@ void CPlayer_Walk::Enter()
 {
 	GetOwnerObj()->SetState((int)PlayerState::Walk);
 	GetOwnerObj()->GetBodyCollider()->SetSize(Vec2D(36, 95));
+	GetOwnerObj()->GetBodyCollider()->SetOffset(Vec2D(0, 5));
 }
 
 void CPlayer_Walk::FinalTick()

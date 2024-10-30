@@ -20,6 +20,7 @@ void CPlayer_Run::Enter()
 {
 	GetOwnerObj()->SetState((int)PlayerState::Run);
 	GetOwnerObj()->GetBodyCollider()->SetSize(Vec2D(86, 75));
+	GetOwnerObj()->GetBodyCollider()->SetOffset(Vec2D(0, 20));
 }
 
 void CPlayer_Run::FinalTick()
