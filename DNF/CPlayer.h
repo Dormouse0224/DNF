@@ -11,6 +11,7 @@ public:
 
 private:
     vector<CAlbumPlayer*> m_Animation[(int)PlayerState::END];
+    bool m_bLookLeft;
 
 
 public:

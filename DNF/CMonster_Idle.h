@@ -8,7 +8,7 @@ public:
     ~CMonster_Idle();
 
 private:
-
+    float m_Timer;
 
 
 public:

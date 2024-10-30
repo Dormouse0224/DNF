@@ -68,12 +68,12 @@ void CAlbumPlayer::FinalTick()
 
 }
 
-void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraFallow)
+void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraFallow, bool _bFlipHorizontal)
 {
 	m_bLoadingEnd = true;
 	// 현재 씬을 재생
 	m_CurrentAlbum->m_Owner = _thisObj;
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, m_angle, bCameraFallow, m_Dodge);
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, m_angle, bCameraFallow, m_Dodge, _bFlipHorizontal);
 }
 
 // 오브젝트를 거치지 않고 직접 렌더링
@@ -100,7 +100,7 @@ void CAlbumPlayer::NextScene()
 
 void CAlbumPlayer::SetCurrentScene(int _SceneIndex)
 {
-	assert(_SceneIndex <= m_End && _SceneIndex >= m_Begin);
+	assert(_SceneIndex <= m_End - m_Begin && _SceneIndex >= 0);
 	m_SceneNumber = _SceneIndex;
 }
 

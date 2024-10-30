@@ -13,6 +13,7 @@
 
 CPlayer::CPlayer()
 	: CObj(L"Player")
+	, m_bLookLeft(false)
 {
 	SetLayerType(LayerType::Object);
 	SetScale(Vec2D(40, 95));
@@ -58,6 +59,14 @@ void CPlayer::Begin()
 
 void CPlayer::Tick()
 {
+	if (GetRigidBody()->GetSpeed().x < 0)
+	{
+		m_bLookLeft = true;
+	}
+	else if (GetRigidBody()->GetSpeed().x > 0)
+	{
+		m_bLookLeft = false;
+	}
 }
 
 void CPlayer::Render()
@@ -65,7 +74,7 @@ void CPlayer::Render()
 	int state = GetState();
 	for (int i = 0; i < m_Animation[state].size(); ++i)
 	{
-		m_Animation[state][i]->Render(this);
+		m_Animation[state][i]->Render(this, false, m_bLookLeft);
 	}
 }
 

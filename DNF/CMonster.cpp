@@ -2,6 +2,7 @@
 #include "CMonster.h"
 #include "CAlbumPlayer.h"
 #include "CDbgRender.h"
+#include "CRigidBody.h"
 
 CMonster::CMonster(wstring _name)
 	: CObj(_name)
@@ -11,8 +12,10 @@ CMonster::CMonster(wstring _name)
 	, m_AttackFrame(0, 0)
 	, m_AttackCol(nullptr)
 	, m_MonsterTemplate(MonsterTemplate::NONE)
+	, m_bLookLeft(false)
 {
 	SetLayerType(LayerType::Object);
+	SetRigidBody(new CRigidBody(L"Monster_RB"));
 }
 
 CMonster::~CMonster()
@@ -38,6 +41,15 @@ void CMonster::Begin()
 
 void CMonster::Tick()
 {
+	if (GetRigidBody()->GetSpeed().x < 0)
+	{
+		m_bLookLeft = true;
+	}
+	else if (GetRigidBody()->GetSpeed().x > 0)
+	{
+		m_bLookLeft = false;
+	}
+
 	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Circle
 		, GetGroundPos() - Vec2D(m_DetectRange, m_DetectRange), Vec2D(m_DetectRange, m_DetectRange) * 2, 0, Color(255, 0, 255, 0));
 	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Circle
@@ -49,7 +61,7 @@ void CMonster::Render()
 	int state = GetState();
 	for (int i = 0; i < m_Animation[state].size(); ++i)
 	{
-		m_Animation[state][i]->Render(this);
+		m_Animation[state][i]->Render(this, false, m_bLookLeft);
 	}
 }
 

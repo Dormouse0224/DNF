@@ -21,6 +21,7 @@ private:
     pair<int, int> m_AttackFrame;
     CCollider* m_AttackCol;
     MonsterTemplate m_MonsterTemplate;
+    bool m_bLookLeft;
 
 public:
     // 충돌 함수

@@ -120,6 +120,11 @@ public:
 	{
 		return sqrt((x * x) + (y * y));
 	}
+
+	Vec2D Normalize() const
+	{
+		return *this / sqrtf(x * x + y * y);
+	}
 };
 
 

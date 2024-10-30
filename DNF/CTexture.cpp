@@ -50,7 +50,7 @@ int CTexture::Load()
 
 // 오브젝트에 속한 텍스처의 렌더링
 // 오브젝트 로케이션 + 텍스쳐 자체 오프셋 + 추가 렌더링 오프셋(기본값 0)
-void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, bool bLinearDodge)
+void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, bool bLinearDodge, bool bFlipHorizontal)
 {
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
 	Vec2D Resolution = CEngine::GetInst()->GetResolution();
@@ -65,22 +65,23 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 	if (CameraIntersectCheck(CameraPos, Resolution, 0.f, FinalPos, m_Size, _angle) || bCameraFallow)
 	{
 		// 로드된 이미지를 해상도 비율에 맞춰 렌더링
-		//m_DC = CEngine::GetInst()->GetSubDC();
 		if (bLinearDodge)
 		{
-			// 원본 비트맵 이미지를 회전시킨 새 비트맵 생성
+			// 원본 비트맵 이미지를 회전 및 반전시킨 새 비트맵 생성
 			int newWidth = (int)(abs(m_Size.x * cos(_angle / 180 * PI)) + abs(m_Size.y * sin(_angle / 180 * PI)));
 			int newHeight = (int)(abs(m_Size.x * sin(_angle / 180 * PI)) + abs(m_Size.y * cos(_angle / 180 * PI)));
 			Bitmap RotatedBitmap(newWidth, newHeight);
 			Graphics graphics(&RotatedBitmap);
 			graphics.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 			graphics.TranslateTransform(newWidth / 2.0f, newHeight / 2.0f);
+			graphics.ScaleTransform(bFlipHorizontal ? -1.0f : 1.0f, 1.0f);
 			graphics.RotateTransform(_angle);
 			graphics.TranslateTransform(-m_Size.x / 2.0f, -m_Size.y / 2.0f);
 			graphics.DrawImage(m_Bitmap, Point(0, 0));
 
-			// 회전된 비트맵의 최종 렌더 좌표 계산
-			Vec2D RFinalPosLT = FinalPos.Clockwise(_angle) + (m_Size.Clockwise(_angle) / 2) - Vec2D(newWidth / 2, newHeight / 2) - CameraPos;
+			// 새 비트맵의 최종 렌더 좌표 계산
+			Vec2D rotatedCenterDiff = ((FinalPos + m_Size / 2) - ObjCenter).Clockwise(_angle);
+			Vec2D RFinalPosLT = ObjCenter + Vec2D(bFlipHorizontal ? -rotatedCenterDiff.x : rotatedCenterDiff.x, rotatedCenterDiff.y) - Vec2D(newWidth / 2, newHeight / 2) - CameraPos;
 			Vec2D RFinalPosRB = RFinalPosLT + Vec2D(newWidth, newHeight);
 
 			Bitmap* backbuffer = CEngine::GetInst()->GetBackbuffer()->GetBitmap();
@@ -107,9 +108,11 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 			Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
 			graphics.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 			graphics.TranslateTransform(ObjCenter.x, ObjCenter.y);		// 소속 오브젝트 중심점으로 회전중심 이동
+			graphics.ScaleTransform(bFlipHorizontal ? -1.0f : 1.0f, 1.0f);
 			graphics.RotateTransform(_angle);							// 회전 적용
 			graphics.TranslateTransform(-ObjCenter.x, -ObjCenter.y);	// 원래 위치로 이동
 			graphics.DrawImage(m_Bitmap, (int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y), (int)m_Size.x, (int)m_Size.y);
+			graphics.ResetTransform();
 		}
 	}
 }

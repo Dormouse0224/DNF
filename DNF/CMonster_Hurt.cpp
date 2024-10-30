@@ -5,6 +5,7 @@
 #include "CLevelMgr.h"
 #include "CMonster.h"
 #include "CTimeMgr.h"
+#include "CRigidBody.h"
 
 CMonster_Hurt::CMonster_Hurt(wstring _name)
 	: CState(_name)
@@ -28,6 +29,7 @@ void CMonster_Hurt::FinalTick()
 	{
 		GetFSM()->ChangeState(GetFSM()->GetPrevState());
 	}
+	GetOwnerObj()->GetRigidBody()->SetSpeed(Vec2D(0, 0));
 }
 
 void CMonster_Hurt::Exit()

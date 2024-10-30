@@ -5,6 +5,9 @@
 #include "CLevelMgr.h"
 #include "CKeyMgr.h"
 #include "CTextureMgr.h"
+#include "CStage.h"
+#include "CPlayer.h"
+
 
 CCameraMgr::CCameraMgr()
 	: m_CameraPos(Vec2D(0, 0))
@@ -53,6 +56,14 @@ void CCameraMgr::Tick()
 		if (Space == Key_state::PRESSED || Space == Key_state::TAP)
 		{
 			m_CameraPos = Vec2D(0, 0);
+		}
+	}
+	else
+	{
+		CStage* pStage = dynamic_cast<CStage*>(CLevelMgr::GetInst()->GetCurrentLevel());
+		if (pStage)
+		{
+			m_CameraPos = pStage->GetPlayer()->GetGroundPos() - CEngine::GetInst()->GetResolution() / 2.f;
 		}
 	}
 

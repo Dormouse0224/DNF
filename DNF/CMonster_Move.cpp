@@ -4,6 +4,7 @@
 #include "CPlayer.h"
 #include "CLevelMgr.h"
 #include "CMonster.h"
+#include "CRigidBody.h"
 
 CMonster_Move::CMonster_Move(wstring _name)
 	: CState(_name)
@@ -34,6 +35,9 @@ void CMonster_Move::FinalTick()
 			GetFSM()->ChangeState((int)MonsterState::Idle);
 		}
 	}
+
+	GetOwnerObj()->GetRigidBody()
+		->SetSpeed((CLevelMgr::GetInst()->GetCurrentLevel()->GetPlayer()->GetGroundPos() - GetOwnerObj()->GetGroundPos()).Normalize() * m_MoveSpeed);
 }
 
 void CMonster_Move::Exit()

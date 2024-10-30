@@ -21,6 +21,7 @@ public:
     void SetAirborne(bool _tf) { m_IsAirborne = _tf; }
 
     void AddSpeed(Vec2D _spd) { m_Speed = m_Speed + _spd; }
+    Vec2D GetSpeed() { return m_Speed; }
     void SetSpeed(Vec2D _spd) { m_Speed = _spd; }
 
     void Jump(float _power);

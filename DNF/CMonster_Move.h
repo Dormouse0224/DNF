@@ -8,7 +8,7 @@ public:
     ~CMonster_Move();
 
 private:
-
+    int m_MoveSpeed = 20;
 
 
 public:
