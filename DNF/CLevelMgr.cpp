@@ -6,11 +6,13 @@
 #include "CEngine.h"
 #include "CNpkMgr.h"
 #include "CTaskMgr.h"
+#include "CTimeMgr.h"
 
 #include "CLevel_Start.h"
 #include "CLevel_Edit.h"
 #include "CDungeonMaker.h"
 #include "CStageMaker.h"
+#include "CPurpleSeaRoad.h"
 
 #include "CAlbum.h"
 #include "CAlbumPlayer.h"
@@ -43,8 +45,9 @@ void CLevelMgr::Init()
 	CLevel_Edit* pEditLevel = new CLevel_Edit;
 	CDungeonMaker* pDungeonMaker = new CDungeonMaker;
 	CStageMaker* pStageMaker = new CStageMaker;
+	CPurpleSeaRoad* pCPurpleSeaRoad = new CPurpleSeaRoad;
 	ReadDungeonList();
-	m_CurrentLevel = pStartLevel;
+	m_CurrentLevel = pCPurpleSeaRoad;
 	m_CurrentLevel->Begin();
 }
 

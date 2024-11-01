@@ -109,7 +109,7 @@ void CAlbumPlayer::ChangeAlbum(string _AlbumPath, wstring _NpkPath)
 	m_CurrentAlbum = CTextureMgr::GetInst()->LoadAlbum(_AlbumPath, _NpkPath);
 }
 
-CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, wstring _filepath)
+CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, wstring _filepath, Vec2D&& _AdditionalOffset)
 {
 	ifstream animation;
 	AnimationInfo desc;
@@ -133,7 +133,7 @@ CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, wstring _filepat
 
 
 		CAlbumPlayer* pNewPlayer = new CAlbumPlayer(_Name, strAlbumPath, wstrNPKDir);
-		pNewPlayer->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset, desc.angle, desc.bDodge);
+		pNewPlayer->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset + _AdditionalOffset, desc.angle, desc.bDodge);
 		return pNewPlayer;
 	}
 	else

@@ -41,3 +41,15 @@ void CTimeMgr::Tick()
 		m_Time -= 1.f;
 	}
 }
+
+void CTimeMgr::TimeCheckStart()
+{
+	m_CheckTimer = std::chrono::high_resolution_clock::now();
+}
+
+LONGLONG CTimeMgr::TimeCheck()
+{
+	m_CheckDuration = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()- m_CheckTimer);
+	m_CheckTimer = std::chrono::high_resolution_clock::now();
+	return m_CheckDuration.count();
+}

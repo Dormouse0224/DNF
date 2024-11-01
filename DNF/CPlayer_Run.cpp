@@ -7,8 +7,6 @@
 
 CPlayer_Run::CPlayer_Run(wstring _name)
 	: CState(_name)
-	, m_bHorInit(false)
-	, m_bVertInit(false)
 {
 }
 
@@ -25,6 +23,8 @@ void CPlayer_Run::Enter()
 
 void CPlayer_Run::FinalTick()
 {
+	Vec2D curSpd = GetOwnerObj()->GetRigidBody()->GetSpeed();
+
 	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::UP) == Key_state::NONE
 		&& CKeyMgr::GetInst()->GetKeyState(Keyboard::DOWN) == Key_state::NONE
 		&& CKeyMgr::GetInst()->GetKeyState(Keyboard::LEFT) == Key_state::NONE
@@ -32,62 +32,19 @@ void CPlayer_Run::FinalTick()
 	{
 		GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Idle));
 	}
-
-
-	CKeyMgr* keyMgr = CKeyMgr::GetInst();
-
-	if (!m_bHorInit)
-	{
-		if (keyMgr->GetKeyState(Keyboard::UP) == Key_state::PRESSED)
-		{
-			GetOwnerObj()->GetRigidBody()->AddSpeed(Vec2D(0, -m_Speed));
-			m_bHorInit = true;
-		}
-		else if (keyMgr->GetKeyState(Keyboard::DOWN) == Key_state::PRESSED)
-		{
-			GetOwnerObj()->GetRigidBody()->AddSpeed(Vec2D(0, m_Speed));
-			m_bHorInit = true;
-		}
-	}
 	else
 	{
-		if (keyMgr->GetKeyState(Keyboard::DOWN) == Key_state::RELEASE)
-		{
-			GetOwnerObj()->GetRigidBody()->AddSpeed(Vec2D(0, -m_Speed));
-			m_bHorInit = false;
-		}
-		else if (keyMgr->GetKeyState(Keyboard::UP) == Key_state::RELEASE)
-		{
-			GetOwnerObj()->GetRigidBody()->AddSpeed(Vec2D(0, m_Speed));
-			m_bHorInit = false;
-		}
-	}
+		Vec2D spd(0, 0);
+		if (CKeyMgr::GetInst()->GetKeyState(Keyboard::UP) == Key_state::PRESSED)
+			spd = spd - Vec2D(0.f, m_Speed);
+		if (CKeyMgr::GetInst()->GetKeyState(Keyboard::DOWN) == Key_state::PRESSED)
+			spd = spd + Vec2D(0.f, m_Speed);
+		if (CKeyMgr::GetInst()->GetKeyState(Keyboard::LEFT) == Key_state::PRESSED)
+			spd = spd - Vec2D(m_Speed, 0.f);
+		if (CKeyMgr::GetInst()->GetKeyState(Keyboard::RIGHT) == Key_state::PRESSED)
+			spd = spd + Vec2D(m_Speed, 0.f);
 
-	if (!m_bVertInit)
-	{
-		if (keyMgr->GetKeyState(Keyboard::LEFT) == Key_state::PRESSED)
-		{
-			GetOwnerObj()->GetRigidBody()->AddSpeed(Vec2D(-m_Speed, 0));
-			m_bVertInit = true;
-		}
-		else if (keyMgr->GetKeyState(Keyboard::RIGHT) == Key_state::PRESSED)
-		{
-			GetOwnerObj()->GetRigidBody()->AddSpeed(Vec2D(m_Speed, 0));
-			m_bVertInit = true;
-		}
-	}
-	else
-	{
-		if (keyMgr->GetKeyState(Keyboard::RIGHT) == Key_state::RELEASE)
-		{
-			GetOwnerObj()->GetRigidBody()->AddSpeed(Vec2D(-m_Speed, 0));
-			m_bVertInit = false;
-		}
-		else if (keyMgr->GetKeyState(Keyboard::LEFT) == Key_state::RELEASE)
-		{
-			GetOwnerObj()->GetRigidBody()->AddSpeed(Vec2D(m_Speed, 0));
-			m_bVertInit = false;
-		}
+		GetOwnerObj()->GetRigidBody()->SetSpeed(spd);
 	}
 }
 

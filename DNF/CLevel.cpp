@@ -76,6 +76,7 @@ void CLevel::FinalTick()
 	}
 }
 
+
 void CLevel::Render()
 {
 	for (int i = 0; i < (int)LayerType::END; ++i)

@@ -60,10 +60,14 @@ void CCameraMgr::Tick()
 	}
 	else
 	{
+		Vec2D res = CEngine::GetInst()->GetResolution();
 		CStage* pStage = dynamic_cast<CStage*>(CLevelMgr::GetInst()->GetCurrentLevel());
 		if (pStage)
 		{
 			m_CameraPos = pStage->GetPlayer()->GetGroundPos() - CEngine::GetInst()->GetResolution() / 2.f;
+			m_CameraPos.x = max(0.0f, min(m_CameraPos.x, pStage->GetStageInfo()->StageSize.x - res.x));
+			m_CameraPos.y = max(0.0f, min(m_CameraPos.y, pStage->GetStageInfo()->StageSize.y - res.y));
+
 		}
 	}
 

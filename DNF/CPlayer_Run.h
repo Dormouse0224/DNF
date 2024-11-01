@@ -8,9 +8,7 @@ public:
     ~CPlayer_Run();
 
 private:
-    bool m_bHorInit;
-    bool m_bVertInit;
-    int m_Speed = 250;
+    float m_Speed = 250.f;
 
 
 public:

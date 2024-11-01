@@ -106,13 +106,24 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 		else
 		{
 			Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
-			graphics.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+			TextureBrush textureBrush(m_Bitmap);
+
+			// 프레임 방어를 위한 그래픽스 렌더링 세팅
+			graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+			graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+			graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+			graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+			graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+
 			graphics.TranslateTransform(ObjCenter.x, ObjCenter.y);		// 소속 오브젝트 중심점으로 회전중심 이동
 			graphics.ScaleTransform(bFlipHorizontal ? -1.0f : 1.0f, 1.0f);
 			graphics.RotateTransform(_angle);							// 회전 적용
 			graphics.TranslateTransform(-ObjCenter.x, -ObjCenter.y);	// 원래 위치로 이동
+
 			graphics.DrawImage(m_Bitmap, (int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y), (int)m_Size.x, (int)m_Size.y);
 			graphics.ResetTransform();
+
+
 		}
 	}
 }
@@ -175,9 +186,18 @@ void CTexture::DirectRender(Vec2D _RenderOffset, float _angle, bool bCameraFallo
 		else
 		{
 			Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+
+			// 프레임 방어를 위한 그래픽스 렌더링 세팅
+			graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+			graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+			graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+			graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+			graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+
 			graphics.TranslateTransform(AbsCenter.x, AbsCenter.y);		// 죄표계 원점으로 회전중심 이동
 			graphics.RotateTransform(_angle);							// 회전 적용
 			graphics.TranslateTransform(-AbsCenter.x, -AbsCenter.y);	// 원래 위치로 이동
+
 			Status st = graphics.DrawImage(m_Bitmap, (int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y), (int)m_Size.x, (int)m_Size.y);
 		}
 	}

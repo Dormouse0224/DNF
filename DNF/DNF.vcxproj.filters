@@ -173,6 +173,12 @@
     <Filter Include="main\06. Component\05. RigidBody">
       <UniqueIdentifier>{1aab1101-b249-4532-9704-1b623d92ca45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\08. State\Player\Jump">
+      <UniqueIdentifier>{f2b1d02d-460a-4609-83b1-619bf65c69c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Boss">
+      <UniqueIdentifier>{ffc66293-15da-4831-9c5a-934b04cb4a12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -367,6 +373,9 @@
     <ClInclude Include="CRigidBody.h">
       <Filter>main\06. Component\05. RigidBody</Filter>
     </ClInclude>
+    <ClInclude Include="CPurpleSeaRoad.h">
+      <Filter>main\04. Level\Boss</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -531,6 +540,9 @@
     </ClCompile>
     <ClCompile Include="CRigidBody.cpp">
       <Filter>main\06. Component\05. RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="CPurpleSeaRoad.cpp">
+      <Filter>main\04. Level\Boss</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

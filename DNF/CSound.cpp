@@ -154,7 +154,6 @@ bool CSound::LoadOGGSound(const wstring& _strPath)
 		return bytesToRead;
 	};
 
-	// seek 함수는 미구현
 	callbacks.seek_func = [](void* datasource, ogg_int64_t offset, int whence) -> int 
 	{
 		return -1;
@@ -173,12 +172,15 @@ bool CSound::LoadOGGSound(const wstring& _strPath)
 
 	// 메모리 버퍼로부터 ogg 데이터 로드
 	std::pair<const char*, size_t> memoryBuffer(buffer.data(), buffer.size());
-	assert(ov_open_callbacks(&memoryBuffer, &oggFile, nullptr, 0, callbacks) >= 0);
+	int res = ov_open_callbacks(&memoryBuffer, &oggFile, nullptr, 0, callbacks);
+	assert(res >= 0);
+
 
 	// Vorbis_info 및 waveformat 작성
 	vorbis_info* info = ov_info(&oggFile, -1);
+	int channels = info->channels;
 	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
-	waveFormat.nChannels = info->channels;
+	waveFormat.nChannels = channels;
 	waveFormat.nSamplesPerSec = info->rate;
 	waveFormat.wBitsPerSample = 16;
 	waveFormat.nBlockAlign = (waveFormat.nChannels * waveFormat.wBitsPerSample) / 8;

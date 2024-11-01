@@ -55,11 +55,6 @@ void CObj::AddComponent(CComponent* _Component)
 	// 추가되는 컴포넌트가 앨범플레이어인 경우
 	if (dynamic_cast<CAlbumPlayer*>(_Component))
 		m_AlbumPlayerVector.push_back((CAlbumPlayer*)_Component);
-	// 충돌체인경우 충돌체를 현재 레벨의 충돌체 벡터에 등록
-	//else if (dynamic_cast<CCollider*>(_Component))
-	//	CLevelMgr::GetInst()->GetCurrentLevel()->AddCollider((CCollider*)_Component, m_LayerType);
-	//else if (dynamic_cast<CSticker*>(_Component))
-	//	CLevelMgr::GetInst()->GetCurrentLevel()->AddSticker((CSticker*)_Component);
 }
 
 void CObj::RegisterBodyCollider(CCollider* _Coll)
@@ -97,6 +92,11 @@ void CObj::FinalTick()
 		m_ComponentVector[i]->FinalTick();
 	}
 }
+
+struct ThreadParams {
+	CAlbumPlayer* param1;
+	CObj* param2;
+};
 
 void CObj::Render()
 {

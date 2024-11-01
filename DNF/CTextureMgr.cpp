@@ -523,6 +523,12 @@ vector<CAlbum*> CTextureMgr::LoadNPK(wstring _NpkPath)
 	return AlbumList;
 }
 
+static DWORD WINAPI LoadSceneThread(LPVOID lpParam)
+{
+	CTexture* scene = static_cast<CTexture*>(lpParam);
+	scene->Load();
+	return 0;
+}
 
 CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 {
@@ -545,10 +551,39 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 				m_Albums.insert(make_pair(_album->GetPath(), _album));
 				if (_album->GetPath() == _AlbumPath)
 				{
+					//for (int i = 0; i < _album->GetSceneCount(); ++i)
+					//{
+					//	_album->GetScene(i)->Load();
+					//}
+
+					// 스레드 핸들 배열
+					std::vector<HANDLE> threads;
+
+					// 각 씬을 스레드에서 로드
 					for (int i = 0; i < _album->GetSceneCount(); ++i)
 					{
-						_album->GetScene(i)->Load();
+						HANDLE hThread = CreateThread(
+							NULL,            // 기본 보안 속성
+							0,               // 기본 스택 크기
+							LoadSceneThread, // 스레드 함수
+							_album->GetScene(i), // 스레드에 전달할 매개변수
+							0,               // 기본 생성 플래그
+							NULL);           // 스레드 ID
+
+						if (hThread != NULL) {
+							threads.push_back(hThread); // 스레드 핸들을 저장
+						}
 					}
+
+					// 모든 스레드가 종료될 때까지 대기
+					WaitForMultipleObjects(threads.size(), threads.data(), TRUE, INFINITE);
+
+					// 스레드 핸들 닫기
+					for (HANDLE thread : threads)
+					{
+						CloseHandle(thread);
+					}
+
 					result = _album;
 				}
 			}
@@ -556,15 +591,47 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 		// 앨범을 가져온 적이 있으면 엘범 정보를 바탕으로 메모리에 로드 (Texture 로드 호출 시 이미 메모리에 로드된 경우 다시 로드하지 않고 무시됨)
 		else
 		{
+			//for (int i = 0; i < iter->second->GetSceneCount(); ++i)
+			//{
+			//	iter->second->GetScene(i)->Load();
+			//}
+
+			// 스레드 핸들 배열
+			std::vector<HANDLE> threads;
+
+			// 각 씬을 스레드에서 로드
 			for (int i = 0; i < iter->second->GetSceneCount(); ++i)
 			{
-				iter->second->GetScene(i)->Load();
+				HANDLE hThread = CreateThread(
+					NULL,            // 기본 보안 속성
+					0,               // 기본 스택 크기
+					LoadSceneThread, // 스레드 함수
+					iter->second->GetScene(i), // 스레드에 전달할 매개변수
+					0,               // 기본 생성 플래그
+					NULL);           // 스레드 ID
+
+				if (hThread != NULL)
+				{
+					threads.push_back(hThread); // 스레드 핸들을 저장
+				}
 			}
+
+			// 모든 스레드가 종료될 때까지 대기
+			WaitForMultipleObjects(threads.size(), threads.data(), TRUE, INFINITE);
+
+			// 스레드 핸들 닫기
+			for (HANDLE thread : threads) {
+				CloseHandle(thread);
+			}
+
 			result = iter->second;
 		}
 	}
 	return result;
 }
+
+
+
 
 void CTextureMgr::SaveAlbum(string _AlbumName, string _Directory)
 {

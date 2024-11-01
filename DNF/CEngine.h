@@ -1,3 +1,5 @@
+#pragma once
+
 
 class CTexture;
 
@@ -27,6 +29,7 @@ private:
 	ULONG_PTR gdiplusToken;
 
 
+
 public:
 	HPEN GetPen(PEN_TYPE _Type) { return m_Pen[(UINT)_Type]; }
 	HBRUSH GetBrush(BRUSH_TYPE _Type) { return m_Brush[(UINT)_Type]; }
@@ -51,8 +54,9 @@ public:
 	void ChangeWindowSize(Vec2D _vResolution);
 
 
-	//HDC GetSubDC() { return m_hSubDC; }
+	HDC GetSubDC() { return m_hSubDC; }
 	HDC GetMainDC() { return m_hMainDC; }
 	//Bitmap*	GetSubBitmap() { return m_SubBitmap; }
 	CTexture* GetBackbuffer() { return m_Backbuffer; }
+	HBITMAP GetBackbufferHandle() { return m_hSubBitmap; }
 };

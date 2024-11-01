@@ -149,6 +149,7 @@ enum class PlayerState
 	Walk,
 	Run,
 	Attack,
+	Jump,
 
 
 	END

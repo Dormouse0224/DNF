@@ -3,6 +3,7 @@
 #include "CKeyMgr.h"
 #include "CObj.h"
 #include "CCollider.h"
+#include "CRigidBody.h"
 
 CPlayer_Idle::CPlayer_Idle(wstring _name)
 	: CState(_name)
@@ -18,6 +19,7 @@ void CPlayer_Idle::Enter()
 	GetOwnerObj()->SetState((int)PlayerState::Idle);
 	GetOwnerObj()->GetBodyCollider()->SetSize(Vec2D(33, 95));
 	GetOwnerObj()->GetBodyCollider()->SetOffset(Vec2D(0, 5));
+	GetOwnerObj()->GetRigidBody()->SetSpeed(Vec2D(0, 0));
 }
 
 void CPlayer_Idle::FinalTick()
