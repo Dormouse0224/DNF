@@ -1,40 +1,38 @@
 #include "pch.h"
-#include "CPlayer_Run.h"
+#include "CPlayer_Jump.h"
 #include "CObj.h"
-#include "CKeyMgr.h"
-#include "CRigidBody.h"
 #include "CCollider.h"
+#include "CRigidBody.h"
+#include "CKeyMgr.h"
 
-CPlayer_Run::CPlayer_Run(wstring _name)
+CPlayer_Jump::CPlayer_Jump(wstring _name)
 	: CState(_name)
 {
 }
 
-CPlayer_Run::~CPlayer_Run()
+CPlayer_Jump::~CPlayer_Jump()
 {
 }
 
-void CPlayer_Run::Enter()
+void CPlayer_Jump::Enter()
 {
-	GetOwnerObj()->SetState((int)PlayerState::Run);
-	GetOwnerObj()->GetBodyCollider()->SetSize(Vec2D(86, 75));
-	GetOwnerObj()->GetBodyCollider()->SetOffset(Vec2D(0, 20));
+	GetOwnerObj()->SetState((int)PlayerState::Jump);
+	GetOwnerObj()->GetBodyCollider()->SetSize(Vec2D(35, 80));
+	GetOwnerObj()->GetBodyCollider()->SetOffset(Vec2D(10, 5));
 }
 
-void CPlayer_Run::FinalTick()
+void CPlayer_Jump::FinalTick()
 {
-	Vec2D curSpd = GetOwnerObj()->GetRigidBody()->GetSpeed();
-
+	Vec2D spd(0, 0);
 	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::UP) == Key_state::NONE
 		&& CKeyMgr::GetInst()->GetKeyState(Keyboard::DOWN) == Key_state::NONE
 		&& CKeyMgr::GetInst()->GetKeyState(Keyboard::LEFT) == Key_state::NONE
 		&& CKeyMgr::GetInst()->GetKeyState(Keyboard::RIGHT) == Key_state::NONE)
 	{
-		GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Idle));
+		GetOwnerObj()->GetRigidBody()->SetSpeed(spd);
 	}
 	else
 	{
-		Vec2D spd(0, 0);
 		if (CKeyMgr::GetInst()->GetKeyState(Keyboard::UP) == Key_state::PRESSED)
 			spd = spd - Vec2D(0.f, m_Speed);
 		if (CKeyMgr::GetInst()->GetKeyState(Keyboard::DOWN) == Key_state::PRESSED)
@@ -46,17 +44,13 @@ void CPlayer_Run::FinalTick()
 
 		GetOwnerObj()->GetRigidBody()->SetSpeed(spd);
 	}
-	if (GetOwnerObj()->GetRigidBody()->GetAirborne())
-	{
-		GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Jump));
-	}
 
-	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::SPACE) == Key_state::TAP)
+	if (!(GetOwnerObj()->GetRigidBody()->GetAirborne()))
 	{
-		GetOwnerObj()->GetRigidBody()->Jump(800.f);
+		GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Idle));
 	}
 }
 
-void CPlayer_Run::Exit()
+void CPlayer_Jump::Exit()
 {
 }

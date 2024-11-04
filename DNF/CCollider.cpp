@@ -20,6 +20,7 @@ CCollider::~CCollider()
 {
 }
 
+
 void CCollider::BeginOverlap(CCollider* _Other)
 {
 	++m_OverlapCount;
@@ -39,8 +40,18 @@ void CCollider::EndOverlap(CCollider* _Other)
 
 void CCollider::FinalTick()
 {
+	if (GetOwner()->IsLookLeft())
+	{
+		m_RelativeOffset = Vec2D(GetOwner()->GetScale().x - m_Offset.x - m_Size.x, m_Offset.y);
+	}
+	else
+	{
+		m_RelativeOffset = m_Offset;
+	}
+
+
 	// 충돌체 위치 갱신
-	m_Location = m_Offset + GetOwner()->GetLocation();
+	m_Location = m_RelativeOffset + GetOwner()->GetLocation();
 
 	// Collider 등록하기
 	LayerType layertype = GetOwner()->GetLayerType();

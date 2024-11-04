@@ -17,6 +17,9 @@ CObj::CObj(wstring _Name)
 	, m_State(0)
 	, m_BodyCollider(nullptr)
 	, m_RigidBody(nullptr)
+	, m_bLookLeft(false)
+	, m_GroundPosInit(false)
+	, m_bFallowCam(false)
 {
 }
 
@@ -25,6 +28,13 @@ CObj::CObj(wstring _Name, Vec2D _Loc, Vec2D _Scale)
 	, m_Location(_Loc)
 	, m_Scale(_Scale)
 	, m_Dead(false)
+	, m_GroundPos(0, 0)
+	, m_State(0)
+	, m_BodyCollider(nullptr)
+	, m_RigidBody(nullptr)
+	, m_bLookLeft(false)
+	, m_GroundPosInit(false)
+	, m_bFallowCam(false)
 {
 }
 
@@ -36,6 +46,16 @@ CObj::~CObj()
 		delete m_ComponentVector[i];
 	}
 	m_ComponentVector.clear();
+}
+
+void CObj::SetLocation(Vec2D _Location)
+{
+	m_Location = _Location; 
+	if (!m_GroundPosInit)
+	{
+		m_GroundPos = Vec2D(m_Location.x + (m_Scale.x / 2.f), m_Location.y + m_Scale.y);
+		m_GroundPosInit = true;
+	}
 }
 
 void CObj::SetScale(Vec2D _Scale)
@@ -102,7 +122,7 @@ void CObj::Render()
 {
 	for (int i = 0; i < m_AlbumPlayerVector.size(); ++i)
 	{
-		m_AlbumPlayerVector[i]->Render(this);
+		m_AlbumPlayerVector[i]->Render(this, m_bFallowCam, m_bLookLeft);
 	}
 }
 

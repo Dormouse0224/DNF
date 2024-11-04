@@ -10,15 +10,16 @@ public:
 private:
     Vec2D m_Speed;
     bool m_IsAirborne;
-    float m_AirborneTime;
+    float m_AirborneHeight;
+    float m_AirborneSpeed;
 
-    float m_Gravity = 10.f;
     
 public:
     virtual void FinalTick();
 
     bool GetAirborne() { return m_IsAirborne; }
     void SetAirborne(bool _tf) { m_IsAirborne = _tf; }
+    float GetAirborneHeight() { return m_AirborneHeight; }
 
     void AddSpeed(Vec2D _spd) { m_Speed = m_Speed + _spd; }
     Vec2D GetSpeed() { return m_Speed; }

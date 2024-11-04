@@ -1,17 +1,17 @@
 #pragma once
 #include "CStage.h"
-
-class CPurpleSeaRoad :
+class CCliff :
     public CStage
 {
 public:
-    CPurpleSeaRoad();
-    ~CPurpleSeaRoad();
-
+    CCliff();
+    ~CCliff();
 
 private:
-    float m_Timer;
-
+    CAlbumPlayer* m_Cliff[2];
+    float m_Speed = 2400.f;
+    float m_Duration;
+    bool m_fadeout;
 
 public:
     virtual void Begin() override;

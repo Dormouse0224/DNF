@@ -25,7 +25,7 @@ void CTimeMgr::Init()
 void CTimeMgr::Tick()
 {
 	QueryPerformanceCounter(&m_CurCount);
-	m_DT = (float)(m_CurCount.QuadPart - m_PrevCount.QuadPart) / (float)(m_Frequency.QuadPart);
+	m_DT = min((float)(m_CurCount.QuadPart - m_PrevCount.QuadPart) / (float)(m_Frequency.QuadPart), 0.5f);
 	m_PrevCount = m_CurCount;
 
 	++m_FPS;

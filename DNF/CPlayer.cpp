@@ -5,15 +5,16 @@
 #include "CFSM.h"
 #include "CRigidBody.h"
 #include "CCollider.h"
+#include "CDbgRender.h"
 
 #include "CPlayer_Idle.h"
 #include "CPlayer_Walk.h"
 #include "CPlayer_Run.h"
+#include "CPlayer_Jump.h"
 
 
 CPlayer::CPlayer()
 	: CObj(L"Player")
-	, m_bLookLeft(false)
 {
 	SetLayerType(LayerType::Object);
 	SetScale(Vec2D(40, 95));
@@ -23,11 +24,14 @@ CPlayer::CPlayer()
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\archer_skin_00_Walk.animation"));
 	AddAnimation(PlayerState::Run, CAlbumPlayer::CreatePlayerFromFile(L"archer_skin_00_Run"
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\archer_skin_00_Run.animation"));
+	AddAnimation(PlayerState::Jump, CAlbumPlayer::CreatePlayerFromFile(L"archer_skin_00_Jump"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\archer_skin_00_Jump.animation"));
 
 	CFSM* pFSM = new CFSM(L"Player_FSM");
 	pFSM->AddState((int)PlayerState::Idle, new CPlayer_Idle(L"Player_Idle"));
 	pFSM->AddState((int)PlayerState::Walk, new CPlayer_Walk(L"Player_Walk"));
 	pFSM->AddState((int)PlayerState::Run, new CPlayer_Run(L"Player_Run"));
+	pFSM->AddState((int)PlayerState::Jump, new CPlayer_Jump(L"Player_Jump"));
 	AddComponent(pFSM);
 
 	SetRigidBody(new CRigidBody(L"Player_RB"));
@@ -59,6 +63,23 @@ void CPlayer::Begin()
 
 void CPlayer::Tick()
 {
+	// 바닥 위치 갱신
+	Vec2D gp(GetLocation().x + (GetScale().x / 2.f), GetLocation().y + GetScale().y);
+	if (GetRigidBody() != nullptr)
+	{
+		SetGroundPos(gp - Vec2D(0.f, GetRigidBody()->GetAirborneHeight()));
+	}
+	else
+	{
+		SetGroundPos(gp);
+	}
+
+
+	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Circle, GetGroundPos() - Vec2D(5, 5)
+		, Vec2D(10, 10), 0, Color(255, 0, 0, 255));
+
+	bool temp = m_bLookLeft;
+
 	if (GetRigidBody()->GetSpeed().x < 0)
 	{
 		m_bLookLeft = true;
@@ -67,6 +88,7 @@ void CPlayer::Tick()
 	{
 		m_bLookLeft = false;
 	}
+	
 }
 
 void CPlayer::Render()

@@ -1,16 +1,22 @@
 #pragma once
 #include "CStage.h"
 
-class CPurpleSeaRoad :
+class CObj;
+
+class CS01 :
     public CStage
 {
 public:
-    CPurpleSeaRoad();
-    ~CPurpleSeaRoad();
-
+    CS01();
+    ~CS01();
 
 private:
-    float m_Timer;
+    float m_Duration;
+    vector<CObj*> m_WaitList;
+    int m_toDeleteId;
+
+    bool m_PlayerIncome;
+    bool m_scene01;
 
 
 public:

@@ -1,16 +1,13 @@
 #pragma once
 #include "CStage.h"
-
-class CPurpleSeaRoad :
+class CS03 :
     public CStage
 {
 public:
-    CPurpleSeaRoad();
-    ~CPurpleSeaRoad();
-
+    CS03();
+    ~CS03();
 
 private:
-    float m_Timer;
 
 
 public:

@@ -30,6 +30,7 @@ private:
 public:
     void SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D m_Offset, float _angle, bool _Dodge);
     void SetFPS(int _FPS) { m_FPS = _FPS; }
+    Vec2D GetOffset() { return m_Offset; }
     void SetOffset(Vec2D&& _offset) { m_Offset = _offset; }
     void FinalTick() override;
     void Render(CObj* _thisObj, bool bCameraFallow = false, bool _bFlipHorizontal = false);

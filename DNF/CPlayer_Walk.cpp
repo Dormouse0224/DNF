@@ -54,7 +54,15 @@ void CPlayer_Walk::FinalTick()
 		GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Run));
 	}
 
-	
+	if (GetOwnerObj()->GetRigidBody()->GetAirborne())
+	{
+		GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Jump));
+	}
+
+	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::SPACE) == Key_state::TAP)
+	{
+		GetOwnerObj()->GetRigidBody()->Jump(800.f);
+	}
 	
 }
 

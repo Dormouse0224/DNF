@@ -10,6 +10,7 @@ public:
 
 private:
     Vec2D m_Offset;
+    Vec2D m_RelativeOffset;
     Vec2D m_Location;
     Vec2D m_Size;
     LayerType m_LayerType;

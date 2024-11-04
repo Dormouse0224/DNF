@@ -6,6 +6,10 @@
 #include "CPlayer.h"
 #include "CSoundMgr.h"
 #include "CSound.h"
+#include "CTimeMgr.h"
+#include "CLevelMgr.h"
+#include "CCameraMgr.h"
+#include "CRigidBody.h"
 
 CPurpleSeaRoad::CPurpleSeaRoad()
 	: CStage(L"PurpleSeaRoad")
@@ -22,6 +26,8 @@ CPurpleSeaRoad::~CPurpleSeaRoad()
 
 void CPurpleSeaRoad::Begin()
 {
+	SetCameraFollowPlayer(true);
+
 	// 배경 객체 생성 후 애니메이션 입력
 	CBackground* pBackground = new CBackground(GetName() + L"_Background_0");
 	pBackground->SetScale(m_StageInfo->StageSize);
@@ -51,25 +57,37 @@ void CPurpleSeaRoad::Begin()
 		+ L"\\animation\\map_purplesearoad_mistspinfront.animation", Vec2D(1200, 320)));
 
 
-
-
-
 	// 플레이어 추가
 	CPlayer* pPlayer = new CPlayer();
 	AddObject(pPlayer, LayerType::Object);
 	SetPlayer(pPlayer);
+	pPlayer->SetLocation(Vec2D(100, 450));
 
 	// BGM이 있으면 재생
 	if (!m_StageInfo->BGMPath.empty())
 	{
 		m_BGM = CSoundMgr::GetInst()->GetSound(m_StageInfo->BGMPath, L"\\music\\" + m_StageInfo->BGMPath);
-		m_BGM->SetVolume(50);
 		m_BGM->PlayToBGM(true);
 	}
 }
 
 void CPurpleSeaRoad::Tick()
 {
+	if (GetPlayer()->GetGroundPos() >> Vec2D(1200, 320) && GetPlayer()->GetGroundPos() << Vec2D(1550, 470))
+		m_Timer += CTimeMgr::GetInst()->GetDeltaTime();
+
+	if (m_Timer > 3.f)
+	{
+		m_Timer = 0;
+		CCameraMgr::GetInst()->SetEffect(CameraEffect::FadeOut);
+		SetGravity(0);
+		GetPlayer()->GetRigidBody()->Jump(700.f);
+	}
+
+	if (CCameraMgr::GetInst()->IsEffectFin())
+	{
+		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"Cliff"));
+	}
 
 	CLevel::Tick();
 }

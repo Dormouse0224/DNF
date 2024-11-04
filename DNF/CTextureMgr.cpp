@@ -509,25 +509,35 @@ void CTextureMgr::WriteColor(char* _dest, const char* _src, ColorBits _bits)
 
 vector<CAlbum*> CTextureMgr::LoadNPK(wstring _NpkPath)
 {
-	ifstream readfile;
-	readfile.open(_NpkPath, ios::binary);
-	assert(readfile.is_open());	// 파일 읽기 오류
-	// NPK 파일 읽어서 앨범 저장
-	vector<CAlbum*> AlbumList = CNpkMgr::GetInst()->ReadNpk(readfile, _NpkPath);
-	readfile.close();
-	for (CAlbum* _album : AlbumList)
+	vector<CAlbum*> AlbumList;
+	map<wstring, vector<CAlbum*>>::iterator iter = m_NPKs.find(_NpkPath);
+	if (iter == m_NPKs.end())
 	{
-		m_Albums.insert(make_pair(_album->GetPath(), _album));
+		ifstream readfile;
+		readfile.open(_NpkPath, ios::binary);
+		assert(readfile.is_open());	// 파일 읽기 오류
+		// NPK 파일 읽어서 앨범 저장
+		AlbumList = CNpkMgr::GetInst()->ReadNpk(readfile, _NpkPath);
+		readfile.close();
+		for (CAlbum* _album : AlbumList)
+		{
+			m_Albums.insert(make_pair(_album->GetPath(), _album));
+		}
+		m_NPKs.insert(make_pair(_NpkPath, AlbumList));
+	}
+	else
+	{
+		AlbumList = iter->second;
 	}
 
 	return AlbumList;
 }
 
-static DWORD WINAPI LoadSceneThread(LPVOID lpParam)
+void CALLBACK LoadSceneThread(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WORK work)
 {
-	CTexture* scene = static_cast<CTexture*>(lpParam);
-	scene->Load();
-	return 0;
+	std::pair<CAlbum*, int>* data = static_cast<std::pair<CAlbum*, int>*>(context);
+	data->first->GetScene(data->second)->Load();
+	delete data; // 할당된 메모리 해제
 }
 
 CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
@@ -556,37 +566,75 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 					//	_album->GetScene(i)->Load();
 					//}
 
-					// 스레드 핸들 배열
-					std::vector<HANDLE> threads;
+					//// 스레드 핸들 배열
+					//std::vector<HANDLE> threads;
 
-					// 각 씬을 스레드에서 로드
-					for (int i = 0; i < _album->GetSceneCount(); ++i)
-					{
-						HANDLE hThread = CreateThread(
-							NULL,            // 기본 보안 속성
-							0,               // 기본 스택 크기
-							LoadSceneThread, // 스레드 함수
-							_album->GetScene(i), // 스레드에 전달할 매개변수
-							0,               // 기본 생성 플래그
-							NULL);           // 스레드 ID
+					//// 각 씬을 스레드에서 로드
+					//for (int i = 0; i < _album->GetSceneCount(); ++i)
+					//{
+					//	HANDLE hThread = CreateThread(
+					//		NULL,            // 기본 보안 속성
+					//		0,               // 기본 스택 크기
+					//		LoadSceneThread, // 스레드 함수
+					//		_album->GetScene(i), // 스레드에 전달할 매개변수
+					//		0,               // 기본 생성 플래그
+					//		NULL);           // 스레드 ID
 
-						if (hThread != NULL) {
-							threads.push_back(hThread); // 스레드 핸들을 저장
+					//	if (hThread != NULL) {
+					//		threads.push_back(hThread); // 스레드 핸들을 저장
+					//	}
+					//}
+
+					//// 모든 스레드가 종료될 때까지 대기
+					//WaitForMultipleObjects(threads.size(), threads.data(), TRUE, INFINITE);
+
+					//// 스레드 핸들 닫기
+					//for (HANDLE thread : threads)
+					//{
+					//	CloseHandle(thread);
+					//}
+
+					// 스레드 풀 생성
+					PTP_POOL pool = CreateThreadpool(nullptr);
+					if (!pool) {
+						std::cerr << "Failed to create thread pool.\n";
+						return nullptr;
+					}
+
+					// 스레드 풀 환경 설정
+					TP_CALLBACK_ENVIRON callbackEnv;
+					InitializeThreadpoolEnvironment(&callbackEnv);
+					SetThreadpoolCallbackPool(&callbackEnv, pool);
+
+					// 각 씬에 대해 작업을 큐에 추가
+					std::vector<PTP_WORK> workItems;
+					for (int i = 0; i < _album->GetSceneCount(); ++i) {
+						auto* data = new std::pair<CAlbum*, int>(_album, i);
+						PTP_WORK work = CreateThreadpoolWork(LoadSceneThread, data, &callbackEnv);
+						if (work) {
+							workItems.push_back(work);
+							SubmitThreadpoolWork(work);
+						}
+						else {
+							delete data;
+							std::cerr << "Failed to create thread pool work item.\n";
 						}
 					}
 
-					// 모든 스레드가 종료될 때까지 대기
-					WaitForMultipleObjects(threads.size(), threads.data(), TRUE, INFINITE);
-
-					// 스레드 핸들 닫기
-					for (HANDLE thread : threads)
-					{
-						CloseHandle(thread);
+					// 모든 작업이 완료될 때까지 대기
+					for (PTP_WORK work : workItems) {
+						WaitForThreadpoolWorkCallbacks(work, FALSE);
+						CloseThreadpoolWork(work);
 					}
+
+					// 스레드 풀 및 환경 정리
+					DestroyThreadpoolEnvironment(&callbackEnv);
+					CloseThreadpool(pool);
 
 					result = _album;
 				}
 			}
+			m_NPKs.insert(make_pair(_NpkPath, AlbumList));
 		}
 		// 앨범을 가져온 적이 있으면 엘범 정보를 바탕으로 메모리에 로드 (Texture 로드 호출 시 이미 메모리에 로드된 경우 다시 로드하지 않고 무시됨)
 		else
@@ -596,33 +644,70 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 			//	iter->second->GetScene(i)->Load();
 			//}
 
-			// 스레드 핸들 배열
-			std::vector<HANDLE> threads;
+			//// 스레드 핸들 배열
+			//std::vector<HANDLE> threads;
 
-			// 각 씬을 스레드에서 로드
-			for (int i = 0; i < iter->second->GetSceneCount(); ++i)
-			{
-				HANDLE hThread = CreateThread(
-					NULL,            // 기본 보안 속성
-					0,               // 기본 스택 크기
-					LoadSceneThread, // 스레드 함수
-					iter->second->GetScene(i), // 스레드에 전달할 매개변수
-					0,               // 기본 생성 플래그
-					NULL);           // 스레드 ID
+			//// 각 씬을 스레드에서 로드
+			//for (int i = 0; i < iter->second->GetSceneCount(); ++i)
+			//{
+			//	HANDLE hThread = CreateThread(
+			//		NULL,            // 기본 보안 속성
+			//		0,               // 기본 스택 크기
+			//		LoadSceneThread, // 스레드 함수
+			//		iter->second->GetScene(i), // 스레드에 전달할 매개변수
+			//		0,               // 기본 생성 플래그
+			//		NULL);           // 스레드 ID
 
-				if (hThread != NULL)
-				{
-					threads.push_back(hThread); // 스레드 핸들을 저장
+			//	if (hThread != NULL)
+			//	{
+			//		threads.push_back(hThread); // 스레드 핸들을 저장
+			//	}
+			//}
+
+			//// 모든 스레드가 종료될 때까지 대기
+			//WaitForMultipleObjects(threads.size(), threads.data(), TRUE, INFINITE);
+
+			//// 스레드 핸들 닫기
+			//for (HANDLE thread : threads) {
+			//	CloseHandle(thread);
+			//}
+
+			// 스레드 풀 생성
+			PTP_POOL pool = CreateThreadpool(nullptr);
+			if (!pool) {
+				std::cerr << "Failed to create thread pool.\n";
+				return nullptr;
+			}
+
+			// 스레드 풀 환경 설정
+			TP_CALLBACK_ENVIRON callbackEnv;
+			InitializeThreadpoolEnvironment(&callbackEnv);
+			SetThreadpoolCallbackPool(&callbackEnv, pool);
+
+			// 각 씬에 대해 작업을 큐에 추가
+			std::vector<PTP_WORK> workItems;
+			for (int i = 0; i < iter->second->GetSceneCount(); ++i) {
+				auto* data = new std::pair<CAlbum*, int>(iter->second, i);
+				PTP_WORK work = CreateThreadpoolWork(LoadSceneThread, data, &callbackEnv);
+				if (work) {
+					workItems.push_back(work);
+					SubmitThreadpoolWork(work);
+				}
+				else {
+					delete data;
+					std::cerr << "Failed to create thread pool work item.\n";
 				}
 			}
 
-			// 모든 스레드가 종료될 때까지 대기
-			WaitForMultipleObjects(threads.size(), threads.data(), TRUE, INFINITE);
-
-			// 스레드 핸들 닫기
-			for (HANDLE thread : threads) {
-				CloseHandle(thread);
+			// 모든 작업이 완료될 때까지 대기
+			for (PTP_WORK work : workItems) {
+				WaitForThreadpoolWorkCallbacks(work, FALSE);
+				CloseThreadpoolWork(work);
 			}
+
+			// 스레드 풀 및 환경 정리
+			DestroyThreadpoolEnvironment(&callbackEnv);
+			CloseThreadpool(pool);
 
 			result = iter->second;
 		}

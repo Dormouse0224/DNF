@@ -20,6 +20,9 @@ private:
 
     CObj* m_SelectedObj;
     CPlayer* m_Player;
+    bool m_CameraFollowPlayer;
+
+    float m_Gravity = 1500.f;
 
 public:
     virtual void Begin();
@@ -50,6 +53,11 @@ public:
 
     CPlayer* GetPlayer() { return m_Player; }
     void SetPlayer(CPlayer* _player) { m_Player = _player; }
+    bool GetCameraFollowPlayer() { return m_CameraFollowPlayer; }
+    void SetCameraFollowPlayer(bool _b) { m_CameraFollowPlayer = _b; }
+
+    float GetGravity() { return m_Gravity; }
+    void SetGravity(float _gravity) { m_Gravity = _gravity; }
 
     // 레벨에 있는 모든 객체를 삭제
     void ClearAll();

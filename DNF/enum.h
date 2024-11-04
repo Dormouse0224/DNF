@@ -148,8 +148,27 @@ enum class PlayerState
 	Idle,
 	Walk,
 	Run,
-	Attack,
 	Jump,
+	Attack,
+
+
+	END
+};
+
+enum class LargoState
+{
+	Income,
+	Attack,
+	Pattern,
+	Death,
+
+	END
+};
+
+enum class CameraEffect
+{
+	FadeIn,
+	FadeOut,
 
 
 	END

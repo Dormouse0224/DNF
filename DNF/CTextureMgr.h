@@ -7,6 +7,7 @@ class CTextureMgr
 
 private:
 	map<string, CAlbum*> m_Albums;
+	map<wstring, vector<CAlbum*>> m_NPKs;
 	CAlbum* m_TempAlbum;			// 기본 임시 앨범
 	CAlbum* m_SysReservedAlbum;		// 프로그램에서 사용되는 텍스처를 저장해두는 앨범
 
