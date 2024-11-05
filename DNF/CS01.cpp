@@ -26,6 +26,13 @@ CS01::CS01()
 
 CS01::~CS01()
 {
+	if (m_scene01 == false)
+	{
+		for (int i = 0; i < m_WaitList.size(); ++i)
+		{
+			delete m_WaitList[i];
+		}
+	}
 }
 
 void CS01::Begin()
@@ -127,7 +134,7 @@ void CS01::Tick()
 					, L"\\sound\\sounds_mon_duskyisland_vo\\largo_4th_vo_meet_01.ogg")->Play();
 				CSound* pSound = CSoundMgr::GetInst()->GetSound(L"duskyisland_largo_3rdform_3phase"
 					, L"\\music\\duskyisland_largo_3rdform_3phase.ogg");
-				pSound->SetVolume(10);
+				pSound->SetVolume(15);
 				pSound->PlayToBGM(true);
 				CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"S03"));
 			}

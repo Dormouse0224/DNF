@@ -111,7 +111,7 @@ bool CSound::LoadWaveSound(const wstring& _strPath)
 	mmioClose(hFile, 0);
 
 	// 기본 볼륨 50으로 설정
-	SetVolume(3.f);
+	SetVolume(5.f);
 
 	return true;
 }
@@ -226,7 +226,7 @@ bool CSound::LoadOGGSound(const wstring& _strPath)
 	m_pSoundBuffer->Unlock(pAudioPtr1, audioBytes1, pAudioPtr2, audioBytes2);
 
 	// 기본 볼륨 50으로 설정
-	SetVolume(3.f);
+	SetVolume(5.f);
 
 	return true;
 }

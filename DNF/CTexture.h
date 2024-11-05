@@ -42,13 +42,13 @@ public:
     void SetOwner(CAlbum* _Album) { m_Owner = _Album; }
 
     virtual int Load() override;
-    void Render(Vec2D _RenderOffset = Vec2D(0, 0), float _angle = 0.f, bool bCameraFallow = false, bool bLinearDodge = false, bool bFlipHorizontal = true);
+    void Render(Vec2D _RenderOffset = Vec2D(0, 0), float _angle = 0.f, bool bCameraFallow = false, bool bLinearDodge = false, bool bFlipHorizontal = true, float _renderPercent = 1.f);
     void DirectRender(Vec2D _RenderOffset = Vec2D(0, 0), float _angle = 0.f, bool bCameraFallow = false, bool bLinearDodge = false);
     int GetLength() { return Length; }
     Bitmap* GetBitmap() { return m_Bitmap; }
 
 private:
-    bool CameraIntersectCheck(Vec2D& _locationA, Vec2D& _SizeA, float _AngleA, Vec2D& _locationB, Vec2D& _SizeB, float _AngleB);
+    bool CameraIntersectCheck(Vec2D& _locationA, Vec2D& _SizeA, float _AngleA, Vec2D& _locationB, Vec2D& _SizeB, float _AngleB, Vec2D _rotationPivotA, Vec2D _rotationPivotB);
     static bool LineCrossCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _q1, Vec2D& _q2);
     static int PointDirectionCheck(Vec2D& _p, Vec2D& _q, Vec2D& _r);
     static bool LineOverlapCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _q1, Vec2D& _q2);

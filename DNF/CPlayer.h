@@ -11,6 +11,7 @@ public:
 
 private:
     vector<CAlbumPlayer*> m_Animation[(int)PlayerState::END];
+    float m_YogiGauge;
 
 
 public:
@@ -24,5 +25,9 @@ public:
     virtual void Render();      // 오브젝트를 그리기
 
     void AddAnimation(PlayerState _state, CAlbumPlayer* _animation);
+
+    float GetYogiGauge() { return m_YogiGauge; }
+    float SetYogiGauge(float _val) { m_YogiGauge = _val; }
+    void AddYogiGauge(float _val) { m_YogiGauge  = min(m_YogiGauge + _val, 110); }
 };
 

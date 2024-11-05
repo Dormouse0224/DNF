@@ -11,6 +11,8 @@
 #include "CCameraMgr.h"
 #include "CRigidBody.h"
 
+#include "CTextureMgr.h"
+
 CPurpleSeaRoad::CPurpleSeaRoad()
 	: CStage(L"PurpleSeaRoad")
 {
@@ -26,6 +28,8 @@ CPurpleSeaRoad::~CPurpleSeaRoad()
 
 void CPurpleSeaRoad::Begin()
 {
+	CTextureMgr::PreloadFromFile(L"BossResources.txt");
+
 	SetCameraFollowPlayer(true);
 
 	// 배경 객체 생성 후 애니메이션 입력

@@ -212,6 +212,12 @@
     <Filter Include="main\08. State\Boss\Pattern">
       <UniqueIdentifier>{3b5ce3e0-97b5-44f6-99a9-86ebf282f79a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\05. Object\08. AoE">
+      <UniqueIdentifier>{eebf1b23-86b3-4f7c-94dc-3fc8f3c40929}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\02. Map\04. Sea">
+      <UniqueIdentifier>{6e66d7c6-28d4-452e-9eb8-3e35b7148c2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -433,6 +439,12 @@
     <ClInclude Include="CLargo_Attack.h">
       <Filter>main\08. State\Boss\Attack</Filter>
     </ClInclude>
+    <ClInclude Include="CAoE.h">
+      <Filter>main\05. Object\08. AoE</Filter>
+    </ClInclude>
+    <ClInclude Include="CSea.h">
+      <Filter>main\05. Object\02. Map\04. Sea</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -624,6 +636,12 @@
     </ClCompile>
     <ClCompile Include="CLargo_Attack.cpp">
       <Filter>main\08. State\Boss\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="CAoE.cpp">
+      <Filter>main\05. Object\08. AoE</Filter>
+    </ClCompile>
+    <ClCompile Include="CSea.cpp">
+      <Filter>main\05. Object\02. Map\04. Sea</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

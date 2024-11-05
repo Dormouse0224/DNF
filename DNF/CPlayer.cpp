@@ -6,6 +6,7 @@
 #include "CRigidBody.h"
 #include "CCollider.h"
 #include "CDbgRender.h"
+#include "CTimeMgr.h"
 
 #include "CPlayer_Idle.h"
 #include "CPlayer_Walk.h"
@@ -15,6 +16,7 @@
 
 CPlayer::CPlayer()
 	: CObj(L"Player")
+	, m_YogiGauge(0.f)
 {
 	SetLayerType(LayerType::Object);
 	SetScale(Vec2D(40, 95));
@@ -74,12 +76,11 @@ void CPlayer::Tick()
 		SetGroundPos(gp);
 	}
 
-
+	// 그라운드 포지션 디버그 렌더링
 	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Circle, GetGroundPos() - Vec2D(5, 5)
 		, Vec2D(10, 10), 0, Color(255, 0, 0, 255));
 
-	bool temp = m_bLookLeft;
-
+	// 바라보는 방향 갱신
 	if (GetRigidBody()->GetSpeed().x < 0)
 	{
 		m_bLookLeft = true;
@@ -89,6 +90,13 @@ void CPlayer::Tick()
 		m_bLookLeft = false;
 	}
 	
+	// 요기 게이지 감소
+	if (m_YogiGauge > 0)
+	{
+		m_YogiGauge -= CTimeMgr::GetInst()->GetDeltaTime() * 10;
+		if (m_YogiGauge < 0)
+			m_YogiGauge = 0;
+	}
 }
 
 void CPlayer::Render()

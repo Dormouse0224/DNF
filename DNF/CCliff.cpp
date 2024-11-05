@@ -64,7 +64,7 @@ void CCliff::Begin()
 
 	CSound* pSound = CSoundMgr::GetInst()->GetSound(L"brim_mgaic_wind_loop_st"
 		, L"\\sound\\sounds_mon_duskyisland\\brim_mgaic_wind_loop_st.ogg");
-	pSound->SetVolume(5);
+	pSound->SetVolume(10);
 	pSound->PlayToBGM(true);
 }
 

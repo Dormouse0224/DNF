@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="CAlbum.h" />
     <ClInclude Include="CAlbumPlayer.h" />
+    <ClInclude Include="CAoE.h" />
     <ClInclude Include="CBackground.h" />
     <ClInclude Include="CBase.h" />
     <ClInclude Include="CButton.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="CRigidBody.h" />
     <ClInclude Include="CS01.h" />
     <ClInclude Include="CS03.h" />
+    <ClInclude Include="CSea.h" />
     <ClInclude Include="CStage.h" />
     <ClInclude Include="CMonster.h" />
     <ClInclude Include="CNPC.h" />
@@ -225,6 +227,7 @@
   <ItemGroup>
     <ClCompile Include="CAlbum.cpp" />
     <ClCompile Include="CAlbumPlayer.cpp" />
+    <ClCompile Include="CAoE.cpp" />
     <ClCompile Include="CBackground.cpp" />
     <ClCompile Include="CBase.cpp" />
     <ClCompile Include="CButton.cpp" />
@@ -250,6 +253,7 @@
     <ClCompile Include="CRigidBody.cpp" />
     <ClCompile Include="CS01.cpp" />
     <ClCompile Include="CS03.cpp" />
+    <ClCompile Include="CSea.cpp" />
     <ClCompile Include="CStage.cpp" />
     <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CNPC.cpp" />

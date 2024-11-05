@@ -106,8 +106,8 @@ void CLevelMgr::ReadDungeonList()
 {
 	std::wifstream DungeonList(CEngine::GetInst()->GetResourcePathW() + L"\\dungeon\\_List.txt");
 	wstring line;
+	map<Vec2D, StageInfo*> StageMap;
 	while (std::getline(DungeonList, line)) {
-		map<Vec2D, StageInfo*> StageMap;
 		LoadStage(line, StageMap);
 		for (map<Vec2D, StageInfo*>::iterator iter = StageMap.begin(); iter != StageMap.end(); ++iter)
 		{
@@ -115,6 +115,7 @@ void CLevelMgr::ReadDungeonList()
 			newStage->SetStageInfo(iter->second);
 		}
 	}
+	DungeonList.close();
 }
 
 void CLevelMgr::LoadStage(wstring _fileName, map<Vec2D, StageInfo*>& _StageInfoMap)
