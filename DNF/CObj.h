@@ -23,6 +23,7 @@ private:
     vector<CComponent*> m_ComponentVector;
     LayerType m_LayerType;
     Vec2D m_GroundPos;
+    bool m_GroundPosInit;
 
     CCollider* m_BodyCollider;
     CRigidBody* m_RigidBody;
@@ -33,9 +34,12 @@ private:
 
 protected:
     vector<CAlbumPlayer*> m_AlbumPlayerVector;
+    bool m_bLookLeft;
+    bool m_bFallowCam;
 
 public:
-    void SetLocation(Vec2D _Location) { m_Location = _Location; m_GroundPos = Vec2D(m_Location.x + (m_Scale.x / 2.f), m_Location.y + m_Scale.y); }
+    void SetLocation(Vec2D _Location);
+    void SetGroundPos(Vec2D _Location) { m_GroundPos = _Location; }
     void SetScale(Vec2D _Scale);
     Vec2D GetLocation() const { return m_Location; }
     Vec2D GetScale() const { return m_Scale; }
@@ -44,6 +48,10 @@ public:
     bool GetDead() { return m_Dead; }
     int GetState() { return m_State; }
     void SetState(int _state) { m_State = _state; }
+    bool IsLookLeft() { return m_bLookLeft; }
+    void SetLookLeft(bool _b) { m_bLookLeft = _b; }
+    bool GetFallowCam() { return m_bFallowCam; }
+    void SetFallowCam(bool _b) { m_bFallowCam = _b; }
 
     // ÄÄÆ÷³ÍÆ®
     virtual void AddComponent(CComponent* _Component);

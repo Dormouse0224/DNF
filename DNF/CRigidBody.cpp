@@ -2,12 +2,14 @@
 #include "CRigidBody.h"
 #include "CObj.h"
 #include "CTimeMgr.h"
+#include "CLevelMgr.h"
 
 CRigidBody::CRigidBody(wstring _name)
 	: CComponent(_name)
 	, m_Speed(0, 0)
 	, m_IsAirborne(false)
-	, m_AirborneTime(0)
+	, m_AirborneHeight(0)
+	, m_AirborneSpeed(0)
 {
 }
 
@@ -17,23 +19,31 @@ CRigidBody::~CRigidBody()
 
 void CRigidBody::FinalTick()
 {
-	if (m_IsAirborne == true && m_AirborneTime > 0.f)
+	Vec2D spd(0, 0);
+
+	if (m_IsAirborne == true)
 	{
-		m_Speed = m_Speed + Vec2D(0.f, m_Gravity);
-		m_AirborneTime -= CTimeMgr::GetInst()->GetDeltaTime();
+		m_AirborneSpeed = m_AirborneSpeed +CLevelMgr::GetInst()->GetCurrentLevel()->GetGravity() * CTimeMgr::GetInst()->GetDeltaTime();
+		m_AirborneHeight += m_AirborneSpeed * CTimeMgr::GetInst()->GetDeltaTime();
+		if (m_AirborneHeight > 0)
+		{
+			m_IsAirborne = false;
+			m_AirborneSpeed = (m_AirborneSpeed * CTimeMgr::GetInst()->GetDeltaTime() - m_AirborneHeight) / CTimeMgr::GetInst()->GetDeltaTime();
+		}
 	}
 	else
 	{
-		m_IsAirborne = false;
-		m_AirborneTime = 0.f;
+		m_AirborneHeight = 0;
+		m_AirborneSpeed = 0;
 	}
 
-	GetOwner()->SetLocation(GetOwner()->GetLocation() + m_Speed * CTimeMgr::GetInst()->GetDeltaTime());
+	spd = m_Speed + Vec2D(0.f, m_AirborneSpeed);
+
+	GetOwner()->SetLocation(GetOwner()->GetLocation() + spd * CTimeMgr::GetInst()->GetDeltaTime());
 }
 
 void CRigidBody::Jump(float _power)
 {
 	m_IsAirborne = true;
-	AddSpeed(Vec2D(0.f, -_power));
-	m_AirborneTime = _power * 2.f / m_Gravity;
+	m_AirborneSpeed = -_power;
 }

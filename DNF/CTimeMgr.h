@@ -1,4 +1,7 @@
 #pragma once
+
+#include <chrono>
+
 class CTimeMgr
 {
 	SINGLETON(CTimeMgr);
@@ -12,9 +15,16 @@ private:
 	UINT			m_FPS;
 	float			m_Time;
 
+
+	std::chrono::steady_clock::time_point m_CheckTimer;
+	std::chrono::nanoseconds m_CheckDuration;
+
 public:
 	void Init();
 	void Tick();
 	float GetDeltaTime() { return m_DT; }
+
+	void TimeCheckStart();
+	LONGLONG TimeCheck();
 };
 

@@ -5,6 +5,8 @@
 #include "CNpkMgr.h"
 #include "CEngine.h"
 #include "CCameraMgr.h"
+#include "CLevelMgr.h"
+#include "CStage.h"
 
 #include "DDSTextureLoader11.h"
 #include <d3d11.h>
@@ -509,20 +511,36 @@ void CTextureMgr::WriteColor(char* _dest, const char* _src, ColorBits _bits)
 
 vector<CAlbum*> CTextureMgr::LoadNPK(wstring _NpkPath)
 {
-	ifstream readfile;
-	readfile.open(_NpkPath, ios::binary);
-	assert(readfile.is_open());	// 파일 읽기 오류
-	// NPK 파일 읽어서 앨범 저장
-	vector<CAlbum*> AlbumList = CNpkMgr::GetInst()->ReadNpk(readfile, _NpkPath);
-	readfile.close();
-	for (CAlbum* _album : AlbumList)
+	vector<CAlbum*> AlbumList;
+	map<wstring, vector<CAlbum*>>::iterator iter = m_NPKs.find(_NpkPath);
+	if (iter == m_NPKs.end())
 	{
-		m_Albums.insert(make_pair(_album->GetPath(), _album));
+		ifstream readfile;
+		readfile.open(_NpkPath, ios::binary);
+		assert(readfile.is_open());	// 파일 읽기 오류
+		// NPK 파일 읽어서 앨범 저장
+		AlbumList = CNpkMgr::GetInst()->ReadNpk(readfile, _NpkPath);
+		readfile.close();
+		for (CAlbum* _album : AlbumList)
+		{
+			m_Albums.insert(make_pair(_album->GetPath(), _album));
+		}
+		m_NPKs.insert(make_pair(_NpkPath, AlbumList));
+	}
+	else
+	{
+		AlbumList = iter->second;
 	}
 
 	return AlbumList;
 }
 
+void CALLBACK LoadSceneThread(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WORK work)
+{
+	std::pair<CAlbum*, int>* data = static_cast<std::pair<CAlbum*, int>*>(context);
+	data->first->GetScene(data->second)->Load();
+	delete data; // 할당된 메모리 해제
+}
 
 CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 {
@@ -545,26 +563,96 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 				m_Albums.insert(make_pair(_album->GetPath(), _album));
 				if (_album->GetPath() == _AlbumPath)
 				{
-					for (int i = 0; i < _album->GetSceneCount(); ++i)
-					{
-						_album->GetScene(i)->Load();
+					// 스레드 풀 생성
+					PTP_POOL pool = CreateThreadpool(nullptr);
+					if (!pool) {
+						std::cerr << "Failed to create thread pool.\n";
+						return nullptr;
 					}
+
+					// 스레드 풀 환경 설정
+					TP_CALLBACK_ENVIRON callbackEnv;
+					InitializeThreadpoolEnvironment(&callbackEnv);
+					SetThreadpoolCallbackPool(&callbackEnv, pool);
+
+					// 각 씬에 대해 작업을 큐에 추가
+					std::vector<PTP_WORK> workItems;
+					for (int i = 0; i < _album->GetSceneCount(); ++i) {
+						auto* data = new std::pair<CAlbum*, int>(_album, i);
+						PTP_WORK work = CreateThreadpoolWork(LoadSceneThread, data, &callbackEnv);
+						if (work) {
+							workItems.push_back(work);
+							SubmitThreadpoolWork(work);
+						}
+						else {
+							delete data;
+							std::cerr << "Failed to create thread pool work item.\n";
+						}
+					}
+
+					// 모든 작업이 완료될 때까지 대기
+					for (PTP_WORK work : workItems) {
+						WaitForThreadpoolWorkCallbacks(work, FALSE);
+						CloseThreadpoolWork(work);
+					}
+
+					// 스레드 풀 및 환경 정리
+					DestroyThreadpoolEnvironment(&callbackEnv);
+					CloseThreadpool(pool);
+
 					result = _album;
 				}
 			}
+			m_NPKs.insert(make_pair(_NpkPath, AlbumList));
 		}
 		// 앨범을 가져온 적이 있으면 엘범 정보를 바탕으로 메모리에 로드 (Texture 로드 호출 시 이미 메모리에 로드된 경우 다시 로드하지 않고 무시됨)
 		else
 		{
-			for (int i = 0; i < iter->second->GetSceneCount(); ++i)
-			{
-				iter->second->GetScene(i)->Load();
+			// 스레드 풀 생성
+			PTP_POOL pool = CreateThreadpool(nullptr);
+			if (!pool) {
+				std::cerr << "Failed to create thread pool.\n";
+				return nullptr;
 			}
+
+			// 스레드 풀 환경 설정
+			TP_CALLBACK_ENVIRON callbackEnv;
+			InitializeThreadpoolEnvironment(&callbackEnv);
+			SetThreadpoolCallbackPool(&callbackEnv, pool);
+
+			// 각 씬에 대해 작업을 큐에 추가
+			std::vector<PTP_WORK> workItems;
+			for (int i = 0; i < iter->second->GetSceneCount(); ++i) {
+				auto* data = new std::pair<CAlbum*, int>(iter->second, i);
+				PTP_WORK work = CreateThreadpoolWork(LoadSceneThread, data, &callbackEnv);
+				if (work) {
+					workItems.push_back(work);
+					SubmitThreadpoolWork(work);
+				}
+				else {
+					delete data;
+					std::cerr << "Failed to create thread pool work item.\n";
+				}
+			}
+
+			// 모든 작업이 완료될 때까지 대기
+			for (PTP_WORK work : workItems) {
+				WaitForThreadpoolWorkCallbacks(work, FALSE);
+				CloseThreadpoolWork(work);
+			}
+
+			// 스레드 풀 및 환경 정리
+			DestroyThreadpoolEnvironment(&callbackEnv);
+			CloseThreadpool(pool);
+
 			result = iter->second;
 		}
 	}
 	return result;
 }
+
+
+
 
 void CTextureMgr::SaveAlbum(string _AlbumName, string _Directory)
 {
@@ -789,6 +877,44 @@ void CTextureMgr::DrawLine(Color _color, int _width, Vec2D _begin, Vec2D _end, b
 {
 	Pen pen(_color, (REAL)_width);
 	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+
+	// 프레임 방어를 위한 그래픽스 렌더링 세팅
+	graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+	graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+	graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+	graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+	graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+
+	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	if (bCameraFallow)
+	{
+		CameraPos = Vec2D(0, 0);
+	}
+	Vec2D pt1 = CameraPos;
+	Vec2D pt2 = CameraPos + Vec2D(1066, 600);
+	if (LineInRectCheck(_begin, _end, pt1, pt2))
+	{
+		graphics.DrawLine(&pen, _begin.x - CameraPos.x, _begin.y - CameraPos.y, _end.x - CameraPos.x, _end.y - CameraPos.y);
+	}
+}
+
+void CTextureMgr::DrawLine(Color _color, int _width, int _Len, Vec2D _LinePos, float _LineAngle, bool bCameraFallow)
+{
+	float rad = _LineAngle * PI / 180.f;
+	Vec2D DirVec(cosf(rad), sinf(rad));
+	Vec2D _begin = _LinePos + (DirVec * _Len / 2);
+	Vec2D _end = _LinePos - (DirVec * _Len / 2);
+
+	Pen pen(_color, (REAL)_width);
+	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+
+	// 프레임 방어를 위한 그래픽스 렌더링 세팅
+	graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+	graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+	graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+	graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+	graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	if (bCameraFallow)
 	{
@@ -806,6 +932,14 @@ void CTextureMgr::DrawRect(Color _color, int _width, Vec2D _LeftTop, Vec2D _size
 {
 	Pen pen(_color, (REAL)_width);
 	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+
+	// 프레임 방어를 위한 그래픽스 렌더링 세팅
+	graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+	graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+	graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+	graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+	graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	if (bCameraFallow)
 	{
@@ -824,6 +958,14 @@ void CTextureMgr::FillRect(Color _color, Vec2D _LeftTop, Vec2D _size, bool bCame
 {
 	SolidBrush brush(_color);
 	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+
+	// 프레임 방어를 위한 그래픽스 렌더링 세팅
+	graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+	graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+	graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+	graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+	graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	if (bCameraFallow)
 	{
@@ -841,6 +983,14 @@ void CTextureMgr::DrawEllipse(Color _color, int _width, Vec2D _LeftTop, Vec2D _s
 {
 	Pen pen(_color, (REAL)_width);
 	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+
+	// 프레임 방어를 위한 그래픽스 렌더링 세팅
+	graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+	graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+	graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+	graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+	graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+
 	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
 	if (bCameraFallow)
 	{
@@ -852,6 +1002,169 @@ void CTextureMgr::DrawEllipse(Color _color, int _width, Vec2D _LeftTop, Vec2D _s
 	{
 		graphics.DrawEllipse(&pen, (int)(_LeftTop.x - CameraPos.x), (int)(_LeftTop.y - CameraPos.y), (int)(_size.x), (int)(_size.y));
 	}
+}
+
+void CTextureMgr::FillEllipse(Color _color, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow)
+{
+	SolidBrush brush(_color);
+	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+
+	// 프레임 방어를 위한 그래픽스 렌더링 세팅
+	graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+	graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+	graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+	graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+	graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+
+	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	if (bCameraFallow)
+	{
+		CameraPos = Vec2D(0, 0);
+	}
+	Vec2D RectCenter = _LeftTop + (_size / 2);
+	if ((RectCenter.x - (CameraPos.x + CEngine::GetInst()->GetResolution().x / 2)) < ((CEngine::GetInst()->GetResolution().x / 2) + _size.x)
+		|| (RectCenter.y - (CameraPos.y + CEngine::GetInst()->GetResolution().y / 2)) < ((CEngine::GetInst()->GetResolution().y / 2) + _size.y))
+	{
+		graphics.FillEllipse(&brush, (int)(_LeftTop.x - CameraPos.x), (int)(_LeftTop.y - CameraPos.y), (int)(_size.x), (int)(_size.y));
+	}
+}
+
+void CTextureMgr::FillDonut(Color _color, Vec2D _OuterLeftTop, Vec2D _OuterSize, Vec2D _InnerLeftTop, Vec2D _InnerSize, bool bCameraFallow)
+{
+	SolidBrush brush(_color);
+	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+	Gdiplus::GraphicsPath path;
+
+	// 프레임 방어를 위한 그래픽스 렌더링 세팅
+	graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+	graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+	graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+	graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+	graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+
+	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	if (bCameraFallow)
+	{
+		CameraPos = Vec2D(0, 0);
+	}
+
+	// 큰 원 추가
+	path.AddEllipse(_OuterLeftTop.x - CameraPos.x, _OuterLeftTop.y - CameraPos.y, _OuterSize.x, _OuterSize.y);
+	// 작은 원을 뺌
+	path.AddEllipse(_InnerLeftTop.x - CameraPos.x, _InnerLeftTop.y - CameraPos.y, _InnerSize.x, _InnerSize.y);
+
+	Vec2D RectCenter = _OuterLeftTop + (_OuterSize / 2);
+	if ((RectCenter.x - (CameraPos.x + CEngine::GetInst()->GetResolution().x / 2)) < ((CEngine::GetInst()->GetResolution().x / 2) + _OuterSize.x)
+		|| (RectCenter.y - (CameraPos.y + CEngine::GetInst()->GetResolution().y / 2)) < ((CEngine::GetInst()->GetResolution().y / 2) + _OuterSize.y))
+	{
+		graphics.FillPath(&brush, &path);
+	}
+}
+
+void CTextureMgr::FillDividedLine(Color _color, Vec2D _LinePos, float _LineAngle, bool bCameraFallow)
+{
+	SolidBrush brush(_color);
+	Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+	Gdiplus::GraphicsPath path;
+
+	// 프레임 방어를 위한 그래픽스 렌더링 세팅
+	graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+	graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+	graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+	graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+	graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+
+	Vec2D CameraPos = CCameraMgr::GetInst()->GetCameraPos();
+	if (bCameraFallow)
+	{
+		CameraPos = Vec2D(0, 0);
+	}
+
+	CStage* pStage = (CStage*)CLevelMgr::GetInst()->GetCurrentLevel();
+	// 직선 위치점 기준 레벨의 각 꼭짓점 위치벡터
+	Vec2D RectA[4] =
+	{
+		Vec2D(0, 0) - _LinePos,
+		Vec2D(0, 0) + Vec2D(pStage->GetStageInfo()->StageSize.x, 0.f) - _LinePos,
+		Vec2D(0, 0) + pStage->GetStageInfo()->StageSize - _LinePos,
+		Vec2D(0, 0) + Vec2D(0.f, pStage->GetStageInfo()->StageSize.y) - _LinePos,
+	};
+	Vec2D RectB[4] =
+	{
+		Vec2D(0, 0),
+		Vec2D(0, 0) + Vec2D(pStage->GetStageInfo()->StageSize.x, 0.f),
+		Vec2D(0, 0) + pStage->GetStageInfo()->StageSize,
+		Vec2D(0, 0) + Vec2D(0.f, pStage->GetStageInfo()->StageSize.y),
+	};
+	_LineAngle = std::fmod(_LineAngle, 360.0);
+	if (_LineAngle < 0) 
+	{
+		_LineAngle += 360.0;
+	}
+	float rad = _LineAngle * PI / 180.f;
+	Vec2D DirVec(cosf(rad), sinf(rad));
+
+	if ((_LineAngle >= 0 && _LineAngle < 90) || (_LineAngle >= 180 && _LineAngle < 270))
+	{
+		int i = _LineAngle / 90;
+		Vec2D temp;
+		if (DirVec.Cross(RectA[(i + 2) % 4]) < 0)
+		{
+			path.AddLine(RectB[(i + 1) % 4].x - CameraPos.x, RectB[(i + 1) % 4].y - CameraPos.y, RectB[(i + 2) % 4].x - CameraPos.x, RectB[(i + 2) % 4].y - CameraPos.y);
+			path.AddLine(RectB[(i + 2) % 4].x - CameraPos.x, RectB[(i + 2) % 4].y - CameraPos.y, (RectB[(i + 2) % 4].y - _LinePos.y) / tanf(rad) + _LinePos.x - CameraPos.x, RectB[(i + 2) % 4].y - CameraPos.y);
+			temp = Vec2D((RectB[(i + 2) % 4].y - _LinePos.y) / tanf(rad) + _LinePos.x, RectB[(i + 2) % 4].y);
+		}
+		else
+		{
+			path.AddLine(RectB[(i + 1) % 4].x - CameraPos.x, RectB[(i + 1) % 4].y - CameraPos.y, RectB[(i + 2) % 4].x - CameraPos.x, (RectB[(i + 2) % 4].x - _LinePos.x) * tanf(rad) + _LinePos.y - CameraPos.y);
+			temp = Vec2D(RectB[(i + 2) % 4].x, (RectB[(i + 2) % 4].x - _LinePos.x) * tanf(rad) + _LinePos.y);
+		}
+
+		if (DirVec.Cross(RectA[i % 4]) < 0)
+		{
+			path.AddLine(temp.x - CameraPos.x, temp.y - CameraPos.y, RectB[i % 4].x - CameraPos.x, (RectB[i % 4].x - _LinePos.x) * tanf(rad) + _LinePos.y - CameraPos.y);
+			path.AddLine(RectB[i % 4].x - CameraPos.x, (RectB[i % 4].x - _LinePos.x) * tanf(rad) + _LinePos.y - CameraPos.y, RectB[i % 4].x - CameraPos.x, RectB[i % 4].y - CameraPos.y);
+			path.AddLine(RectB[i % 4].x - CameraPos.x, RectB[i % 4].y - CameraPos.y, RectB[(i + 1) % 4].x - CameraPos.x, RectB[(i + 1) % 4].y - CameraPos.y);
+		}
+		else
+		{
+			path.AddLine(temp.x - CameraPos.x, temp.y - CameraPos.y, (RectB[i % 4].y - _LinePos.y) / tanf(rad) + _LinePos.x - CameraPos.x, RectB[i % 4].y - CameraPos.y);
+			path.AddLine((RectB[i % 4].y - _LinePos.y) / tanf(rad) + _LinePos.x - CameraPos.x, RectB[i % 4].y - CameraPos.y, RectB[(i + 1) % 4].x - CameraPos.x, RectB[(i + 1) % 4].y - CameraPos.y);
+		}
+	}
+	else
+	{
+		int i = _LineAngle / 90;
+		Vec2D temp;
+		if (DirVec.Cross(RectA[(i + 2) % 4]) < 0)
+		{
+			path.AddLine(RectB[(i + 1) % 4].x - CameraPos.x, RectB[(i + 1) % 4].y - CameraPos.y, RectB[(i + 2) % 4].x - CameraPos.x, RectB[(i + 2) % 4].y - CameraPos.y);
+			path.AddLine(RectB[(i + 2) % 4].x - CameraPos.x, RectB[(i + 2) % 4].y - CameraPos.y, RectB[(i + 2) % 4].x - CameraPos.x, (RectB[(i + 2) % 4].x - _LinePos.x) * tanf(rad) + _LinePos.y - CameraPos.y);
+			temp = Vec2D(RectB[(i + 2) % 4].x, (RectB[(i + 2) % 4].x - _LinePos.x) * tanf(rad) + _LinePos.y);
+		}
+		else
+		{
+			path.AddLine(RectB[(i + 1) % 4].x - CameraPos.x, RectB[(i + 1) % 4].y - CameraPos.y, (RectB[(i + 1) % 4].y - _LinePos.y) / tanf(rad) + _LinePos.x - CameraPos.x, RectB[(i + 1) % 4].y - CameraPos.y);
+			temp = Vec2D((RectB[(i + 1) % 4].y - _LinePos.y) / tanf(rad) + _LinePos.x, RectB[(i + 1) % 4].y);
+		}
+
+		if (DirVec.Cross(RectA[i % 4]) < 0)
+		{
+			path.AddLine(temp.x - CameraPos.x, temp.y - CameraPos.y, (RectB[i % 4].y - _LinePos.y) / tanf(rad) + _LinePos.x - CameraPos.x, RectB[i % 4].y - CameraPos.y);
+			path.AddLine((RectB[i % 4].y - _LinePos.y) / tanf(rad) + _LinePos.x - CameraPos.x, RectB[i % 4].y - CameraPos.y, RectB[i % 4].x - CameraPos.x, RectB[i % 4].y - CameraPos.y);
+			path.AddLine(RectB[i % 4].x - CameraPos.x, RectB[i % 4].y - CameraPos.y, RectB[(i + 1) % 4].x - CameraPos.x, RectB[(i + 1) % 4].y - CameraPos.y);
+		}
+		else
+		{
+			path.AddLine(temp.x - CameraPos.x, temp.y - CameraPos.y, RectB[i % 4].x - CameraPos.x, (RectB[i % 4].x - _LinePos.x) * tanf(rad) + _LinePos.y - CameraPos.y);
+			path.AddLine(RectB[i % 4].x - CameraPos.x, (RectB[i % 4].x - _LinePos.x) * tanf(rad) + _LinePos.y - CameraPos.y, RectB[(i + 1) % 4].x - CameraPos.x, RectB[(i + 1) % 4].y - CameraPos.y);
+		}
+	}
+	
+
+
+	graphics.FillPath(&brush, &path);
+
 }
 
 bool CTextureMgr::LineInRectCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _LT, Vec2D& _RB)
@@ -869,4 +1182,43 @@ bool CTextureMgr::LineInRectCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _LT, Vec2D& _RB
 		return true;
 
 	return false;
+}
+
+void CTextureMgr::PreloadFromFile(wstring _fileName)
+{
+	std::wifstream PreloadList(CEngine::GetInst()->GetResourcePathW() + L"\\animation\\Preload\\" + _fileName);
+	wstring line;
+	while (std::getline(PreloadList, line)) 
+	{
+		wstring _filepath = CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + line + L".animation";
+		ifstream animation;
+		AnimationInfo desc;
+		animation.open(_filepath.c_str(), ios::binary);
+		if (animation.is_open())
+		{
+			char NPKDir[255] = {};
+			char AlbumPath[255] = {};
+			animation.read((char*)&desc, sizeof(desc));
+			animation.read(NPKDir, desc.NPKDirLen);
+			animation.read(AlbumPath, desc.AlbumPathLen);
+
+			animation.close();
+
+
+			string strAlbumPath = AlbumPath;
+			WCHAR wNPKDir[255] = {};
+			MultiByteToWideChar(CP_ACP, 0, NPKDir, -1, wNPKDir, 255);
+			wstring wstrNPKDir = wNPKDir;
+			wstrNPKDir = CEngine::GetInst()->GetResourcePathW() + wstrNPKDir;
+
+
+			CTextureMgr::GetInst()->LoadAlbum(strAlbumPath, wstrNPKDir);
+		}
+		else
+		{
+
+			animation.close();
+		}
+	}
+	PreloadList.close();
 }

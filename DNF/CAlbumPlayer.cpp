@@ -17,6 +17,7 @@ CAlbumPlayer::CAlbumPlayer(wstring _Name, string _AlbumPath, wstring _NpkPath)
 	, m_SceneTime(0)
 	, m_Dodge(false)
 	, m_bLoadingEnd(false)
+	, m_RenderPercent(1.f)
 {
 	m_CurrentAlbum = CTextureMgr::GetInst()->LoadAlbum(_AlbumPath, _NpkPath);
 }
@@ -73,7 +74,7 @@ void CAlbumPlayer::Render(CObj* _thisObj, bool bCameraFallow, bool _bFlipHorizon
 	m_bLoadingEnd = true;
 	// 현재 씬을 재생
 	m_CurrentAlbum->m_Owner = _thisObj;
-	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, m_angle, bCameraFallow, m_Dodge, _bFlipHorizontal);
+	m_CurrentAlbum->GetScene(m_SceneNumber + m_Begin)->Render(m_Offset, m_angle, bCameraFallow, m_Dodge, _bFlipHorizontal, m_RenderPercent);
 }
 
 // 오브젝트를 거치지 않고 직접 렌더링
@@ -109,7 +110,7 @@ void CAlbumPlayer::ChangeAlbum(string _AlbumPath, wstring _NpkPath)
 	m_CurrentAlbum = CTextureMgr::GetInst()->LoadAlbum(_AlbumPath, _NpkPath);
 }
 
-CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, wstring _filepath)
+CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, wstring _filepath, Vec2D&& _AdditionalOffset)
 {
 	ifstream animation;
 	AnimationInfo desc;
@@ -133,7 +134,7 @@ CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, wstring _filepat
 
 
 		CAlbumPlayer* pNewPlayer = new CAlbumPlayer(_Name, strAlbumPath, wstrNPKDir);
-		pNewPlayer->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset, desc.angle, desc.bDodge);
+		pNewPlayer->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset + _AdditionalOffset, desc.angle, desc.bDodge);
 		return pNewPlayer;
 	}
 	else
@@ -143,3 +144,5 @@ CAlbumPlayer* CAlbumPlayer::CreatePlayerFromFile(wstring _Name, wstring _filepat
 		return nullptr;
 	}
 }
+
+

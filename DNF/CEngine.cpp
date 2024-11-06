@@ -18,6 +18,7 @@
 #include "CDbgRender.h"
 #include "resource.h"
 
+
 CEngine::CEngine()
 	: m_hInst(nullptr)
 	, m_hMainDC(nullptr)
@@ -33,6 +34,7 @@ CEngine::CEngine()
 
 CEngine::~CEngine()
 {
+	DeleteObject(m_hSubBitmap);
 	GdiplusShutdown(gdiplusToken);
 }
 
@@ -111,7 +113,6 @@ void CEngine::Progress()
 	CUIMgr::GetInst()->Tick();
 	CStickerMgr::GetInst()->Tick();
 
-
 	// 레벨 프레임 행동 수행
 	CLevelMgr::GetInst()->Progress();
 
@@ -122,19 +123,21 @@ void CEngine::Progress()
 	// 백버퍼 화면 초기화
 	{
 		CTextureMgr::GetInst()->FillRect(Color(255, 100, 100, 100), Vec2D(0, 0), m_Resolution, true);
-		//SELECT_BRUSH(BRUSH_TYPE::GRAY);
-		//Rectangle(m_hSubDC, -1, -1, (int)m_Resolution.x + 1, (int)m_Resolution.y + 1);
 	}
+
 	// 레벨 렌더링
 	CLevelMgr::GetInst()->Render();
+
+	// 카메라 이펙트
+	CCameraMgr::GetInst()->Effect();
+
 	// 디버그 렌더링
 	CDbgRender::GetInst()->Render();
+
 	// 백버퍼 비트맵을 프런트버퍼 비트맵으로 복사
-	//BitBlt(m_hMainDC, 0, 0, (int)m_Resolution.x, (int)m_Resolution.y, m_hSubDC, 0, 0, SRCCOPY);
 	m_Backbuffer->GetBitmap()->GetHBITMAP(Color::White, &m_hSubBitmap);
 	DeleteObject(SelectObject(m_hSubDC, m_hSubBitmap));
 	BitBlt(m_hMainDC, 0, 0, (int)m_Resolution.x, (int)m_Resolution.y, m_hSubDC, 0, 0, SRCCOPY);
-
 
 
 	// 태스크 매니저에 요청된 태스크 수행

@@ -12,7 +12,6 @@ CMonster::CMonster(wstring _name)
 	, m_AttackFrame(0, 0)
 	, m_AttackCol(nullptr)
 	, m_MonsterTemplate(MonsterTemplate::NONE)
-	, m_bLookLeft(false)
 {
 	SetLayerType(LayerType::Object);
 	SetRigidBody(new CRigidBody(L"Monster_RB"));

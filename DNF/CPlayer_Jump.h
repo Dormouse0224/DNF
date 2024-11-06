@@ -1,14 +1,14 @@
 #pragma once
 #include "CState.h"
-class CPlayer_Run :
+class CPlayer_Jump :
     public CState
 {
 public:
-    CPlayer_Run(wstring _name);
-    ~CPlayer_Run();
+    CPlayer_Jump(wstring _name);
+    ~CPlayer_Jump();
 
 private:
-    float m_Speed = 250.f;
+    float m_Speed = 150.f;
 
 
 public:

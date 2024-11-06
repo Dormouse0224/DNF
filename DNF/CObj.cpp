@@ -17,6 +17,9 @@ CObj::CObj(wstring _Name)
 	, m_State(0)
 	, m_BodyCollider(nullptr)
 	, m_RigidBody(nullptr)
+	, m_bLookLeft(false)
+	, m_GroundPosInit(false)
+	, m_bFallowCam(false)
 {
 }
 
@@ -25,6 +28,13 @@ CObj::CObj(wstring _Name, Vec2D _Loc, Vec2D _Scale)
 	, m_Location(_Loc)
 	, m_Scale(_Scale)
 	, m_Dead(false)
+	, m_GroundPos(0, 0)
+	, m_State(0)
+	, m_BodyCollider(nullptr)
+	, m_RigidBody(nullptr)
+	, m_bLookLeft(false)
+	, m_GroundPosInit(false)
+	, m_bFallowCam(false)
 {
 }
 
@@ -36,6 +46,16 @@ CObj::~CObj()
 		delete m_ComponentVector[i];
 	}
 	m_ComponentVector.clear();
+}
+
+void CObj::SetLocation(Vec2D _Location)
+{
+	m_Location = _Location; 
+	if (!m_GroundPosInit)
+	{
+		m_GroundPos = Vec2D(m_Location.x + (m_Scale.x / 2.f), m_Location.y + m_Scale.y);
+		m_GroundPosInit = true;
+	}
 }
 
 void CObj::SetScale(Vec2D _Scale)
@@ -55,11 +75,6 @@ void CObj::AddComponent(CComponent* _Component)
 	// 추가되는 컴포넌트가 앨범플레이어인 경우
 	if (dynamic_cast<CAlbumPlayer*>(_Component))
 		m_AlbumPlayerVector.push_back((CAlbumPlayer*)_Component);
-	// 충돌체인경우 충돌체를 현재 레벨의 충돌체 벡터에 등록
-	//else if (dynamic_cast<CCollider*>(_Component))
-	//	CLevelMgr::GetInst()->GetCurrentLevel()->AddCollider((CCollider*)_Component, m_LayerType);
-	//else if (dynamic_cast<CSticker*>(_Component))
-	//	CLevelMgr::GetInst()->GetCurrentLevel()->AddSticker((CSticker*)_Component);
 }
 
 void CObj::RegisterBodyCollider(CCollider* _Coll)
@@ -98,11 +113,16 @@ void CObj::FinalTick()
 	}
 }
 
+struct ThreadParams {
+	CAlbumPlayer* param1;
+	CObj* param2;
+};
+
 void CObj::Render()
 {
 	for (int i = 0; i < m_AlbumPlayerVector.size(); ++i)
 	{
-		m_AlbumPlayerVector[i]->Render(this);
+		m_AlbumPlayerVector[i]->Render(this, m_bFallowCam, m_bLookLeft);
 	}
 }
 

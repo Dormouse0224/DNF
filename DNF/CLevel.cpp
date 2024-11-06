@@ -12,6 +12,7 @@ CLevel::CLevel(wstring _Name)
 	: CBase(_Name)
 	, m_SelectedObj(nullptr)
 	, m_Player(nullptr)
+	, m_CameraFollowPlayer(false)
 {
 	CLevelMgr::GetInst()->AddLevel(_Name, this);
 }
@@ -57,7 +58,10 @@ void CLevel::Tick()
 	{
 		for (int j = 0; j < m_hObj[i].size(); ++j)
 		{
-			m_hObj[i][j]->Tick();
+			if (m_hObj[i][j]->GetDead() == false)
+			{
+				m_hObj[i][j]->Tick();
+			}
 		}
 	}
 
@@ -75,6 +79,7 @@ void CLevel::FinalTick()
 		}
 	}
 }
+
 
 void CLevel::Render()
 {
@@ -100,6 +105,7 @@ void CLevel::DeleteObject(LayerType _layer, UINT _ObjectID)
 			deleteobj.m_TaskType = TaskType::ObjectDelete;
 			deleteobj.m_param0 = (DWORD_PTR)m_hObj[(int)_layer][i];
 			CTaskMgr::GetInst()->AddTask(deleteobj);
+			m_hObj[(int)_layer].erase(m_hObj[(int)_layer].begin() + i);
 		}
 	}
 	

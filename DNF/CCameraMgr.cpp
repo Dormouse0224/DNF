@@ -12,7 +12,10 @@
 CCameraMgr::CCameraMgr()
 	: m_CameraPos(Vec2D(0, 0))
 	, m_CameraSpeed(500.f)
+	, m_Effect(CameraEffect::END)
+	, m_EffectTimer(0.f)
 	, m_Alpha(0)
+	, m_IsEffectFin(false)
 {
 
 }
@@ -58,15 +61,68 @@ void CCameraMgr::Tick()
 			m_CameraPos = Vec2D(0, 0);
 		}
 	}
-	else
+	else if (CLevelMgr::GetInst()->GetCurrentLevel()->GetCameraFollowPlayer())
 	{
+		Vec2D res = CEngine::GetInst()->GetResolution();
 		CStage* pStage = dynamic_cast<CStage*>(CLevelMgr::GetInst()->GetCurrentLevel());
 		if (pStage)
 		{
-			m_CameraPos = pStage->GetPlayer()->GetGroundPos() - CEngine::GetInst()->GetResolution() / 2.f;
+			m_CameraPos = pStage->GetPlayer()->GetLocation() + pStage->GetPlayer()->GetScale() / 2.f - CEngine::GetInst()->GetResolution() / 2.f;
+			m_CameraPos.x = max(0.0f, min(m_CameraPos.x, pStage->GetStageInfo()->StageSize.x - res.x));
+			m_CameraPos.y = max(0.0f, min(m_CameraPos.y, pStage->GetStageInfo()->StageSize.y - res.y));
+
 		}
 	}
 
+	m_EffectTimer += CTimeMgr::GetInst()->GetDeltaTime();
+	switch (m_Effect)
+	{
+	case CameraEffect::FadeIn:
+		m_Alpha = max(255.f * (1 - (m_EffectTimer / 1.f)), 0);
+		break;
+	case CameraEffect::FadeOut:
+		m_Alpha = min(255.f * (m_EffectTimer / 1.f), 255);
+		break;
+	case CameraEffect::END:
+		m_EffectTimer = 0;
+		break;
+	}
+}
+
+bool CCameraMgr::IsEffectFin()
+{
+	bool b = m_IsEffectFin;
+	m_IsEffectFin = false;
+	return b;
+}
+
+void CCameraMgr::Effect()
+{
+	switch (m_Effect)
+	{
+	case CameraEffect::FadeIn:
+		if (m_Alpha <= 0)
+		{
+			m_Effect = CameraEffect::END;
+			m_EffectTimer = 0;
+		}
+		CTextureMgr::GetInst()->FillRect(Color(m_Alpha, 0, 0, 0), Vec2D(0, 0), CEngine::GetInst()->GetResolution(), true);
+		break;
+	case CameraEffect::FadeOut:
+		if (m_Alpha >= 255)
+		{
+			m_Effect = CameraEffect::END;
+			m_IsEffectFin = true;
+			m_EffectTimer = 0;
+		}
+		CTextureMgr::GetInst()->FillRect(Color(m_Alpha, 0, 0, 0), Vec2D(0, 0), CEngine::GetInst()->GetResolution(), true);
+		break;
+	case CameraEffect::END:
+		m_IsEffectFin = false;
+		if (m_Alpha > 0)
+			CTextureMgr::GetInst()->FillRect(Color(m_Alpha, 0, 0, 0), Vec2D(0, 0), CEngine::GetInst()->GetResolution(), true);
+		break;
+	}
 }
 
 

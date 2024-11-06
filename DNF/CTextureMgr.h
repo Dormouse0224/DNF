@@ -7,6 +7,7 @@ class CTextureMgr
 
 private:
 	map<string, CAlbum*> m_Albums;
+	map<wstring, vector<CAlbum*>> m_NPKs;
 	CAlbum* m_TempAlbum;			// 기본 임시 앨범
 	CAlbum* m_SysReservedAlbum;		// 프로그램에서 사용되는 텍스처를 저장해두는 앨범
 
@@ -31,11 +32,16 @@ public:
 	CAlbum* GetAlbum(string _AlbumPath);
 
 	void DrawLine(Color _color, int _width, Vec2D _begin, Vec2D _end, bool bCameraFallow = false);
+	void DrawLine(Color _color, int _width, int _Len, Vec2D _LinePos, float _LineAngle, bool bCameraFallow = false);
 	void DrawRect(Color _color, int _width, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow = false);
 	void FillRect(Color _color, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow = false);
-	void DrawEllipse(Color _color, int _width, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow);
+	void DrawEllipse(Color _color, int _width, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow = false);
+	void FillEllipse(Color _color, Vec2D _LeftTop, Vec2D _size, bool bCameraFallow = false);
+	void FillDonut(Color _color, Vec2D _OuterLeftTop, Vec2D _OuterSize, Vec2D _InnerLeftTop, Vec2D _InnerSize, bool bCameraFallow = false);
+	void FillDividedLine(Color _color, Vec2D _LinePos, float _LineAngle, bool bCameraFallow = false);
 
 
+	static void PreloadFromFile(wstring _filepath);
 
 private:
 

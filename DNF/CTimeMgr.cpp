@@ -25,7 +25,7 @@ void CTimeMgr::Init()
 void CTimeMgr::Tick()
 {
 	QueryPerformanceCounter(&m_CurCount);
-	m_DT = (float)(m_CurCount.QuadPart - m_PrevCount.QuadPart) / (float)(m_Frequency.QuadPart);
+	m_DT = min((float)(m_CurCount.QuadPart - m_PrevCount.QuadPart) / (float)(m_Frequency.QuadPart), 0.5f);
 	m_PrevCount = m_CurCount;
 
 	++m_FPS;
@@ -40,4 +40,16 @@ void CTimeMgr::Tick()
 		m_FPS = 0;
 		m_Time -= 1.f;
 	}
+}
+
+void CTimeMgr::TimeCheckStart()
+{
+	m_CheckTimer = std::chrono::high_resolution_clock::now();
+}
+
+LONGLONG CTimeMgr::TimeCheck()
+{
+	m_CheckDuration = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()- m_CheckTimer);
+	m_CheckTimer = std::chrono::high_resolution_clock::now();
+	return m_CheckDuration.count();
 }

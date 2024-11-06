@@ -213,7 +213,6 @@ void CStageMaker::Begin()
 	if (!m_StageInfo->BGMPath.empty())
 	{
 		m_BGM = CSoundMgr::GetInst()->GetSound(m_StageInfo->BGMPath, L"\\music\\" + m_StageInfo->BGMPath);
-		m_BGM->SetVolume(50);
 		m_BGM->PlayToBGM(true);
 	}
 

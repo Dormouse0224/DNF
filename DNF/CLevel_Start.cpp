@@ -104,7 +104,7 @@ void CLevel_Start::End()
 
 void CLevel_Start::GameStartBtnCallback()
 {
-	CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"seriaroom"));
+	CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"seria_room"));
 }
 
 void CLevel_Start::TextureEditBtnCallback()

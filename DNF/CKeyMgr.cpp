@@ -173,8 +173,9 @@ void CKeyMgr::Tick()
         ScreenToClient(CEngine::GetInst()->GetMainWnd(), &point);
         m_MousePos = Vec2D(point.x, point.y);
 
+        // 커맨드 갱신
         m_CommandTimeout += CTimeMgr::GetInst()->GetDeltaTime();
-        if (m_CommandTimeout > 0.2)
+        if (m_CommandTimeout > 0.3)
         {
             m_CommandTimeout = 0.f;
             m_Command.clear();

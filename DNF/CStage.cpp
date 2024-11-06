@@ -36,6 +36,8 @@ CStage::~CStage()
 
 void CStage::Begin()
 {
+	SetCameraFollowPlayer(true);
+
 	// 배경 객체 생성 후 애니메이션 입력
 	CBackground* pBackground = new CBackground(m_StageInfo->StageName + L"_Background");
 	pBackground->SetScale(m_StageInfo->StageSize);
@@ -175,7 +177,6 @@ void CStage::Begin()
 	if (!m_StageInfo->BGMPath.empty())
 	{
 		m_BGM = CSoundMgr::GetInst()->GetSound(m_StageInfo->BGMPath, L"\\music\\" + m_StageInfo->BGMPath);
-		m_BGM->SetVolume(50);
 		m_BGM->PlayToBGM(true);
 	}
 }

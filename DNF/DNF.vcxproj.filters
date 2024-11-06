@@ -173,6 +173,51 @@
     <Filter Include="main\06. Component\05. RigidBody">
       <UniqueIdentifier>{1aab1101-b249-4532-9704-1b623d92ca45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\08. State\Player\Jump">
+      <UniqueIdentifier>{f2b1d02d-460a-4609-83b1-619bf65c69c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Stage\Boss">
+      <UniqueIdentifier>{ffc66293-15da-4831-9c5a-934b04cb4a12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Stage\Boss\PurpleSeaRoad">
+      <UniqueIdentifier>{93f1a926-37ff-4a64-9fec-1dffbd0a8362}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Stage\Boss\Cliff">
+      <UniqueIdentifier>{f1020de5-25aa-4f0d-b958-a631a59326f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Stage\Boss\S01">
+      <UniqueIdentifier>{146c2110-6254-472e-93dc-1a83ebc7d519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\04. Level\Stage\Boss\S03">
+      <UniqueIdentifier>{7b2de5ec-afeb-49f8-a25d-e3f284ae122c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\06. Dummy">
+      <UniqueIdentifier>{b8ced1d1-6ce0-4bc1-b0c8-dbf5f85dcfdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\07. Boss">
+      <UniqueIdentifier>{63b054e5-9121-482a-bafa-6c35ea5601b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Boss">
+      <UniqueIdentifier>{f9e703e1-9bdd-4ff1-819a-651ba5c209df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Boss\Income">
+      <UniqueIdentifier>{e643576d-6aa1-4c97-8ff0-1b9e7a6c3fa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Boss\Attack">
+      <UniqueIdentifier>{f2d77356-7747-4c9b-8cbc-5bcbdac6c68e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Boss\Death">
+      <UniqueIdentifier>{3da3dbcb-650f-4e58-a02b-a79a10077b31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\08. State\Boss\Pattern">
+      <UniqueIdentifier>{3b5ce3e0-97b5-44f6-99a9-86ebf282f79a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\08. AoE">
+      <UniqueIdentifier>{eebf1b23-86b3-4f7c-94dc-3fc8f3c40929}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\02. Map\04. Sea">
+      <UniqueIdentifier>{6e66d7c6-28d4-452e-9eb8-3e35b7148c2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -367,6 +412,39 @@
     <ClInclude Include="CRigidBody.h">
       <Filter>main\06. Component\05. RigidBody</Filter>
     </ClInclude>
+    <ClInclude Include="CPurpleSeaRoad.h">
+      <Filter>main\04. Level\Stage\Boss\PurpleSeaRoad</Filter>
+    </ClInclude>
+    <ClInclude Include="CCliff.h">
+      <Filter>main\04. Level\Stage\Boss\Cliff</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayer_Jump.h">
+      <Filter>main\08. State\Player\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="CS01.h">
+      <Filter>main\04. Level\Stage\Boss\S01</Filter>
+    </ClInclude>
+    <ClInclude Include="CS03.h">
+      <Filter>main\04. Level\Stage\Boss\S03</Filter>
+    </ClInclude>
+    <ClInclude Include="CDummy.h">
+      <Filter>main\05. Object\06. Dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="CLargo.h">
+      <Filter>main\05. Object\07. Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="CLargo_Income.h">
+      <Filter>main\08. State\Boss\Income</Filter>
+    </ClInclude>
+    <ClInclude Include="CLargo_Attack.h">
+      <Filter>main\08. State\Boss\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="CAoE.h">
+      <Filter>main\05. Object\08. AoE</Filter>
+    </ClInclude>
+    <ClInclude Include="CSea.h">
+      <Filter>main\05. Object\02. Map\04. Sea</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -531,6 +609,39 @@
     </ClCompile>
     <ClCompile Include="CRigidBody.cpp">
       <Filter>main\06. Component\05. RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="CPurpleSeaRoad.cpp">
+      <Filter>main\04. Level\Stage\Boss\PurpleSeaRoad</Filter>
+    </ClCompile>
+    <ClCompile Include="CCliff.cpp">
+      <Filter>main\04. Level\Stage\Boss\Cliff</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer_Jump.cpp">
+      <Filter>main\08. State\Player\Jump</Filter>
+    </ClCompile>
+    <ClCompile Include="CS01.cpp">
+      <Filter>main\04. Level\Stage\Boss\S01</Filter>
+    </ClCompile>
+    <ClCompile Include="CS03.cpp">
+      <Filter>main\04. Level\Stage\Boss\S03</Filter>
+    </ClCompile>
+    <ClCompile Include="CDummy.cpp">
+      <Filter>main\05. Object\06. Dummy</Filter>
+    </ClCompile>
+    <ClCompile Include="CLargo.cpp">
+      <Filter>main\05. Object\07. Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="CLargo_Income.cpp">
+      <Filter>main\08. State\Boss\Income</Filter>
+    </ClCompile>
+    <ClCompile Include="CLargo_Attack.cpp">
+      <Filter>main\08. State\Boss\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="CAoE.cpp">
+      <Filter>main\05. Object\08. AoE</Filter>
+    </ClCompile>
+    <ClCompile Include="CSea.cpp">
+      <Filter>main\05. Object\02. Map\04. Sea</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

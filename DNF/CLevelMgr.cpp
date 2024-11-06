@@ -6,11 +6,16 @@
 #include "CEngine.h"
 #include "CNpkMgr.h"
 #include "CTaskMgr.h"
+#include "CTimeMgr.h"
 
 #include "CLevel_Start.h"
 #include "CLevel_Edit.h"
 #include "CDungeonMaker.h"
 #include "CStageMaker.h"
+#include "CPurpleSeaRoad.h"
+#include "CCliff.h"
+#include "CS01.h"
+#include "CS03.h"
 
 #include "CAlbum.h"
 #include "CAlbumPlayer.h"
@@ -43,8 +48,12 @@ void CLevelMgr::Init()
 	CLevel_Edit* pEditLevel = new CLevel_Edit;
 	CDungeonMaker* pDungeonMaker = new CDungeonMaker;
 	CStageMaker* pStageMaker = new CStageMaker;
+	CPurpleSeaRoad* pPurpleSeaRoad = new CPurpleSeaRoad;
+	CCliff* pCliff = new CCliff;
+	CS01* pS01 = new CS01;
+	CS03* pS03 = new CS03;
 	ReadDungeonList();
-	m_CurrentLevel = pStartLevel;
+	m_CurrentLevel = pPurpleSeaRoad;
 	m_CurrentLevel->Begin();
 }
 
@@ -97,8 +106,8 @@ void CLevelMgr::ReadDungeonList()
 {
 	std::wifstream DungeonList(CEngine::GetInst()->GetResourcePathW() + L"\\dungeon\\_List.txt");
 	wstring line;
+	map<Vec2D, StageInfo*> StageMap;
 	while (std::getline(DungeonList, line)) {
-		map<Vec2D, StageInfo*> StageMap;
 		LoadStage(line, StageMap);
 		for (map<Vec2D, StageInfo*>::iterator iter = StageMap.begin(); iter != StageMap.end(); ++iter)
 		{
@@ -106,6 +115,7 @@ void CLevelMgr::ReadDungeonList()
 			newStage->SetStageInfo(iter->second);
 		}
 	}
+	DungeonList.close();
 }
 
 void CLevelMgr::LoadStage(wstring _fileName, map<Vec2D, StageInfo*>& _StageInfoMap)
