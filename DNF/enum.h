@@ -169,7 +169,19 @@ enum class CameraEffect
 {
 	FadeIn,
 	FadeOut,
+	Flash,
 
+	END
+};
+
+enum class AvatarParts
+{
+	Hair,
+	Cap,
+	Pants,
+	Coat,
+	Shoes,
+	LBow,
 
 	END
 };

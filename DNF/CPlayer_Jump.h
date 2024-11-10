@@ -8,7 +8,7 @@ public:
     ~CPlayer_Jump();
 
 private:
-    float m_Speed = 150.f;
+    float m_Speed = 250.f;
 
 
 public:

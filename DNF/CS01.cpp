@@ -22,6 +22,7 @@ CS01::CS01()
 	m_StageInfo = new StageInfo();
 	m_StageInfo->StageSize = Vec2D(1110, 1000);
 	m_StageInfo->StageName = GetName();
+	m_UpperBound = 700;
 }
 
 CS01::~CS01()
@@ -144,23 +145,22 @@ void CS01::Tick()
 
 
 
-	CLevel::Tick();
+	CStage::Tick();
 }
 
 void CS01::FinalTick()
 {
 
-	CLevel::FinalTick();
+	CStage::FinalTick();
 }
 
 void CS01::Render()
 {
 
-	CLevel::Render();
+	CStage::Render();
 }
 
 void CS01::End()
 {
-
-	ClearAll();
+	CStage::End();
 }

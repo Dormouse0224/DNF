@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "CTimeMgr.h"
 #include "CEngine.h"
+#include "CLevelMgr.h"
+#include "CLevel.h"
+#include "CPlayer.h"
+#include "CPlayer_Attack.h"
+
 
 CTimeMgr::CTimeMgr()
 	: m_CurCount{}
@@ -40,16 +45,15 @@ void CTimeMgr::Tick()
 		m_FPS = 0;
 		m_Time -= 1.f;
 	}
+
+	CPlayer* pPlayer = CLevelMgr::GetInst()->GetCurrentLevel()->GetPlayer();
+	if (pPlayer)
+	{
+		pPlayer->GetAttackState()->m_SkillDuration -= m_DT;
+		for (int i = 0; i < (int)PlayerSkill::END; ++i)
+		{
+			pPlayer->GetAttackState()->m_Cooltime[i] -= m_DT;
+		}
+	}
 }
 
-void CTimeMgr::TimeCheckStart()
-{
-	m_CheckTimer = std::chrono::high_resolution_clock::now();
-}
-
-LONGLONG CTimeMgr::TimeCheck()
-{
-	m_CheckDuration = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()- m_CheckTimer);
-	m_CheckTimer = std::chrono::high_resolution_clock::now();
-	return m_CheckDuration.count();
-}

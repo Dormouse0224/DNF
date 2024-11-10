@@ -13,6 +13,7 @@
 #include "CDummy.h"
 #include "CLargo.h"
 #include "CSea.h"
+#include "CDbgRender.h"
 
 CS03::CS03()
 	: CStage(L"S03")
@@ -23,6 +24,7 @@ CS03::CS03()
 	m_StageInfo = new StageInfo();
 	m_StageInfo->StageSize = Vec2D(1568, 960);
 	m_StageInfo->StageName = GetName();
+	m_UpperBound = 560;
 }
 
 CS03::~CS03()
@@ -140,17 +142,22 @@ void CS03::Tick()
 	m_PlayerYogiGauge->SetLocation(GetPlayer()->GetLocation() + Vec2D(70, -20));
 
 
-	CLevel::Tick();
+	CStage::Tick();
 }
 
 void CS03::FinalTick()
 {
 
-	CLevel::FinalTick();
+	CStage::FinalTick();
 }
 
 void CS03::Render()
 {
+	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Line, Vec2D(-10.f, m_StageInfo->StageSize.y - m_UpperBound)
+		, Vec2D(m_StageInfo->StageSize.x + 10, m_StageInfo->StageSize.y - m_UpperBound), 0, Color(255, 255, 0, 0));
+	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Rectangle
+		, Vec2D(0, 0), m_StageInfo->StageSize, 0, Color(255, 255, 0, 0));
+
 	for (int i = 0; i < (int)LayerType::Object; ++i)
 	{
 		vector<CObj*> vec = GetObjLayer((LayerType)i);
@@ -184,8 +191,7 @@ void CS03::Render()
 
 void CS03::End()
 {
-
-	ClearAll();
+	CStage::End();
 }
 
 void CS03::AddAoE(AoEType _type, Vec2D _pos, int _param1, int _param2, float _castTime, bool _isVert)

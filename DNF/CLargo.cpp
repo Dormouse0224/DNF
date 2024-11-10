@@ -61,12 +61,16 @@ void CLargo::Tick()
 	Vec2D gp(GetLocation().x + (GetScale().x / 2.f), GetLocation().y + GetScale().y);
 	if (GetRigidBody() != nullptr)
 	{
-		SetGroundPos(gp - Vec2D(0.f, GetRigidBody()->GetAirborneHeight()));
+		RenewGroundPos(gp - Vec2D(0.f, GetRigidBody()->GetAirborneHeight()));
 	}
 	else
 	{
-		SetGroundPos(gp);
+		RenewGroundPos(gp);
 	}
+
+	// 그라운드 포지션 디버그 렌더링
+	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Circle, GetGroundPos() - Vec2D(5, 5)
+		, Vec2D(10, 10), 0, Color(255, 0, 0, 255));
 }
 
 void CLargo::Render()
@@ -89,8 +93,6 @@ void CLargo::Render()
 		m_bIncomeFin = true;
 	}
 	
-	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Circle, GetGroundPos() - Vec2D(5, 5)
-		, Vec2D(10, 10), 0, Color(255, 0, 0, 255));
 }
 
 void CLargo::AddAnimation(CAlbumPlayer* _AP, LargoState _st)

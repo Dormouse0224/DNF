@@ -44,6 +44,9 @@ public:
     void SetCurrentScene(int _SceneIndex);
     void ChangeAlbum(string _AlbumPath, wstring _NpkPath);
     static CAlbumPlayer* CreatePlayerFromFile(wstring _Name, wstring _filepath, Vec2D&& _AdditionalOffset = Vec2D(0, 0));
+    static void CreateAvatar(wstring _fileName, string _code, AvatarParts _parts, vector<CAlbumPlayer*>& _avatarArr);
+    static void CreateAvatar(wstring _fileName, string _code[6], vector<CAlbumPlayer*>& _avatarArr);
+    static vector<CAlbumPlayer*> CreateAvatarArr(wstring _fileName, string _code[6]);
     void SwitchLoop() { m_Loop = !m_Loop; }
 
 

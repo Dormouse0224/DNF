@@ -23,8 +23,6 @@ public:
 	void Init();
 	void Tick();
 	float GetDeltaTime() { return m_DT; }
-
-	void TimeCheckStart();
-	LONGLONG TimeCheck();
+	float GetNow() { return m_CurCount.QuadPart / m_Frequency.QuadPart; }
 };
 

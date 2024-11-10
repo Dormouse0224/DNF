@@ -18,6 +18,7 @@
 #include "CMonster_Idle.h"
 #include "CMonster_Hurt.h"
 #include "CMonster_Move.h"
+#include "CDbgRender.h"
 
 
 CStage::CStage(wstring _name)
@@ -183,8 +184,13 @@ void CStage::Begin()
 
 void CStage::Tick()
 {
+	if (GetPlayer()->GetGroundPos().x < 0 || GetPlayer()->GetGroundPos().x > m_StageInfo->StageSize.x)
+		GetPlayer()->SetGroundPos(Vec2D(min(max(GetPlayer()->GetGroundPos().x, 0), m_StageInfo->StageSize.x), GetPlayer()->GetGroundPos().y));
+	if (GetPlayer()->GetGroundPos().y < m_StageInfo->StageSize.y - m_UpperBound || GetPlayer()->GetGroundPos().y > m_StageInfo->StageSize.y)
+		GetPlayer()->SetGroundPos(Vec2D(GetPlayer()->GetGroundPos().x, min(max(GetPlayer()->GetGroundPos().y, m_StageInfo->StageSize.y - m_UpperBound), m_StageInfo->StageSize.y)));
 
 	CCollisionMgr::GetInst()->AddCollisionLayer(LayerType::Object, LayerType::Object);
+
 	CLevel::Tick();
 
 }
@@ -196,6 +202,10 @@ void CStage::FinalTick()
 
 void CStage::Render()
 {
+	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Line, Vec2D(-10.f, m_StageInfo->StageSize.y - m_UpperBound)
+		, Vec2D(m_StageInfo->StageSize.x + 10, m_StageInfo->StageSize.y - m_UpperBound), 0, Color(255, 255, 0, 0));
+	CDbgRender::GetInst()->AddDbgRender(DbgRenderShape::Rectangle
+		, Vec2D(0, 0), m_StageInfo->StageSize, 0, Color(255, 255, 0, 0));
 	CLevel::Render();
 }
 

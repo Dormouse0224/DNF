@@ -10,6 +10,8 @@ CRigidBody::CRigidBody(wstring _name)
 	, m_IsAirborne(false)
 	, m_AirborneHeight(0)
 	, m_AirborneSpeed(0)
+	, m_GravityReduce(0.f)
+	, m_bZeroGravity(false)
 {
 }
 
@@ -23,7 +25,8 @@ void CRigidBody::FinalTick()
 
 	if (m_IsAirborne == true)
 	{
-		m_AirborneSpeed = m_AirborneSpeed +CLevelMgr::GetInst()->GetCurrentLevel()->GetGravity() * CTimeMgr::GetInst()->GetDeltaTime();
+		if (!m_bZeroGravity)
+			m_AirborneSpeed = m_AirborneSpeed + (CLevelMgr::GetInst()->GetCurrentLevel()->GetGravity() - m_GravityReduce) * CTimeMgr::GetInst()->GetDeltaTime();
 		m_AirborneHeight += m_AirborneSpeed * CTimeMgr::GetInst()->GetDeltaTime();
 		if (m_AirborneHeight > 0)
 		{

@@ -20,6 +20,7 @@ CCliff::CCliff()
 	m_StageInfo = new StageInfo();
 	m_StageInfo->StageSize = Vec2D(1066, 600);
 	m_StageInfo->StageName = GetName();
+	m_UpperBound = 600;
 }
 
 CCliff::~CCliff()
@@ -74,7 +75,7 @@ void CCliff::Tick()
 	{
 		m_Cliff[i]->SetOffset(Vec2D(750, ((int)(m_Cliff[i]->GetOffset().y + (720 * i) + m_Speed * CTimeMgr::GetInst()->GetDeltaTime()) % 720) - (720 * i)));
 	}
-	CLevel::Tick();
+	CStage::Tick();
 
 	m_Duration += CTimeMgr::GetInst()->GetDeltaTime();
 	GetPlayer()->SetLocation(Vec2D(750.f, (300.f - 50.f * powf(m_Duration - 4.f, 3.f))));
@@ -94,15 +95,15 @@ void CCliff::Tick()
 
 void CCliff::FinalTick()
 {
-	CLevel::FinalTick();
+	CStage::FinalTick();
 }
 
 void CCliff::Render()
 {
-	CLevel::Render();
+	CStage::Render();
 }
 
 void CCliff::End()
 {
-	ClearAll();
+	CStage::End();
 }

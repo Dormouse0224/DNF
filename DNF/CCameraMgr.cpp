@@ -83,6 +83,9 @@ void CCameraMgr::Tick()
 	case CameraEffect::FadeOut:
 		m_Alpha = min(255.f * (m_EffectTimer / 1.f), 255);
 		break;
+	case CameraEffect::Flash:
+		m_Alpha = max(-1020.f * pow((m_EffectTimer - 0.5), 2.f) + 255.f, 0);
+		break;
 	case CameraEffect::END:
 		m_EffectTimer = 0;
 		break;
@@ -116,6 +119,15 @@ void CCameraMgr::Effect()
 			m_EffectTimer = 0;
 		}
 		CTextureMgr::GetInst()->FillRect(Color(m_Alpha, 0, 0, 0), Vec2D(0, 0), CEngine::GetInst()->GetResolution(), true);
+		break;
+	case CameraEffect::Flash:
+		if (m_Alpha <= 0)
+		{
+			m_Effect = CameraEffect::END;
+			m_IsEffectFin = true;
+			m_EffectTimer = 0;
+		}
+		CTextureMgr::GetInst()->FillRect(Color(m_Alpha, 255, 255, 255), Vec2D(0, 0), CEngine::GetInst()->GetResolution(), true);
 		break;
 	case CameraEffect::END:
 		m_IsEffectFin = false;

@@ -10,7 +10,7 @@ public:
     ~CPlayer_Walk();
 
 private:
-    float m_Speed = 150.f;
+    float m_Speed = 200.f;
 
 public:
     virtual void Enter();

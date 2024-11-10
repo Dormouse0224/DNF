@@ -8,7 +8,7 @@ public:
     ~CPlayer_Run();
 
 private:
-    float m_Speed = 250.f;
+    float m_Speed = 350.f;
 
 
 public:

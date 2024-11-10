@@ -16,6 +16,7 @@
 #include "CCliff.h"
 #include "CS01.h"
 #include "CS03.h"
+#include "CSeriaRoom.h"
 
 #include "CAlbum.h"
 #include "CAlbumPlayer.h"
@@ -52,8 +53,9 @@ void CLevelMgr::Init()
 	CCliff* pCliff = new CCliff;
 	CS01* pS01 = new CS01;
 	CS03* pS03 = new CS03;
+	CSeriaRoom* pSeriaRoom = new CSeriaRoom;
 	ReadDungeonList();
-	m_CurrentLevel = pPurpleSeaRoad;
+	m_CurrentLevel = pSeriaRoom;
 	m_CurrentLevel->Begin();
 }
 

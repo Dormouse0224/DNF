@@ -7,6 +7,7 @@
 #include "CLevelMgr.h"
 #include "CSticker.h"
 #include "CRigidBody.h"
+#include "CTextMgr.h"
 
 CObj::CObj(wstring _Name)
 	: CBase(_Name)
@@ -58,6 +59,20 @@ void CObj::SetLocation(Vec2D _Location)
 	}
 }
 
+void CObj::SetGroundPos(Vec2D _Location)
+{
+	Vec2D gp((GetScale().x / 2.f), GetScale().y);
+	m_GroundPos = _Location;
+	if (m_RigidBody)
+	{
+		SetLocation(_Location + Vec2D(0.f, m_RigidBody->GetAirborneHeight()) - gp);
+	}
+	else
+	{
+		SetLocation(_Location - gp);
+	}
+}
+
 void CObj::SetScale(Vec2D _Scale)
 {
 	m_Scale = _Scale;
@@ -66,6 +81,11 @@ void CObj::SetScale(Vec2D _Scale)
 	{
 		m_BodyCollider->SetSize(m_Scale);
 	}
+}
+
+void CObj::GiveDamage(int _dmg)
+{
+	m_HP -= _dmg;
 }
 
 void CObj::AddComponent(CComponent* _Component)

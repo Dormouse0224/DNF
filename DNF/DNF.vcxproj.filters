@@ -218,6 +218,21 @@
     <Filter Include="main\05. Object\02. Map\04. Sea">
       <UniqueIdentifier>{6e66d7c6-28d4-452e-9eb8-3e35b7148c2a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\04. Level\Stage\SeriaRoom">
+      <UniqueIdentifier>{8a632f83-c200-470a-8542-ce117b60d163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\09. PlayerObj">
+      <UniqueIdentifier>{90d45185-de12-4ac1-9401-f4db6d4f92e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\09. PlayerObj\Arrow">
+      <UniqueIdentifier>{b3ad6bd3-5efa-445b-a2f3-1ab9b38b65bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\09. PlayerObj\Skill">
+      <UniqueIdentifier>{9d49fd09-d996-4adb-b52a-88e4a4b0ecf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\09. PlayerObj\AoE">
+      <UniqueIdentifier>{7c82704d-527c-446d-a4ea-683cc86aebff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -445,6 +460,18 @@
     <ClInclude Include="CSea.h">
       <Filter>main\05. Object\02. Map\04. Sea</Filter>
     </ClInclude>
+    <ClInclude Include="CSeriaRoom.h">
+      <Filter>main\04. Level\Stage\SeriaRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="CArrow.h">
+      <Filter>main\05. Object\09. PlayerObj\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayerSkill.h">
+      <Filter>main\05. Object\09. PlayerObj\Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayerAoE.h">
+      <Filter>main\05. Object\09. PlayerObj\AoE</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -642,6 +669,18 @@
     </ClCompile>
     <ClCompile Include="CSea.cpp">
       <Filter>main\05. Object\02. Map\04. Sea</Filter>
+    </ClCompile>
+    <ClCompile Include="CSeriaRoom.cpp">
+      <Filter>main\04. Level\Stage\SeriaRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="CArrow.cpp">
+      <Filter>main\05. Object\09. PlayerObj\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayerSkill.cpp">
+      <Filter>main\05. Object\09. PlayerObj\Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayerAoE.cpp">
+      <Filter>main\05. Object\09. PlayerObj\AoE</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

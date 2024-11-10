@@ -8,11 +8,13 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <set>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <random>
+#include <array>
 
 // GDI+
 //#include <ole2.h>
@@ -67,6 +69,7 @@ using std::string;
 using std::vector;
 using std::list;
 using std::map;
+using std::set;
 using std::pair;
 using std::make_pair;
 using std::ifstream;

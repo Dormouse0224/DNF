@@ -4,6 +4,7 @@
 #include "CObj.h"
 #include "CCollider.h"
 #include "CRigidBody.h"
+#include "CPlayer_Attack.h"
 
 CPlayer_Idle::CPlayer_Idle(wstring _name)
 	: CState(_name)
@@ -44,6 +45,13 @@ void CPlayer_Idle::FinalTick()
 	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::SPACE) == Key_state::TAP)
 	{
 		GetOwnerObj()->GetRigidBody()->Jump(800.f);
+	}
+
+	CState* pState = GetFSM()->FindState((int)PlayerState::Attack);
+	if (pState)
+	{
+		if (((CPlayer_Attack*)pState)->AttackCheck())
+			GetFSM()->ChangeState(pState);
 	}
 }
 

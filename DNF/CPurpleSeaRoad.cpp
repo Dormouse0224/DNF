@@ -15,11 +15,13 @@
 
 CPurpleSeaRoad::CPurpleSeaRoad()
 	: CStage(L"PurpleSeaRoad")
+	, m_Timer(0)
 {
 	m_StageInfo = new StageInfo();
 	m_StageInfo->StageSize = Vec2D(1700, 630);
 	m_StageInfo->StageName = GetName();
 	m_StageInfo->BGMPath = L"duskyisland_purplesearoad.ogg";
+	m_UpperBound = 240;
 }
 
 CPurpleSeaRoad::~CPurpleSeaRoad()
@@ -28,6 +30,7 @@ CPurpleSeaRoad::~CPurpleSeaRoad()
 
 void CPurpleSeaRoad::Begin()
 {
+	// 리소스 미리 로드
 	CTextureMgr::PreloadFromFile(L"BossResources.txt");
 
 	SetCameraFollowPlayer(true);
@@ -93,22 +96,22 @@ void CPurpleSeaRoad::Tick()
 		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"Cliff"));
 	}
 
-	CLevel::Tick();
+	CStage::Tick();
 }
 
 void CPurpleSeaRoad::FinalTick()
 {
 
-	CLevel::FinalTick();
+	CStage::FinalTick();
 }
 
 void CPurpleSeaRoad::Render()
 {
 
-	CLevel::Render();
+	CStage::Render();
 }
 
 void CPurpleSeaRoad::End()
 {
-	ClearAll();
+	CStage::End();
 }

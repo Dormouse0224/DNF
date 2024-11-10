@@ -3,6 +3,7 @@
 #include "CObj.h"
 #include "CRigidBody.h"
 #include "CCollider.h"
+#include "CPlayer_Attack.h"
 
 
 CPlayer_Walk::CPlayer_Walk(wstring _name)
@@ -30,7 +31,10 @@ void CPlayer_Walk::FinalTick()
 		&& CKeyMgr::GetInst()->GetKeyState(Keyboard::LEFT) == Key_state::NONE
 		&& CKeyMgr::GetInst()->GetKeyState(Keyboard::RIGHT) == Key_state::NONE)
 	{
-		GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Idle));
+		if (GetFSM()->GetPrevState() == GetFSM()->FindState((int)PlayerState::Attack))
+			GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Attack));
+		else
+			GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Idle));
 	}
 	else
 	{
@@ -64,6 +68,12 @@ void CPlayer_Walk::FinalTick()
 		GetOwnerObj()->GetRigidBody()->Jump(800.f);
 	}
 	
+	CState* pState = GetFSM()->FindState((int)PlayerState::Attack);
+	if (pState)
+	{
+		if (((CPlayer_Attack*)pState)->AttackCheck())
+			GetFSM()->ChangeState(pState);
+	}
 }
 
 void CPlayer_Walk::Exit()

@@ -552,6 +552,11 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 		// 앨범을 가져온 적 없는 경우 - 앨범이 속한 NPK 파일 로드 후 앨범 데이터 저장, 요청된 앨범은 텍스처를 메모리에 로드
 		if (iter == m_Albums.end())
 		{
+			// 앨범을 찾을 수 없는데 해당 앨범이 속한 npk는 등록되어 있는 경우, 없는 앨범이므로 중단
+			map<wstring, vector<CAlbum*>>::iterator iter1 = m_NPKs.find(_NpkPath);
+			if (iter1 != m_NPKs.end())
+				return nullptr;
+
 			ifstream readfile;
 			readfile.open(_NpkPath, ios::binary);
 			assert(readfile.is_open());	// 파일 읽기 오류
@@ -565,10 +570,8 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 				{
 					// 스레드 풀 생성
 					PTP_POOL pool = CreateThreadpool(nullptr);
-					if (!pool) {
-						std::cerr << "Failed to create thread pool.\n";
+					if (!pool)
 						return nullptr;
-					}
 
 					// 스레드 풀 환경 설정
 					TP_CALLBACK_ENVIRON callbackEnv;
@@ -586,7 +589,6 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 						}
 						else {
 							delete data;
-							std::cerr << "Failed to create thread pool work item.\n";
 						}
 					}
 
@@ -608,12 +610,14 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 		// 앨범을 가져온 적이 있으면 엘범 정보를 바탕으로 메모리에 로드 (Texture 로드 호출 시 이미 메모리에 로드된 경우 다시 로드하지 않고 무시됨)
 		else
 		{
+			// 해당 앨범의 텍스쳐가 로드된 적이 있으면 중단
+			if (iter->second->GetScene(0)->GetBitmap() != nullptr)
+				return iter->second;
+
 			// 스레드 풀 생성
 			PTP_POOL pool = CreateThreadpool(nullptr);
-			if (!pool) {
-				std::cerr << "Failed to create thread pool.\n";
+			if (!pool)
 				return nullptr;
-			}
 
 			// 스레드 풀 환경 설정
 			TP_CALLBACK_ENVIRON callbackEnv;
@@ -631,7 +635,6 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 				}
 				else {
 					delete data;
-					std::cerr << "Failed to create thread pool work item.\n";
 				}
 			}
 

@@ -4,6 +4,7 @@
 #include "CCollider.h"
 #include "CRigidBody.h"
 #include "CKeyMgr.h"
+#include "CPlayer_Attack.h"
 
 CPlayer_Jump::CPlayer_Jump(wstring _name)
 	: CState(_name)
@@ -47,7 +48,17 @@ void CPlayer_Jump::FinalTick()
 
 	if (!(GetOwnerObj()->GetRigidBody()->GetAirborne()))
 	{
-		GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Idle));
+		if (GetFSM()->GetPrevState() == GetFSM()->FindState((int)PlayerState::Attack))
+			GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Attack));
+		else
+			GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Idle));
+	}
+
+	CState* pState = GetFSM()->FindState((int)PlayerState::Attack);
+	if (pState)
+	{
+		if (((CPlayer_Attack*)pState)->AttackCheck())
+			GetFSM()->ChangeState(pState);
 	}
 }
 

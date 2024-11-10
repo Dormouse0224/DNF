@@ -36,10 +36,12 @@ protected:
     vector<CAlbumPlayer*> m_AlbumPlayerVector;
     bool m_bLookLeft;
     bool m_bFallowCam;
+    int m_HP;
 
 public:
     void SetLocation(Vec2D _Location);
-    void SetGroundPos(Vec2D _Location) { m_GroundPos = _Location; }
+    void RenewGroundPos(Vec2D _Location) { m_GroundPos = _Location; }
+    void SetGroundPos(Vec2D _Location);
     void SetScale(Vec2D _Scale);
     Vec2D GetLocation() const { return m_Location; }
     Vec2D GetScale() const { return m_Scale; }
@@ -52,6 +54,7 @@ public:
     void SetLookLeft(bool _b) { m_bLookLeft = _b; }
     bool GetFallowCam() { return m_bFallowCam; }
     void SetFallowCam(bool _b) { m_bFallowCam = _b; }
+    void GiveDamage(int _dmg);
 
     // ÄÄÆ÷³ÍÆ®
     virtual void AddComponent(CComponent* _Component);

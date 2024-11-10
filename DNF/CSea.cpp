@@ -33,11 +33,11 @@ void CSea::Tick()
 	Vec2D gp(GetLocation().x + (GetScale().x / 2.f), GetLocation().y + GetScale().y);
 	if (GetRigidBody() != nullptr)
 	{
-		SetGroundPos(gp - Vec2D(0.f, GetRigidBody()->GetAirborneHeight()));
+		RenewGroundPos(gp - Vec2D(0.f, GetRigidBody()->GetAirborneHeight()));
 	}
 	else
 	{
-		SetGroundPos(gp);
+		RenewGroundPos(gp);
 	}
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "CObj.h"
 
+class CPlayer_Attack;
 
 class CPlayer :
     public CObj
@@ -12,6 +13,11 @@ public:
 private:
     vector<CAlbumPlayer*> m_Animation[(int)PlayerState::END];
     float m_YogiGauge;
+    bool m_Setup;
+    vector<CAlbumPlayer*> m_Avatar[(int)PlayerState::END];
+    string m_CurAvatarCode[(int)AvatarParts::END];
+    string m_PrevAvatarCode[(int)AvatarParts::END];
+    CPlayer_Attack* m_AttackState;
 
 
 public:
@@ -29,5 +35,14 @@ public:
     float GetYogiGauge() { return m_YogiGauge; }
     float SetYogiGauge(float _val) { m_YogiGauge = _val; }
     void AddYogiGauge(float _val) { m_YogiGauge  = min(m_YogiGauge + _val, 110); }
+
+    bool GetSetup() { return m_Setup; }
+    void SetSetup(bool _b) { m_Setup = _b; }
+
+    string* GetCurAvatarCode() { return m_CurAvatarCode; }
+
+    bool CheckAvatarCodeChange();
+
+    CPlayer_Attack* GetAttackState() { return m_AttackState; }
 };
 
