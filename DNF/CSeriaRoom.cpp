@@ -25,7 +25,7 @@ CSeriaRoom::~CSeriaRoom()
 void CSeriaRoom::Begin()
 {
 	SetCameraFollowPlayer(true);
-	CCameraMgr::GetInst()->SetEffect(CameraEffect::Flash);
+	CCameraMgr::GetInst()->SetEffect(CameraEffect::FadeIn);
 
 	// 배경 객체 생성 후 애니메이션 입력
 	CBackground* pBackground = new CBackground(GetName() + L"_Background_0");

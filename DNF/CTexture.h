@@ -42,7 +42,8 @@ public:
     void SetOwner(CAlbum* _Album) { m_Owner = _Album; }
 
     virtual int Load() override;
-    void Render(Vec2D _RenderOffset = Vec2D(0, 0), float _angle = 0.f, bool bCameraFallow = false, bool bLinearDodge = false, bool bFlipHorizontal = true, float _renderPercent = 1.f);
+    void Render(Vec2D _RenderOffset = Vec2D(0, 0), float _angle = 0.f, bool bCameraFallow = false, bool bLinearDodge = false
+        , bool bFlipHorizontal = true, float _renderPercent = 1.f, float _renderPercentH = 1.f);
     void DirectRender(Vec2D _RenderOffset = Vec2D(0, 0), float _angle = 0.f, bool bCameraFallow = false, bool bLinearDodge = false);
     int GetLength() { return Length; }
     Bitmap* GetBitmap() { return m_Bitmap; }

@@ -63,7 +63,7 @@ void CPlayerAoE::Tick()
 		{
 			if (vec[i] != pPlayer && Vec2D(vec[i]->GetLocation().x - GetLocation().x, (vec[i]->GetLocation().y - GetLocation().y) * 3.f).Length() < m_Radius)
 			{
-				vec[i]->GiveDamage(0);
+				vec[i]->GiveDamage(m_ATK);
 			}
 		}
 	}

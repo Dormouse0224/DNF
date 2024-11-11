@@ -51,6 +51,11 @@ void CLargo_Attack::Enter()
 
 void CLargo_Attack::FinalTick()
 {
+	if (GetOwnerObj()->GetCurHP() <= 0)
+	{
+		GetFSM()->ChangeState((int)LargoState::Death);
+	}
+
 	std::random_device rd;
 	std::mt19937 gen(rd());
 

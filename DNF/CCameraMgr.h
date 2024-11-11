@@ -13,6 +13,7 @@ private:
 	float m_CameraSpeed;
 	CameraEffect m_Effect;
 	float m_EffectTimer;
+	bool m_IsEffectRun;
 	bool m_IsEffectFin;
 	int m_Alpha;
 
@@ -24,6 +25,9 @@ public:
 
 	void SetEffect(CameraEffect _eff) { m_Effect = _eff; }
 	bool IsEffectFin();
+
+	int GetAlpha() { return m_Alpha; }
+	void SetAlpha(int _alpha) { m_Alpha = _alpha; }
 
 	void Effect();
 };

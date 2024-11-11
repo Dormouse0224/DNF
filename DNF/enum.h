@@ -138,6 +138,7 @@ enum class MonsterState
 	Hurt,
 	JumpUp,
 	JumpDown,
+	Death,
 	
 
 	END
@@ -150,6 +151,7 @@ enum class PlayerState
 	Run,
 	Jump,
 	Attack,
+	Death,
 
 
 	END

@@ -50,7 +50,8 @@ int CTexture::Load()
 
 // 오브젝트에 속한 텍스처의 렌더링
 // 오브젝트 로케이션 + 텍스쳐 자체 오프셋 + 추가 렌더링 오프셋(기본값 0)
-void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, bool bLinearDodge, bool bFlipHorizontal, float _renderPercent)
+void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, bool bLinearDodge, bool bFlipHorizontal
+	, float _renderPercent, float _renderPercentH)
 {
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
 	Vec2D Resolution = CEngine::GetInst()->GetResolution();
@@ -120,12 +121,13 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 			graphics.RotateTransform(_angle);							// 회전 적용
 			graphics.TranslateTransform(-ObjCenter.x, -ObjCenter.y);	// 원래 위치로 이동
 
-			if (_renderPercent == 1.f)
+			if (_renderPercent == 1.f && _renderPercentH == 1.f)
 				graphics.DrawImage(m_Bitmap, (int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y), (int)m_Size.x, (int)m_Size.y);
 			else
 			{
-				Rect destRect((int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y) + (int)(m_Size.y * (1.f - _renderPercent)), (int)m_Size.x , (int)m_Size.y * _renderPercent);
-				graphics.DrawImage(m_Bitmap, destRect, 0, (int)(m_Size.y * (1.f - _renderPercent)), (int)m_Size.x, (int)(m_Size.y * _renderPercent), UnitPixel);
+				Rect destRect((int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y) + (int)(m_Size.y * (1.f - _renderPercent))
+					, (int)m_Size.x * _renderPercentH, (int)m_Size.y * _renderPercent);
+				graphics.DrawImage(m_Bitmap, destRect, 0, (int)(m_Size.y * (1.f - _renderPercent)), (int)(m_Size.x * _renderPercentH), (int)(m_Size.y * _renderPercent), UnitPixel);
 			}
 			graphics.ResetTransform();
 

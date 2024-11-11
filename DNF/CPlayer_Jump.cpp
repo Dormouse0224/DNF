@@ -60,6 +60,11 @@ void CPlayer_Jump::FinalTick()
 		if (((CPlayer_Attack*)pState)->AttackCheck())
 			GetFSM()->ChangeState(pState);
 	}
+
+	if (GetOwnerObj()->GetCurHP() < 0)
+	{
+		GetFSM()->ChangeState(GetFSM()->FindState((int)PlayerState::Death));
+	}
 }
 
 void CPlayer_Jump::Exit()

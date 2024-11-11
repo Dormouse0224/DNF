@@ -20,6 +20,8 @@ CS03::CS03()
 	, m_Largo(nullptr)
 	, m_AoEVec{}
 	, m_SeaGap(150)
+	, m_Clear(false)
+	, m_ClearTimer(0.f)
 {
 	m_StageInfo = new StageInfo();
 	m_StageInfo->StageSize = Vec2D(1568, 960);
@@ -141,6 +143,16 @@ void CS03::Tick()
 	// 요기 게이지 포지션 갱신
 	m_PlayerYogiGauge->SetLocation(GetPlayer()->GetLocation() + Vec2D(70, -20));
 
+	// 클리어 판정
+	if (m_Clear)
+	{
+		m_ClearTimer += CTimeMgr::GetInst()->GetDeltaTime();
+		if (m_ClearTimer > 10)
+		{
+			CCameraMgr::GetInst()->SetAlpha(255);
+			CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"SeriaRoom"));
+		}
+	}
 
 	CStage::Tick();
 }

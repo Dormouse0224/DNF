@@ -233,6 +233,9 @@
     <Filter Include="main\05. Object\09. PlayerObj\AoE">
       <UniqueIdentifier>{7c82704d-527c-446d-a4ea-683cc86aebff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\08. State\Player\Death">
+      <UniqueIdentifier>{f41c4dd9-8e94-463c-860a-b4e4d93428b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -472,6 +475,10 @@
     <ClInclude Include="CPlayerAoE.h">
       <Filter>main\05. Object\09. PlayerObj\AoE</Filter>
     </ClInclude>
+    <ClInclude Include="CPlayer_Death.h" />
+    <ClInclude Include="CLargo_Death.h">
+      <Filter>main\08. State\Boss\Death</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -681,6 +688,12 @@
     </ClCompile>
     <ClCompile Include="CPlayerAoE.cpp">
       <Filter>main\05. Object\09. PlayerObj\AoE</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer_Death.cpp">
+      <Filter>main\08. State\Player\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="CLargo_Death.cpp">
+      <Filter>main\08. State\Boss\Death</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -33,6 +33,7 @@ enum class RiseExplosion
     END
 };
 
+class CPlayer;
 
 class CAoE :
     public CObj
@@ -58,6 +59,8 @@ private:
     CAlbumPlayer* m_ScreenEffect[(int)ScreenEffect::END];
     vector<CAlbumPlayer*> m_RiseExplosion[(int)RiseExplosion::END];
 
+    CPlayer* m_Player;
+
 public:
     virtual void Begin();       // 처음 시작할 때 할 일
     virtual void Tick();    // 반복적으로 할 일
@@ -65,5 +68,7 @@ public:
 
     void SetInfo(AoEType _type, Vec2D _pos, int _param1, int _param2, float _castTime, bool _isVert);
     bool IsEffectFin() { return m_IsEffectFin; }
+
+    int LineCrossCheck(Vec2D _LT, Vec2D _RB, int _Len, Vec2D _LinePos, float _LineAngle);
 };
 

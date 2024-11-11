@@ -55,12 +55,14 @@ enum class EffectLayer
     a,
     b,
     c,
+    d,
 
     END
 };
 
 class CAlbumPlayer;
 class CArrow;
+class CDummy;
 
 class CPlayer_Attack :
     public CState
@@ -73,6 +75,8 @@ public:
 private:
     float m_SkillDuration;
     float m_PlaylistTimer;
+    float m_PlaylistEffTimer[(int)EffectLayer::END];
+    float m_PlaylistScrTimer[(int)EffectLayer::END];
     float m_IdleTimer;
     float m_Cooltime[(int)PlayerSkill::END];
     PlayerSkill m_CurrentSkill;
@@ -80,12 +84,17 @@ private:
     vector<pair<CAlbumPlayer*, float>> m_Playlist;
     vector<pair<vector<CAlbumPlayer*>, float>> m_PlaylistAvt;
     vector<pair<CAlbumPlayer*, float>> m_PlaylistEff[(int)EffectLayer::END];
+    vector<pair<CAlbumPlayer*, float>> m_PlaylistScr[(int)EffectLayer::END];
     int m_PlaylistIdx;
+    int m_PlaylistEffIdx[(int)EffectLayer::END];
+    int m_PlaylistScrIdx[(int)EffectLayer::END];
     CAlbumPlayer* m_IdleAnimation;
     vector<CAlbumPlayer*> m_IdleAnimationAvt;
+    CDummy* m_Screen;
 
     bool m_Flag[5];
     Vec2D m_Coord;
+    WCHAR m_SagittariusCode;
 
 
 public:
@@ -94,10 +103,14 @@ public:
     virtual void Exit();
 
     void Render();
-    void AddPlaylist(CAlbumPlayer* _AP, float _dur) { m_Playlist.push_back(make_pair(_AP, _dur)); }
-    void AddPlaylistAvt(vector<CAlbumPlayer*> _APVec, float _dur) { m_PlaylistAvt.push_back(make_pair(_APVec, _dur)); }
-    void AddPlaylistEff(CAlbumPlayer* _AP, float _dur, EffectLayer _layer) { m_PlaylistEff[(int)_layer].push_back(make_pair(_AP, _dur)); }
+    void AddPlaylist(CAlbumPlayer* _AP, float _dur = 0);
+    void AddPlaylistAvt(vector<CAlbumPlayer*> _APVec, float _dur = 0);
+    void AddPlaylistEff(CAlbumPlayer* _AP, EffectLayer _layer, float _dur = 0);
+    void AddPlaylistScr(CAlbumPlayer* _AP, EffectLayer _layer, float _dur = 0);
+    void ClearAllPlaylist();
     void ClearPlaylist();
+    void ClearEffPlaylist(int i);
+    void ClearScrPlaylist(int i);
 
     bool AttackCheck();
 

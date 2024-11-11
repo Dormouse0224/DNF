@@ -161,6 +161,7 @@
     <ClInclude Include="CFSM.h" />
     <ClInclude Include="CLargo.h" />
     <ClInclude Include="CLargo_Attack.h" />
+    <ClInclude Include="CLargo_Death.h" />
     <ClInclude Include="CLargo_Income.h" />
     <ClInclude Include="CMonster_Attack.h" />
     <ClInclude Include="CMonster_Hurt.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CPlayerAoE.h" />
     <ClInclude Include="CPlayer_Attack.h" />
+    <ClInclude Include="CPlayer_Death.h" />
     <ClInclude Include="CPlayer_Idle.h" />
     <ClInclude Include="CPlayer_Jump.h" />
     <ClInclude Include="CPlayer_Run.h" />
@@ -242,6 +244,7 @@
     <ClCompile Include="CFSM.cpp" />
     <ClCompile Include="CLargo.cpp" />
     <ClCompile Include="CLargo_Attack.cpp" />
+    <ClCompile Include="CLargo_Death.cpp" />
     <ClCompile Include="CLargo_Income.cpp" />
     <ClCompile Include="CMonster_Attack.cpp" />
     <ClCompile Include="CMonster_Hurt.cpp" />
@@ -250,6 +253,7 @@
     <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CPlayerAoE.cpp" />
     <ClCompile Include="CPlayer_Attack.cpp" />
+    <ClCompile Include="CPlayer_Death.cpp" />
     <ClCompile Include="CPlayer_Idle.cpp" />
     <ClCompile Include="CPlayer_Jump.cpp" />
     <ClCompile Include="CPlayer_Run.cpp" />

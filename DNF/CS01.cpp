@@ -22,7 +22,7 @@ CS01::CS01()
 	m_StageInfo = new StageInfo();
 	m_StageInfo->StageSize = Vec2D(1110, 1000);
 	m_StageInfo->StageName = GetName();
-	m_UpperBound = 700;
+	m_UpperBound = 1000;
 }
 
 CS01::~CS01()

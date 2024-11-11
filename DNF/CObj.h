@@ -36,7 +36,12 @@ protected:
     vector<CAlbumPlayer*> m_AlbumPlayerVector;
     bool m_bLookLeft;
     bool m_bFallowCam;
-    int m_HP;
+
+    bool m_Immune;
+    float m_MaxHP;
+    float m_CurHP;
+    float m_MaxMP;
+    float m_CurMP;
 
 public:
     void SetLocation(Vec2D _Location);
@@ -54,7 +59,15 @@ public:
     void SetLookLeft(bool _b) { m_bLookLeft = _b; }
     bool GetFallowCam() { return m_bFallowCam; }
     void SetFallowCam(bool _b) { m_bFallowCam = _b; }
-    void GiveDamage(int _dmg);
+    void SetImmune(bool _b) { m_Immune = _b; }
+    float GetMaxHP() { return m_MaxHP; }
+    float GetCurHP() { return m_CurHP; }
+    float GetMaxMP() { return m_MaxMP; }
+    float GetCurMP() { return m_CurMP; }
+    void SetMaxHP(float _f) { m_MaxHP = _f; }
+    void SetCurHP(float _f) { m_CurHP = _f; }
+    void SetMaxMP(float _f) { m_MaxMP = _f; }
+    void SetCurMP(float _f) { m_CurMP = _f; }
 
     // 컴포넌트
     virtual void AddComponent(CComponent* _Component);
@@ -76,6 +89,8 @@ public:
     virtual void Overlap(CCollider* _Self, CCollider* _Other);
     virtual void EndOverlap(CCollider* _Self, CCollider* _Other);
 
+    virtual void GiveDamage(int _dmg);
+    virtual void UseMana(int _mana);
 
     virtual void Begin();       // 처음 시작할 때 할 일
     virtual void Tick() = 0;    // 반복적으로 할 일

@@ -8,6 +8,10 @@
 #include "CRigidBody.h"
 #include "CCollider.h"
 #include "CDbgRender.h"
+#include "CDummy.h"
+#include "CCameraMgr.h"
+#include "CLevelMgr.h"
+#include "CLargo_Death.h"
 
 CLargo::CLargo()
 	: CObj(L"Largo")
@@ -15,17 +19,25 @@ CLargo::CLargo()
 	, m_bIncomeFin(false)
 	, m_AttackState(nullptr)
 {
+	m_MaxHP = 10000;
+	m_CurHP = 10000;
+
 	SetLayerType(LayerType::Object);
 	SetScale(Vec2D(150, 150));
 	AddAnimation(CAlbumPlayer::CreatePlayerFromFile(L"boss_unshackled_incomingB_0"
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\boss_unshackled_incomingB_0.animation"), LargoState::Income);
 	AddAnimation(CAlbumPlayer::CreatePlayerFromFile(L"boss_unshackled_incomingB_1"
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\boss_unshackled_incomingB_1.animation"), LargoState::Income);
+	AddAnimation(CAlbumPlayer::CreatePlayerFromFile(L"boss_unshackled_death_0"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\boss_unshackled_death_0.animation"), LargoState::Death);
+	AddAnimation(CAlbumPlayer::CreatePlayerFromFile(L"boss_unshackled_death_1"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\boss_unshackled_death_1.animation"), LargoState::Death);
 
 	CFSM* pFSM = new CFSM(L"Largo_FSM");
 	pFSM->AddState((int)LargoState::Income, new CLargo_Income);
 	m_AttackState = new CLargo_Attack;
 	pFSM->AddState((int)LargoState::Attack, m_AttackState);
+	pFSM->AddState((int)LargoState::Death, new CLargo_Death);
 	AddComponent(pFSM);
 
 	SetRigidBody(new CRigidBody(L"Largo_RB"));
@@ -33,10 +45,21 @@ CLargo::CLargo()
 	CCollider* pCol = new CCollider(L"Largo_Col");
 	RegisterBodyCollider(pCol);
 	AddComponent(pCol);
+
+	// 플레이어 HUD 등록
+	m_HUD = new CDummy(L"hud");
+	m_HUD->SetLocation(CCameraMgr::GetInst()->GetCameraPos() + Vec2D(10, 50));
+	m_HUD->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"ui_hud_monsterhp_0"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\ui_hud_monsterhp_0.animation"));
+	m_HPTex = CAlbumPlayer::CreatePlayerFromFile(L"ui_hud_monsterhp_1"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\ui_hud_monsterhp_1.animation", Vec2D(30, 17));
+	m_HUD->AddComponent(m_HPTex);
+	CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(m_HUD, LayerType::Near);
 }
 
 CLargo::~CLargo()
 {
+	CLevelMgr::GetInst()->GetCurrentLevel()->DeleteObject(LayerType::Near, m_HUD->GetID());
 }
 
 void CLargo::BeginOverlap(CCollider* _Self, CCollider* _Other)
@@ -57,6 +80,12 @@ void CLargo::Begin()
 
 void CLargo::Tick()
 {
+	// hud 위치 갱신
+	m_HUD->SetLocation(CCameraMgr::GetInst()->GetCameraPos() + Vec2D(10, 50));
+
+	// hp, mp 퍼센티지 갱신
+	m_HPTex->SetRenderPercentH(m_CurHP / m_MaxHP);
+
 	// 바닥 위치 갱신
 	Vec2D gp(GetLocation().x + (GetScale().x / 2.f), GetLocation().y + GetScale().y);
 	if (GetRigidBody() != nullptr)

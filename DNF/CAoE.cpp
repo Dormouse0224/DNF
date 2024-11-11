@@ -7,6 +7,8 @@
 #include "CEngine.h"
 #include "CSoundMgr.h"
 #include "CSound.h"
+#include "CPlayer.h"
+#include "CCollider.h"
 
 CAoE::CAoE(wstring _name)
 	: CObj(_name)
@@ -37,6 +39,7 @@ CAoE::CAoE(wstring _name)
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\boss_unshackled_effect_screenattack_signalloop_dodge.animation");
 	m_ScreenEffect[(int)ScreenEffect::Crash] = CAlbumPlayer::CreatePlayerFromFile(L"boss_unshackled_effect_screenattack_maincrash_dodge"
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\boss_unshackled_effect_screenattack_maincrash_dodge.animation");
+	m_Player = CLevelMgr::GetInst()->GetCurrentLevel()->GetPlayer();
 }
 
 CAoE::~CAoE()
@@ -66,6 +69,7 @@ void CAoE::Tick()
 	m_Timer += CTimeMgr::GetInst()->GetDeltaTime();
 	if (m_CastTime > m_Timer)
 	{
+		// 시전 중
 		if (m_Type == AoEType::ScreenAtk)
 		{
 			m_ScreenEffect[(int)ScreenEffect::SlashStart]->FinalTick();
@@ -75,6 +79,7 @@ void CAoE::Tick()
 	}
 	else
 	{
+		// 시전 종료 이후
 		if (m_Type == AoEType::Donut)
 		{
 			if (!m_IsCastFin)
@@ -86,10 +91,34 @@ void CAoE::Tick()
 				int num = dis(gen);
 				CSoundMgr::GetInst()->GetSound(L"largo_4th_screen_thin_slash_0" + std::to_wstring(num)
 					, L"\\sound\\sounds_mon_duskyisland\\largo_4th_screen_thin_slash_0" + std::to_wstring(num) + L".ogg")->Play();
+				float dist = (m_Pos - m_Player->GetGroundPos()).Length();
+				if (dist < m_Param1 && dist > m_Param2)
+					m_Player->GiveDamage(m_Player->GetMaxHP() * 0.1f);
 			}
 			m_RingSlash->FinalTick();
 			if (m_RingSlash->GetCurSceneNum() == m_RingSlash->GetFinal())
 				m_IsEffectFin = true;
+		}
+		else if (m_Type == AoEType::Circle)
+		{
+			if (!m_IsCastFin)
+			{
+				m_IsCastFin = true;
+				float dist = (m_Pos - m_Player->GetGroundPos()).Length();
+				if (dist < m_Param1)
+					m_Player->GiveDamage(m_Player->GetMaxHP() * 0.1f);
+			}
+		}
+		else if (m_Type == AoEType::Rect)
+		{
+			if (!m_IsCastFin)
+			{
+				m_IsCastFin = true;
+				Vec2D LT = m_Pos - Vec2D(m_Param1 / 2, m_Param2 / 2);
+				Vec2D RB = m_Pos + Vec2D(m_Param1 / 2, m_Param2 / 2);
+				if (m_Player->GetGroundPos() >> LT && m_Player->GetGroundPos() << RB)
+					m_Player->GiveDamage(m_Player->GetMaxHP() * 0.3f);
+			}
 		}
 		else if (m_Type == AoEType::ScreenAtk)
 		{
@@ -102,6 +131,9 @@ void CAoE::Tick()
 				int num = dis(gen);
 				CSoundMgr::GetInst()->GetSound(L"largo_4th_screen_slash_crash_0" + std::to_wstring(num)
 					, L"\\sound\\sounds_mon_duskyisland\\largo_4th_screen_slash_crash_0" + std::to_wstring(num) + L".ogg")->Play();
+				if (LineCrossCheck(m_Player->GetBodyCollider()->GetLocation(), m_Player->GetBodyCollider()->GetLocation() + m_Player->GetBodyCollider()->GetSize()
+					, 1300, m_Pos, (float)m_Param1) != -1)
+					m_Player->GiveDamage(m_Player->GetMaxHP() * 1.1f);
 			}
 			m_ScreenEffect[(int)ScreenEffect::SlashEnd]->FinalTick();
 			m_ScreenEffect[(int)ScreenEffect::Crash]->FinalTick();
@@ -120,6 +152,9 @@ void CAoE::Tick()
 				int num = dis(gen);
 				CSoundMgr::GetInst()->GetSound(L"largo_4th_screen_thin_slash_0" + std::to_wstring(num)
 					, L"\\sound\\sounds_mon_duskyisland\\largo_4th_screen_thin_slash_0" + std::to_wstring(num) + L".ogg")->Play();
+				if (LineCrossCheck(m_Player->GetBodyCollider()->GetLocation(), m_Player->GetBodyCollider()->GetLocation() + m_Player->GetBodyCollider()->GetSize()
+					, 1300, m_Pos, (float)m_Param1) == 0)
+					m_Player->GiveDamage(m_Player->GetMaxHP() * 0.2f);
 			}
 			m_ScreenEffect[(int)ScreenEffect::SlashEnd]->FinalTick();
 			if (m_ScreenEffect[(int)ScreenEffect::SlashEnd]->GetCurSceneNum() == m_ScreenEffect[(int)ScreenEffect::SlashEnd]->GetFinal())
@@ -139,9 +174,12 @@ void CAoE::Render()
 	switch (m_Type)
 	{
 	case AoEType::Circle:
-		CTextureMgr::GetInst()->FillEllipse(Color(50, 255, 0, 0), m_Pos - Vec2D(m_Param1, m_Param1 / 3), Vec2D(m_Param1 * 2, m_Param1 * 2 / 3));
-		CTextureMgr::GetInst()->FillEllipse(Color(255, 255, 0, 0), m_Pos - Vec2D(m_Param1 * progress, m_Param1 * progress / 3)
-			, Vec2D(m_Param1 * progress * 2, m_Param1 * progress * 2 / 3));
+		if (!m_IsCastFin)
+		{
+			CTextureMgr::GetInst()->FillEllipse(Color(50, 255, 0, 0), m_Pos - Vec2D(m_Param1, m_Param1 / 3), Vec2D(m_Param1 * 2, m_Param1 * 2 / 3));
+			CTextureMgr::GetInst()->FillEllipse(Color(255, 255, 0, 0), m_Pos - Vec2D(m_Param1 * progress, m_Param1 * progress / 3)
+				, Vec2D(m_Param1 * progress * 2, m_Param1 * progress * 2 / 3));
+		}
 		break;
 	case AoEType::Donut:
 		if (!m_IsCastFin)
@@ -243,4 +281,28 @@ void CAoE::SetInfo(AoEType _type, Vec2D _pos, int _param1, int _param2, float _c
 
 	SetLocation(_pos);
 
+}
+
+int CAoE::LineCrossCheck(Vec2D _LT, Vec2D _RB, int _Len, Vec2D _LinePos, float _LineAngle)
+{
+	float rad = _LineAngle * PI / 180.f;
+	Vec2D DirVec(cosf(rad), sinf(rad));
+	Vec2D _begin = _LinePos + (DirVec * _Len / 2);
+	Vec2D _end = _LinePos - (DirVec * _Len / 2);
+	Vec2D linevec = _end - _begin;
+	Vec2D ref[4] =
+	{
+		_LT - _begin,
+		Vec2D(_RB.x, _LT.y) - _begin,
+		_RB - _begin,
+		Vec2D(_LT.x, _RB.y) - _begin
+	};
+
+	if (linevec.Cross(ref[0]) > 0 && linevec.Cross(ref[1]) > 0 && linevec.Cross(ref[2]) > 0 && linevec.Cross(ref[3]) > 0)
+		return 1;
+
+	if (linevec.Cross(ref[0]) < 0 && linevec.Cross(ref[1]) < 0 && linevec.Cross(ref[2]) < 0 && linevec.Cross(ref[3]) < 0)
+		return -1;
+
+	return 0;
 }

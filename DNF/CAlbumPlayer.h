@@ -27,12 +27,15 @@ private:
 
     bool m_bLoadingEnd;
     float m_RenderPercent;
+    float m_RenderPercentH;
 
 public:
     void SetPlayInfo(int _Begin, int _End, bool _Loop, int _FPS, Vec2D m_Offset, float _angle, bool _Dodge);
+    int GetFPS() { return m_FPS; }
     void SetFPS(int _FPS) { m_FPS = _FPS; }
     void SetAngle(float _angle) { m_angle = _angle; }
     void SetRenderPercent(float _percent) { m_RenderPercent = _percent; }
+    void SetRenderPercentH(float _percent) { m_RenderPercentH = _percent; }
     Vec2D GetOffset() { return m_Offset; }
     void SetOffset(Vec2D&& _offset) { m_Offset = _offset; }
     void FinalTick() override;

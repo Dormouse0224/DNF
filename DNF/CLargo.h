@@ -3,6 +3,7 @@
 
 class CAlbumPlayer;
 class CLargo_Attack;
+class CDummy;
 
 class CLargo :
     public CObj
@@ -16,6 +17,9 @@ private:
     bool m_bIncomeFin;
     CLargo_Attack* m_AttackState;
 
+    CDummy* m_HUD;
+    CAlbumPlayer* m_HPTex;
+
 
 public:
     // 충돌 함수
@@ -28,6 +32,7 @@ public:
     virtual void Render();      // 오브젝트를 그리기
 
     void AddAnimation(CAlbumPlayer* _AP, LargoState _st);
+    vector<CAlbumPlayer*>& GetAnimationVec(LargoState _st) { return m_Animation[(int)_st]; }
     bool IsIncomeFin() { return m_bIncomeFin; }
     void SetAttackState(CLargo_Attack* _AtkState) { m_AttackState = _AtkState; }
 };

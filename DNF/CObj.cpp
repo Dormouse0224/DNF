@@ -85,7 +85,12 @@ void CObj::SetScale(Vec2D _Scale)
 
 void CObj::GiveDamage(int _dmg)
 {
-	m_HP -= _dmg;
+	m_CurHP -= _dmg;
+}
+
+void CObj::UseMana(int _mana)
+{
+	m_CurMP -= _mana;
 }
 
 void CObj::AddComponent(CComponent* _Component)
