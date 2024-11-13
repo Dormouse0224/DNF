@@ -116,10 +116,10 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 			graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
 			graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
 
-			graphics.TranslateTransform(ObjCenter.x, ObjCenter.y);		// 소속 오브젝트 중심점으로 회전중심 이동
+			graphics.TranslateTransform(ObjCenter.x, ObjCenter.y);			// 소속 오브젝트 중심점으로 회전중심 이동
 			graphics.ScaleTransform(bFlipHorizontal ? -1.0f : 1.0f, 1.0f);	// bool 변수로 좌우 반전
-			graphics.RotateTransform(_angle);							// 회전 적용
-			graphics.TranslateTransform(-ObjCenter.x, -ObjCenter.y);	// 원래 위치로 이동
+			graphics.RotateTransform(_angle);								// 회전 적용
+			graphics.TranslateTransform(-ObjCenter.x, -ObjCenter.y);		// 원래 위치로 이동
 
 			if (_renderPercent == 1.f && _renderPercentH == 1.f)
 				graphics.DrawImage(m_Bitmap, (int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y), (int)m_Size.x, (int)m_Size.y);
