@@ -42,7 +42,8 @@ CPlayer::CPlayer()
 	m_MPRegen = m_MaxMP * 0.1f;
 
 	// 스킬 리소스 미리 로드
-	CTextureMgr::PreloadFromFile(L"PlayerSkillResources.txt");
+	CTextureMgr::PreloadFromFile(L"PlayerResources.txt");
+	CTextureMgr::PreloadAvatar(L"AvatarResources.txt");
 
 	// 상태별 모션 애니메이션
 	for (int i = 0; i < (int)PlayerState::END; ++i) {
@@ -244,7 +245,10 @@ bool CPlayer::CheckAvatarCodeChange()
 	for (int i = 0; i < 6; ++i)
 	{
 		if (m_CurAvatarCode[i] != m_PrevAvatarCode[i])
+		{
+			m_PrevAvatarCode[i] != m_CurAvatarCode[i];
 			return true;
+		}
 	}
 	return false;
 }

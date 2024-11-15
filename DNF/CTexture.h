@@ -54,5 +54,7 @@ private:
     static int PointDirectionCheck(Vec2D& _p, Vec2D& _q, Vec2D& _r);
     static bool LineOverlapCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _q1, Vec2D& _q2);
     void LinearDodge(BitmapData* _dest, BitmapData* src, int _width, int _height);
+    void AlphaBlend(BitmapData* _dest, BitmapData* _src, int _width, int _height);
+    void FlipHorizontal(BitmapData* bitmapData);
 };
 

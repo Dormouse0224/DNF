@@ -7,6 +7,7 @@
 #include "CSoundMgr.h"
 #include "CSound.h"
 #include "CCameraMgr.h"
+#include "CTextureMgr.h"
 
 CSeriaRoom::CSeriaRoom()
 	: CStage(L"SeriaRoom")
@@ -47,6 +48,9 @@ void CSeriaRoom::Begin()
 		m_BGM = CSoundMgr::GetInst()->GetSound(m_StageInfo->BGMPath, L"\\music\\" + m_StageInfo->BGMPath);
 		m_BGM->PlayToBGM(true);
 	}
+
+	// 리소스 미리 로딩
+	CTextureMgr::PreloadFromFile(L"BossResources.txt");
 }
 
 void CSeriaRoom::Tick()

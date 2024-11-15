@@ -55,7 +55,7 @@ void CLevelMgr::Init()
 	CS03* pS03 = new CS03;
 	CSeriaRoom* pSeriaRoom = new CSeriaRoom;
 	ReadDungeonList();
-	m_CurrentLevel = pPurpleSeaRoad;
+	m_CurrentLevel = pS03;
 	m_CurrentLevel->Begin();
 }
 

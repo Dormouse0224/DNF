@@ -26,6 +26,7 @@ public:
 	void WriteColor(char* _dest, const char* _src, ColorBits _bits);
 	vector<CAlbum*> LoadNPK(wstring _NpkPath);
 	CAlbum* LoadAlbum(string _AlbumPath, wstring _NpkPath);
+	void LoadAll(wstring _NpkPath);
 	void SaveAlbum(string _AlbumName, string _Directory);
 	CTexture* CreateRectTexture(wstring _Name, Vec2D _size, Vec2D _offset, Color _color, bool _IsAddedBySys);
 	CTexture* LoadFromFile(wstring _filepath);
@@ -42,6 +43,7 @@ public:
 
 
 	static void PreloadFromFile(wstring _filepath);
+	static void PreloadAvatar(wstring _fileName);
 
 private:
 

@@ -27,3 +27,10 @@ bool ObjectSort(const CObj* a, const CObj* b)
 		return a->GetGroundPos().y < b->GetGroundPos().y;
 	}
 }
+
+list<CAlbum*> LoadQueue = {};
+
+void AddLoadQueue(CAlbum* _queue)
+{
+	LoadQueue.push_back(_queue);
+}

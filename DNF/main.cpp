@@ -5,13 +5,19 @@
 #include "DNF.h"
 #include "CEngine.h"
 #include "CDbgRender.h"
+#include "CTextureMgr.h"
+#include "CTexture.h"
 
 // 전역 변수:
-HINSTANCE hInst;    // 현재 인스턴스입니다.
+HINSTANCE hInst;                // 현재 인스턴스입니다.
+bool IsProgressFin = false;     // 프로그레스 종료 여부
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+void MainProgress(HACCEL hAccelTable);
+void BackgroundLoad();
+
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -42,13 +48,33 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     RegisterClassExW(&wcex);
 
-
-    // Engine 초기화
-    if (FAILED(CEngine::GetInst()->Init(hInst)))
-        return FALSE;
-
     // 단축키 테이블
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_DNF));
+
+    // 백그라운드 로딩 스레드와 프로그레스 표시 스레드 시작
+    std::thread loadingThread(BackgroundLoad);
+    std::thread progressThread(MainProgress, hAccelTable);
+
+    // 스레드 종료 대기
+    if (loadingThread.joinable()) {
+        loadingThread.join();
+    }
+    if (progressThread.joinable()) {
+        progressThread.join();
+    }
+   
+
+    //return (int) msg.wParam;
+    return 0;
+}
+
+
+void MainProgress(HACCEL hAccelTable)
+{
+    // Engine 초기화
+    if (FAILED(CEngine::GetInst()->Init(hInst)))
+        return;
+
 
     //메세지 루프
     MSG msg;
@@ -59,8 +85,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
             if (msg.message == WM_QUIT)
+            {
+                IsProgressFin = true;
                 break;
-            
+            }
+
             if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
             {
                 TranslateMessage(&msg);
@@ -73,10 +102,68 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             CEngine::GetInst()->Progress();
         }
     }
-
-    return (int) msg.wParam;
 }
 
+void CALLBACK LoadSceneThread(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WORK work)
+{
+    std::pair<CAlbum*, int>* data = static_cast<std::pair<CAlbum*, int>*>(context);
+    data->first->GetScene(data->second)->Load();
+    delete data; // 할당된 메모리 해제
+}
+
+void BackgroundLoad()
+{
+    while (true)
+    {
+        if (IsProgressFin)
+            break;
+
+        if (!LoadQueue.empty())
+        {
+            CAlbum* Data;
+            Data = LoadQueue.front();
+            LoadQueue.pop_front();
+            
+            // 스레드 풀 생성
+            PTP_POOL pool = CreateThreadpool(nullptr);
+            if (!pool)
+                return;
+
+            // 스레드 풀 환경 설정
+            TP_CALLBACK_ENVIRON callbackEnv;
+            InitializeThreadpoolEnvironment(&callbackEnv);
+            SetThreadpoolCallbackPool(&callbackEnv, pool);
+
+            // 각 씬에 대해 작업을 큐에 추가
+            std::vector<PTP_WORK> workItems;
+            for (int i = 0; i < Data->GetSceneCount(); ++i) {
+                auto* data = new std::pair<CAlbum*, int>(Data, i);
+                PTP_WORK work = CreateThreadpoolWork(LoadSceneThread, data, &callbackEnv);
+                if (work) {
+                    workItems.push_back(work);
+                    SubmitThreadpoolWork(work);
+                }
+                else {
+                    delete data;
+                }
+            }
+
+            // 모든 작업이 완료될 때까지 대기
+            for (PTP_WORK work : workItems) {
+                WaitForThreadpoolWorkCallbacks(work, FALSE);
+                CloseThreadpoolWork(work);
+            }
+
+            // 스레드 풀 및 환경 정리
+            DestroyThreadpoolEnvironment(&callbackEnv);
+            CloseThreadpool(pool);
+        }
+        else
+        {
+            int a = 0;
+        }
+    }
+}
 
 
 //

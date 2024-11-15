@@ -53,6 +53,10 @@ int CTexture::Load()
 void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, bool bLinearDodge, bool bFlipHorizontal
 	, float _renderPercent, float _renderPercentH)
 {
+	// 비트맵 로딩이 안된 경우 렌더링 취소
+	if (!m_Bitmap)
+		return;
+
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
 	Vec2D Resolution = CEngine::GetInst()->GetResolution();
 	Vec2D FinalPos(m_Owner->GetOwner()->GetLocation() + m_Offset + _RenderOffset);
@@ -106,32 +110,61 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 		}
 		else
 		{
-			Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
-			TextureBrush textureBrush(m_Bitmap);
+			if (_angle != 0)
+			{
+				Graphics graphics(CEngine::GetInst()->GetBackbuffer()->GetBitmap());
+				TextureBrush textureBrush(m_Bitmap);
 
-			// 프레임 방어를 위한 그래픽스 렌더링 세팅
-			graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
-			graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
-			graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
-			graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
-			graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
+				// 프레임 방어를 위한 그래픽스 렌더링 세팅
+				graphics.SetCompositingMode(CompositingModeSourceOver);			// 알파블렌딩 적용
+				graphics.SetCompositingQuality(CompositingQualityHighSpeed);	// 감마 보정 미적용
+				graphics.SetPixelOffsetMode(PixelOffsetModeNone);				// 픽섹 위치 조정 미적용
+				graphics.SetSmoothingMode(SmoothingModeNone);					// 안티앨리어싱 미적용
+				graphics.SetInterpolationMode(InterpolationModeLowQuality);		// 이미지 보간 미적용
 
-			graphics.TranslateTransform(ObjCenter.x, ObjCenter.y);			// 소속 오브젝트 중심점으로 회전중심 이동
-			graphics.ScaleTransform(bFlipHorizontal ? -1.0f : 1.0f, 1.0f);	// bool 변수로 좌우 반전
-			graphics.RotateTransform(_angle);								// 회전 적용
-			graphics.TranslateTransform(-ObjCenter.x, -ObjCenter.y);		// 원래 위치로 이동
+				graphics.TranslateTransform(ObjCenter.x, ObjCenter.y);			// 소속 오브젝트 중심점으로 회전중심 이동
+				graphics.ScaleTransform(bFlipHorizontal ? -1.0f : 1.0f, 1.0f);	// bool 변수로 좌우 반전
+				graphics.RotateTransform(_angle);								// 회전 적용
+				graphics.TranslateTransform(-ObjCenter.x, -ObjCenter.y);		// 원래 위치로 이동
 
-			if (_renderPercent == 1.f && _renderPercentH == 1.f)
-				graphics.DrawImage(m_Bitmap, (int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y), (int)m_Size.x, (int)m_Size.y);
+				if (_renderPercent == 1.f && _renderPercentH == 1.f)
+					graphics.DrawImage(m_Bitmap, (int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y), (int)m_Size.x, (int)m_Size.y);
+				else
+				{
+					Rect destRect((int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y) + (int)(m_Size.y * (1.f - _renderPercent))
+						, (int)m_Size.x * _renderPercentH, (int)m_Size.y * _renderPercent);
+					graphics.DrawImage(m_Bitmap, destRect, 0, (int)(m_Size.y * (1.f - _renderPercent)), (int)(m_Size.x * _renderPercentH), (int)(m_Size.y * _renderPercent), UnitPixel);
+				}
+				graphics.ResetTransform();
+			}
 			else
 			{
-				Rect destRect((int)(FinalPos.x - CameraPos.x), (int)(FinalPos.y - CameraPos.y) + (int)(m_Size.y * (1.f - _renderPercent))
-					, (int)m_Size.x * _renderPercentH, (int)m_Size.y * _renderPercent);
-				graphics.DrawImage(m_Bitmap, destRect, 0, (int)(m_Size.y * (1.f - _renderPercent)), (int)(m_Size.x * _renderPercentH), (int)(m_Size.y * _renderPercent), UnitPixel);
+				if (bFlipHorizontal)
+					m_Bitmap->RotateFlip(RotateFlipType::RotateNoneFlipX);
+				Vec2D RenderCenterDiff = (FinalPos + m_Size / 2) - (ObjCenter + CameraPos);
+				Vec2D FinalPosLT = ObjCenter + Vec2D(bFlipHorizontal ? -RenderCenterDiff.x : RenderCenterDiff.x, RenderCenterDiff.y) - (m_Size / 2) + Vec2D(0, (int)(m_Size.y * (1.f - _renderPercent)));
+				Vec2D FinalPosRB = FinalPosLT + Vec2D((int)(m_Size.x * _renderPercentH), (int)(m_Size.y * _renderPercent));
+				Bitmap* backbuffer = CEngine::GetInst()->GetBackbuffer()->GetBitmap();
+				BitmapData BufferBitmapdata;
+				BitmapData RenderBitmapdata;
+				Rect BufferRect(max(FinalPosLT.x, 0)
+					, max(FinalPosLT.y, 0)
+					, min(FinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(FinalPosLT.x, 0)
+					, min(FinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(FinalPosLT.y, 0));
+				Rect RenderRect(max(-FinalPosLT.x, 0)
+					, max(max(-FinalPosLT.y, 0), (int)(m_Size.y * (1.f - _renderPercent)))
+					, min(FinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(FinalPosLT.x, 0)
+					, min(FinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(max(FinalPosLT.y, 0), (int)(m_Size.y * (1.f - _renderPercent))));
+				backbuffer->LockBits(&BufferRect, ImageLockModeWrite, PixelFormat32bppARGB, &BufferBitmapdata);
+				m_Bitmap->LockBits(&RenderRect, ImageLockModeRead, PixelFormat32bppARGB, &RenderBitmapdata);
+				AlphaBlend(&BufferBitmapdata, &RenderBitmapdata
+					, min(FinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(FinalPosLT.x, 0)
+					, min(FinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(FinalPosLT.y, 0));
+				m_Bitmap->UnlockBits(&RenderBitmapdata);
+				backbuffer->UnlockBits(&BufferBitmapdata);
+				if (bFlipHorizontal)
+					m_Bitmap->RotateFlip(RotateFlipType::RotateNoneFlipX);
 			}
-			graphics.ResetTransform();
-
-
 		}
 	}
 }
@@ -301,6 +334,70 @@ void CTexture::LinearDodge(BitmapData* _dest, BitmapData* _src, int _width, int 
 			Dest[destIndex + 1] = min(Dest[destIndex + 1] + Src[srcIndex + 1], 255);	// G
 			Dest[destIndex + 2] = min(Dest[destIndex + 2] + Src[srcIndex + 2], 255);	// R
 			Dest[destIndex + 3] = min(Dest[destIndex + 3] + Src[srcIndex + 3], 255);	// A
+		}
+	}
+}
+
+
+void CTexture::AlphaBlend(BitmapData* _dest, BitmapData* _src, int _width, int _height)
+{
+	byte* Dest = (byte*)_dest->Scan0;
+	byte* Src = (byte*)_src->Scan0;
+	for (int y = 0; y < _height; ++y)
+	{
+		for (int x = 0; x < _width; ++x)
+		{
+			int destIndex = _dest->Stride * y + x * 4;
+			int srcIndex = _src->Stride * y + x * 4;
+			float alpha = Src[srcIndex + 3] / 255.f;
+
+			// 알파 값이 0이면 블렌딩을 생략
+			if (alpha == 0.0f) continue;
+
+			// 알파 값이 1이면 Src 픽셀을 그대로 복사
+			if (alpha == 1.0f)
+			{
+				Dest[destIndex + 0] = Src[srcIndex + 0]; // B
+				Dest[destIndex + 1] = Src[srcIndex + 1]; // G
+				Dest[destIndex + 2] = Src[srcIndex + 2]; // R
+				Dest[destIndex + 3] = Src[srcIndex + 3]; // A
+			}
+			else
+			{
+				// 알파 블렌딩 연산
+				Dest[destIndex + 0] = Dest[destIndex + 0] * (1 - alpha) + Src[srcIndex + 0] * alpha; // B
+				Dest[destIndex + 1] = Dest[destIndex + 1] * (1 - alpha) + Src[srcIndex + 1] * alpha; // G
+				Dest[destIndex + 2] = Dest[destIndex + 2] * (1 - alpha) + Src[srcIndex + 2] * alpha; // R
+				Dest[destIndex + 3] = Dest[destIndex + 3];                                              // A
+			}
+		}
+	}
+}
+
+void CTexture::FlipHorizontal(BitmapData* bitmapData)
+{
+	int width = bitmapData->Width;
+	int height = bitmapData->Height;
+	int stride = bitmapData->Stride;
+
+	// 이미지 데이터 포인터
+	byte* imageData = (byte*)bitmapData->Scan0;
+
+	// 각 행에 대해 좌우 반전 적용
+	for (int y = 0; y < height; ++y)
+	{
+		byte* row = imageData + y * stride;
+
+		for (int x = 0; x < width / 2; ++x)
+		{
+			int leftIndex = x * 4;
+			int rightIndex = (width - 1 - x) * 4;
+
+			// 왼쪽 픽셀과 오른쪽 픽셀을 교환 (B, G, R, A 순서)
+			for (int i = 0; i < 4; ++i)
+			{
+				std::swap(row[leftIndex + i], row[rightIndex + i]);
+			}
 		}
 	}
 }

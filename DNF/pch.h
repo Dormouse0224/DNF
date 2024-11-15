@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <random>
 #include <array>
+#include <thread>
 
 // GDI+
 //#include <ole2.h>

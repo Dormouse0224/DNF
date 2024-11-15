@@ -46,7 +46,7 @@ CLargo::CLargo()
 	RegisterBodyCollider(pCol);
 	AddComponent(pCol);
 
-	// 플레이어 HUD 등록
+	// 몬스터 HUD 등록
 	m_HUD = new CDummy(L"hud");
 	m_HUD->SetLocation(CCameraMgr::GetInst()->GetCameraPos() + Vec2D(10, 50));
 	m_HUD->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"ui_hud_monsterhp_0"
