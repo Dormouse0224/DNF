@@ -45,7 +45,7 @@ void CLevel_Edit::Begin()
 
 	// NPK 파일 로드 버튼 추가
 	CButton* OpenNpk = new CButton(L"Btn_OpenNpk");
-    OpenNpk->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::LoadNPKCallback);
+    OpenNpk->SetDelegate0(this, (DELEGATE_0)&CLevel_Edit::LoadNPKCallback);
 	OpenNpk->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadNPK_Idle"
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\LoadNPK_Idle.animation"), BtnState::IDLE);
 	OpenNpk->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"LoadNPK_CursorOn"
@@ -54,11 +54,11 @@ void CLevel_Edit::Begin()
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\LoadNPK_Pressed.animation"), BtnState::PRESSED);
 	AddObject(OpenNpk, LayerType::UI);
 	OpenNpk->SetScale(Vec2D(219, 47));
-	OpenNpk->SetLocation(Vec2D(833, 10));
+	OpenNpk->SetUIPos(Vec2D(833, 10));
 
 	// 이미지 파일 로드 버튼 추가
 	CButton* MakeAlbum = new CButton(L"Btn_MakeAlbum");
-	MakeAlbum->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::CreateAlbumCallback);
+	MakeAlbum->SetDelegate0(this, (DELEGATE_0)&CLevel_Edit::CreateAlbumCallback);
 	MakeAlbum->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"CreateAlbum_Idle"
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\CreateAlbum_Idle.animation"), BtnState::IDLE);
 	MakeAlbum->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"CreateAlbum_CursorOn"
@@ -67,11 +67,11 @@ void CLevel_Edit::Begin()
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\CreateAlbum_Pressed.animation"), BtnState::PRESSED);
 	AddObject(MakeAlbum, LayerType::UI);
 	MakeAlbum->SetScale(Vec2D(219, 47));
-	MakeAlbum->SetLocation(Vec2D(833, 65));
+	MakeAlbum->SetUIPos(Vec2D(833, 65));
 
 	// 애니메이션 파일 편집 버튼 추가
 	CButton* EditAni = new CButton(L"Btn_MakeAlbum");
-	EditAni->SetDelegate(this, (DELEGATE_0)&CLevel_Edit::EditAnimationCallback);
+	EditAni->SetDelegate0(this, (DELEGATE_0)&CLevel_Edit::EditAnimationCallback);
 	EditAni->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditAnimation_Idle"
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\EditAnimation_Idle.animation"), BtnState::IDLE);
 	EditAni->AddComponent_Btn(CAlbumPlayer::CreatePlayerFromFile(L"EditAnimation_CursorOn"
@@ -80,7 +80,7 @@ void CLevel_Edit::Begin()
 		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\EditAnimation_Pressed.animation"), BtnState::PRESSED);
 	AddObject(EditAni, LayerType::UI);
 	EditAni->SetScale(Vec2D(219, 47));
-	EditAni->SetLocation(Vec2D(833, 120));
+	EditAni->SetUIPos(Vec2D(833, 120));
 
 
 	// 에디터 레벨 BGM 세팅

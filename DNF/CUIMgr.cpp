@@ -40,17 +40,26 @@ void CUIMgr::Tick()
 		Key_state MLBtn = CKeyMgr::GetInst()->GetKeyState(Keyboard::MOUSE_LBTN);
 		if (MLBtn == Key_state::NONE)
 		{
+			pUI->m_PrevPressed = pUI->m_IsPressed;
 			pUI->m_IsPressed = false;
 		}
 		else
 		{
 			if (MLBtn == Key_state::TAP && pUI->IsCursorOn())
 			{
+				pUI->m_PrevPressed = pUI->m_IsPressed;
 				pUI->m_IsPressed = true;
 				pUI->MouseLBtnDown();
+
+				// vector 에서 제거 후 가장 뒤로 보내준다.
+				UIVec.erase((++riter).base());
+				UIVec.push_back(pParentUI);
+
+				break;
 			}
 			else if (MLBtn == Key_state::RELEASE && pUI->m_IsPressed)
 			{
+				pUI->m_PrevPressed = pUI->m_IsPressed;
 				pUI->m_IsPressed = false;
 				if (pUI->IsCursorOn())
 				{
@@ -65,9 +74,11 @@ void CUIMgr::Tick()
 	}
 }
 
-CUI* CUIMgr::GetPriorityUI(CUI* _ParentUI)
+CUI* CUIMgr::GetPriorityUI(CUI* _ParentUI, bool _getSecondary, bool _getThird)
 {
 	CUI* pPriorityUI = nullptr;
+	CUI* pSecondPriorityUI = nullptr;
+	CUI* pThirdUI = nullptr;
 
 	// Queue 역할을 할 List
 	static list<CUI*> queue;
@@ -88,10 +99,31 @@ CUI* CUIMgr::GetPriorityUI(CUI* _ParentUI)
 		}
 
 		if (pUI->IsCursorOn())
+		{
+			if (pSecondPriorityUI)
+				pThirdUI = pSecondPriorityUI;
+			if (pPriorityUI)
+				pSecondPriorityUI = pPriorityUI;
 			pPriorityUI = pUI;
+		}
 	}
 
-	return pPriorityUI;
+	if (_getThird)
+		return pThirdUI;
+	if (_getSecondary)
+		return pSecondPriorityUI;
+	else
+		return pPriorityUI;
+}
+
+CUI* CUIMgr::GetSuperParent(CUI* _UI)
+{
+	CUI* pSuperParentUI = _UI;
+	while (pSuperParentUI->m_Parent)
+	{
+		pSuperParentUI = pSuperParentUI->m_Parent;
+	}
+	return pSuperParentUI;
 }
 
 void CUIMgr::ReleaseCheck(CUI* _UI)
@@ -117,4 +149,10 @@ void CUIMgr::ReleaseCheck(CUI* _UI)
 		if (CKeyMgr::GetInst()->GetKeyState(Keyboard::MOUSE_LBTN) == Key_state::RELEASE)
 			pUI->m_IsPressed = false;
 	}
+}
+
+void CUIMgr::Render()
+{
+	if (m_RenderDelegate0)
+		(m_DelegateObj->*m_RenderDelegate0)();
 }

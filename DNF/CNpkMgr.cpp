@@ -29,6 +29,7 @@ CNpkMgr::~CNpkMgr()
 
 }
 
+
 vector<CAlbum*> CNpkMgr::ReadNpk(ifstream& _file, wstring _NpkPath)
 {
 	vector<CAlbum*> AlbumVector;

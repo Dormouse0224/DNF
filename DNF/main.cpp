@@ -120,9 +120,9 @@ void BackgroundLoad()
 
         if (!LoadQueue.empty())
         {
-            CAlbum* Data;
-            Data = LoadQueue.front();
-            LoadQueue.pop_front();
+            std::unique_lock<std::mutex> lock(queueMutex);
+            CAlbum* Data = LoadQueue.front();
+            lock.unlock();
             
             // 스레드 풀 생성
             PTP_POOL pool = CreateThreadpool(nullptr);
@@ -157,6 +157,10 @@ void BackgroundLoad()
             // 스레드 풀 및 환경 정리
             DestroyThreadpoolEnvironment(&callbackEnv);
             CloseThreadpool(pool);
+
+            std::unique_lock<std::mutex> lock1(queueMutex);
+            LoadQueue.pop_front();
+            lock1.unlock();
         }
         else
         {

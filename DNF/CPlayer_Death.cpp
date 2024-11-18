@@ -26,6 +26,7 @@ CPlayer_Death::~CPlayer_Death()
 
 void CPlayer_Death::Enter()
 {
+	((CPlayer*)GetOwnerObj())->StateAnimationInit(PlayerState::Death);
 	GetOwnerObj()->SetImmune(true);
 	GetOwnerObj()->SetState((int)PlayerState::Death);
 	CCameraMgr::GetInst()->SetAlpha(150);

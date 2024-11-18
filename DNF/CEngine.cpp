@@ -128,6 +128,9 @@ void CEngine::Progress()
 	// ·¹º§ ·»´õ¸µ
 	CLevelMgr::GetInst()->Render();
 
+	// UI Ãß°¡ ·»´õ¸µ
+	CUIMgr::GetInst()->Render();
+
 	// Ä«¸Þ¶ó ÀÌÆåÆ®
 	CCameraMgr::GetInst()->Effect();
 

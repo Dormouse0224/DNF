@@ -16,6 +16,7 @@
 #include <random>
 #include <array>
 #include <thread>
+#include <mutex>
 
 // GDI+
 //#include <ole2.h>

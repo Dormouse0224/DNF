@@ -5,6 +5,7 @@
 #include "CObj.h"
 #include "CKeyMgr.h"
 #include "CCameraMgr.h"
+#include "CUI.h"
 
 CStickerMgr::CStickerMgr()
 	: m_PrevCursorPos(0, 0)
@@ -62,7 +63,15 @@ void CStickerMgr::Tick()
 		}
 		else if (MLBtn == Key_state::PRESSED)
 		{
-			SelectedObj->SetLocation(SelectedObj->GetLocation() + (CursorPos - m_PrevCursorPos));
+			CUI* pUI = dynamic_cast<CUI*>(SelectedObj);
+			if (pUI)
+			{
+				pUI->SetUIPos(pUI->GetUIPos() + (CursorPos - m_PrevCursorPos));
+			}
+			else
+			{
+				SelectedObj->SetLocation(SelectedObj->GetLocation() + (CursorPos - m_PrevCursorPos));
+			}
 			m_PrevCursorPos = CursorPos;
 		}
 	}

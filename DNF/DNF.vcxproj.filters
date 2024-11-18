@@ -236,6 +236,12 @@
     <Filter Include="main\08. State\Player\Death">
       <UniqueIdentifier>{f41c4dd9-8e94-463c-860a-b4e4d93428b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\05. Object\01.UI\02. Window">
+      <UniqueIdentifier>{888b1eaf-ce77-4a66-9253-69a3c27bf04b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\05. Object\01.UI\03. ItemIcon">
+      <UniqueIdentifier>{009fd9be-f1b7-470c-8735-67de1cfa2030}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -479,6 +485,12 @@
     <ClInclude Include="CLargo_Death.h">
       <Filter>main\08. State\Boss\Death</Filter>
     </ClInclude>
+    <ClInclude Include="CWindow.h">
+      <Filter>main\05. Object\01.UI\02. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="CItemIcon.h">
+      <Filter>main\05. Object\01.UI\03. ItemIcon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -694,6 +706,12 @@
     </ClCompile>
     <ClCompile Include="CLargo_Death.cpp">
       <Filter>main\08. State\Boss\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="CWindow.cpp">
+      <Filter>main\05. Object\01.UI\02. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="CItemIcon.cpp">
+      <Filter>main\05. Object\01.UI\03. ItemIcon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

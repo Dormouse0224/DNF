@@ -5,6 +5,7 @@
 #include "CRigidBody.h"
 #include "CKeyMgr.h"
 #include "CPlayer_Attack.h"
+#include "CPlayer.h"
 
 CPlayer_Jump::CPlayer_Jump(wstring _name)
 	: CState(_name)
@@ -17,6 +18,7 @@ CPlayer_Jump::~CPlayer_Jump()
 
 void CPlayer_Jump::Enter()
 {
+	((CPlayer*)GetOwnerObj())->StateAnimationInit(PlayerState::Jump);
 	GetOwnerObj()->SetState((int)PlayerState::Jump);
 	GetOwnerObj()->GetBodyCollider()->SetSize(Vec2D(35, 80));
 	GetOwnerObj()->GetBodyCollider()->SetOffset(Vec2D(10, 5));

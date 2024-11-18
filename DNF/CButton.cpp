@@ -15,7 +15,7 @@ CButton::~CButton()
 	
 }
 
-void CButton::Render()
+void CButton::Render_UI()
 {
 	if (IsCursorOn())
 	{
@@ -23,20 +23,20 @@ void CButton::Render()
 		{
 			// 버튼 눌림 애니메이션
 			if (m_Action[(int)BtnState::PRESSED] != nullptr)
-				m_Action[(int)BtnState::PRESSED]->Render(this, true);
+				m_Action[(int)BtnState::PRESSED]->Render(this);
 		}
 		else
 		{
 			// 버튼 커서온 애니메이션
 			if (m_Action[(int)BtnState::CURSOR_ON] != nullptr)
-				m_Action[(int)BtnState::CURSOR_ON]->Render(this, true);
+				m_Action[(int)BtnState::CURSOR_ON]->Render(this);
 		}
 	}
 	else
 	{
 		// 버튼 기본 애니메이션
 		if (m_Action[(int)BtnState::IDLE] != nullptr)
-			m_Action[(int)BtnState::IDLE]->Render(this, true);
+			m_Action[(int)BtnState::IDLE]->Render(this);
 	}
 }
 
@@ -48,13 +48,21 @@ void CButton::AddComponent_Btn(CAlbumPlayer* _Scene, BtnState _BtnState)
 
 void CButton::MouseLBtnClikced()
 {
-	if (m_ClickCallback)
+	if (m_ClickCallback0)
 	{
-		m_ClickCallback();
+		m_ClickCallback0();
+	}
+	if (m_ClickCallback1)
+	{
+		m_ClickCallback1(m_ClickCallback1_param);
 	}
 	
-	if (m_ClickDelegate)
+	if (m_ClickDelegate0)
 	{
-		(m_DelegateObj->*m_ClickDelegate)();
+		(m_DelegateObj->*m_ClickDelegate0)();
+	}
+	if (m_ClickDelegate1)
+	{
+		(m_DelegateObj->*m_ClickDelegate1)(m_ClickDelegate1_param);
 	}
 }

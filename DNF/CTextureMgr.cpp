@@ -303,6 +303,13 @@ Bitmap* CTextureMgr::ConvertToBitmapV4(CTexture* _pTexture)
 	char* data2 = new char[size * 4];
 	if (_pTexture->Type == ColorBits::ARGB_1555 && _pTexture->CompressMode == CompressMode::ZLIB)
 	{
+		if (size == 1)
+		{
+			//delete[] data;
+			delete[] data2;
+			return nullptr;
+		}
+
 		data = (char*)UncompressZlib(_pTexture->Data, size, _pTexture->Length);
 		vector<Color> ColorTable = _pTexture->m_Owner->m_PaletteVector[0];
 		if (ColorTable.size() > 0)
@@ -535,13 +542,6 @@ vector<CAlbum*> CTextureMgr::LoadNPK(wstring _NpkPath)
 	return AlbumList;
 }
 
-//void CALLBACK LoadSceneThread(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WORK work)
-//{
-//	std::pair<CAlbum*, int>* data = static_cast<std::pair<CAlbum*, int>*>(context);
-//	data->first->GetScene(data->second)->Load();
-//	delete data; // 할당된 메모리 해제
-//}
-
 CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 {
 	CAlbum* result = nullptr;
@@ -570,40 +570,6 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 				{
 					AddLoadQueue(_album);
 
-					//// 스레드 풀 생성
-					//PTP_POOL pool = CreateThreadpool(nullptr);
-					//if (!pool)
-					//	return nullptr;
-
-					//// 스레드 풀 환경 설정
-					//TP_CALLBACK_ENVIRON callbackEnv;
-					//InitializeThreadpoolEnvironment(&callbackEnv);
-					//SetThreadpoolCallbackPool(&callbackEnv, pool);
-
-					//// 각 씬에 대해 작업을 큐에 추가
-					//std::vector<PTP_WORK> workItems;
-					//for (int i = 0; i < _album->GetSceneCount(); ++i) {
-					//	auto* data = new std::pair<CAlbum*, int>(_album, i);
-					//	PTP_WORK work = CreateThreadpoolWork(LoadSceneThread, data, &callbackEnv);
-					//	if (work) {
-					//		workItems.push_back(work);
-					//		SubmitThreadpoolWork(work);
-					//	}
-					//	else {
-					//		delete data;
-					//	}
-					//}
-
-					//// 모든 작업이 완료될 때까지 대기
-					//for (PTP_WORK work : workItems) {
-					//	WaitForThreadpoolWorkCallbacks(work, FALSE);
-					//	CloseThreadpoolWork(work);
-					//}
-
-					//// 스레드 풀 및 환경 정리
-					//DestroyThreadpoolEnvironment(&callbackEnv);
-					//CloseThreadpool(pool);
-
 					result = _album;
 				}
 			}
@@ -617,40 +583,6 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 				return iter->second;
 
 			AddLoadQueue(iter->second);
-
-			//// 스레드 풀 생성
-			//PTP_POOL pool = CreateThreadpool(nullptr);
-			//if (!pool)
-			//	return nullptr;
-
-			//// 스레드 풀 환경 설정
-			//TP_CALLBACK_ENVIRON callbackEnv;
-			//InitializeThreadpoolEnvironment(&callbackEnv);
-			//SetThreadpoolCallbackPool(&callbackEnv, pool);
-
-			//// 각 씬에 대해 작업을 큐에 추가
-			//std::vector<PTP_WORK> workItems;
-			//for (int i = 0; i < iter->second->GetSceneCount(); ++i) {
-			//	auto* data = new std::pair<CAlbum*, int>(iter->second, i);
-			//	PTP_WORK work = CreateThreadpoolWork(LoadSceneThread, data, &callbackEnv);
-			//	if (work) {
-			//		workItems.push_back(work);
-			//		SubmitThreadpoolWork(work);
-			//	}
-			//	else {
-			//		delete data;
-			//	}
-			//}
-
-			//// 모든 작업이 완료될 때까지 대기
-			//for (PTP_WORK work : workItems) {
-			//	WaitForThreadpoolWorkCallbacks(work, FALSE);
-			//	CloseThreadpoolWork(work);
-			//}
-
-			//// 스레드 풀 및 환경 정리
-			//DestroyThreadpoolEnvironment(&callbackEnv);
-			//CloseThreadpool(pool);
 
 			result = iter->second;
 		}
@@ -1253,11 +1185,87 @@ bool CTextureMgr::LineInRectCheck(Vec2D& _p1, Vec2D& _p2, Vec2D& _LT, Vec2D& _RB
 	return false;
 }
 
+
+void CALLBACK PreloadFileThread(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WORK work)
+{
+	wstring* line = (wstring*)context;
+	wstring _filepath = CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + *line + L".animation";
+	ifstream animation;
+	AnimationInfo desc;
+	animation.open(_filepath.c_str(), ios::binary);
+	if (animation.is_open())
+	{
+		char NPKDir[255] = {};
+		char AlbumPath[255] = {};
+		animation.read((char*)&desc, sizeof(desc));
+		animation.read(NPKDir, desc.NPKDirLen);
+		animation.read(AlbumPath, desc.AlbumPathLen);
+
+		animation.close();
+
+
+		string strAlbumPath = AlbumPath;
+		WCHAR wNPKDir[255] = {};
+		MultiByteToWideChar(CP_ACP, 0, NPKDir, -1, wNPKDir, 255);
+		wstring wstrNPKDir = wNPKDir;
+		wstrNPKDir = CEngine::GetInst()->GetResourcePathW() + wstrNPKDir;
+
+		CTextureMgr::GetInst()->LoadAlbum(strAlbumPath, wstrNPKDir);
+	}
+	else
+	{
+
+		animation.close();
+	}
+}
+
+void CTextureMgr::PreloadFromFileT(wstring _fileName)
+{
+	std::wifstream PreloadList(CEngine::GetInst()->GetResourcePathW() + L"\\animation\\Preload\\" + _fileName);
+	wstring line;
+	
+	// 스레드 풀 생성
+	PTP_POOL pool = CreateThreadpool(nullptr);
+	if (!pool)
+		return;
+
+	// 스레드 풀 환경 설정
+	TP_CALLBACK_ENVIRON callbackEnv;
+	InitializeThreadpoolEnvironment(&callbackEnv);
+	SetThreadpoolCallbackPool(&callbackEnv, pool);
+
+	// 각 씬에 대해 작업을 큐에 추가
+	std::vector<PTP_WORK> workItems;
+	while (std::getline(PreloadList, line)) {
+		wstring* data = new wstring(line);
+		PTP_WORK work = CreateThreadpoolWork(PreloadFileThread, data, &callbackEnv);
+		if (work) {
+			workItems.push_back(work);
+			SubmitThreadpoolWork(work);
+		}
+		else {
+			delete data;
+		}
+	}
+
+	// 모든 작업이 완료될 때까지 대기
+	for (PTP_WORK work : workItems) {
+		WaitForThreadpoolWorkCallbacks(work, FALSE);
+		CloseThreadpoolWork(work);
+	}
+
+	// 스레드 풀 및 환경 정리
+	DestroyThreadpoolEnvironment(&callbackEnv);
+	CloseThreadpool(pool);
+
+	PreloadList.close();
+}
+
 void CTextureMgr::PreloadFromFile(wstring _fileName)
 {
 	std::wifstream PreloadList(CEngine::GetInst()->GetResourcePathW() + L"\\animation\\Preload\\" + _fileName);
 	wstring line;
-	while (std::getline(PreloadList, line)) 
+	while (std::getline(PreloadList, line))
 	{
 		wstring _filepath = CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + line + L".animation";
 		ifstream animation;
@@ -1284,8 +1292,112 @@ void CTextureMgr::PreloadFromFile(wstring _fileName)
 		}
 		else
 		{
-
 			animation.close();
+		}
+	}
+	PreloadList.close();
+}
+
+void CALLBACK PreloadAvatarThread(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WORK work)
+{
+	pair<string, int>* data = (pair<string, int>*)context;
+	int i = data->second;
+	string line = data->first;
+	AvatarParts _parts = (AvatarParts)i;
+	wstring wstrNPKDir = CEngine::GetInst()->GetResourcePathW() + L"\\texture\\player\\sprite_character_archer_equipment_avatar_skin.NPK";
+	string strAlbumPath = "sprite/character/archer/equipment/avatar/skin/ac_body0000.img";
+
+	string parts[6] = { "hair", "cap", "pants", "coat", "shoes", "lbow" };
+	wstring wparts[6] = { L"hair", L"cap", L"pants", L"coat", L"shoes", L"lbow" };
+	string layer[4] = { "d", "c", "b", "a" };
+
+	// 아바타가 속한 NPK 파일명
+	int pos0 = wstrNPKDir.find(L"skin");
+	if (pos0 != wstring::npos)
+		wstrNPKDir.replace(pos0, 4, wparts[(int)_parts]);
+	if (_parts == AvatarParts::LBow)
+	{
+		int pos = wstrNPKDir.find(L"avatar");
+		if (pos != wstring::npos)
+			wstrNPKDir.replace(pos, 6, L"weapon");
+	}
+
+	// Coat 레이어에만 존재하는 x 레이어는 따로 처리
+	if (_parts == AvatarParts::Coat)
+	{
+		string temp = strAlbumPath;
+		int pos1 = temp.find("skin");
+		if (pos1 != string::npos)
+			temp.replace(pos1, 4, parts[(int)_parts]);
+		int pos2 = temp.find("body");
+		if (pos2 != string::npos)
+			temp.replace(pos2, 8, parts[(int)_parts] + line + "x");
+
+		CTextureMgr::GetInst()->LoadAlbum(temp, wstrNPKDir);
+	}
+
+	// 아바타가 속한 앨범명 계산 후 배열에 저장
+	for (int layerIdx = 0; layerIdx < 4; ++layerIdx)
+	{
+		string temp = strAlbumPath;
+		int pos1 = temp.find("skin");
+		if (pos1 != string::npos)
+			temp.replace(pos1, 4, parts[(int)_parts]);
+		if (_parts == AvatarParts::LBow)
+		{
+			int pos = temp.find("avatar");
+			if (pos != string::npos)
+				temp.replace(pos, 6, "weapon");
+		}
+		int pos2 = temp.find("body");
+		if (pos2 != string::npos)
+			temp.replace(pos2, 8, parts[(int)_parts] + line + layer[layerIdx]);
+
+		CTextureMgr::GetInst()->LoadAlbum(temp, wstrNPKDir);
+	}
+}
+
+void CTextureMgr::PreloadAvatarT(wstring _fileName)
+{
+	std::ifstream PreloadList(CEngine::GetInst()->GetResourcePathW() + L"\\animation\\Preload\\" + _fileName);
+	string line;
+	while (std::getline(PreloadList, line))
+	{
+		for (int i = 0; i < (int)AvatarParts::END; ++i)
+		{
+			// 스레드 풀 생성
+			PTP_POOL pool = CreateThreadpool(nullptr);
+			if (!pool)
+				return;
+
+			// 스레드 풀 환경 설정
+			TP_CALLBACK_ENVIRON callbackEnv;
+			InitializeThreadpoolEnvironment(&callbackEnv);
+			SetThreadpoolCallbackPool(&callbackEnv, pool);
+
+			// 각 씬에 대해 작업을 큐에 추가
+			std::vector<PTP_WORK> workItems;
+			while (std::getline(PreloadList, line)) {
+				pair<string, int>* data = new pair<string, int>(line, i);
+				PTP_WORK work = CreateThreadpoolWork(PreloadAvatarThread, data, &callbackEnv);
+				if (work) {
+					workItems.push_back(work);
+					SubmitThreadpoolWork(work);
+				}
+				else {
+					delete data;
+				}
+			}
+
+			// 모든 작업이 완료될 때까지 대기
+			for (PTP_WORK work : workItems) {
+				WaitForThreadpoolWorkCallbacks(work, FALSE);
+				CloseThreadpoolWork(work);
+			}
+
+			// 스레드 풀 및 환경 정리
+			DestroyThreadpoolEnvironment(&callbackEnv);
+			CloseThreadpool(pool);
 		}
 	}
 	PreloadList.close();

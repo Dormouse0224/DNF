@@ -3,6 +3,7 @@
 
 class CPlayer_Attack;
 class CDummy;
+class CUI;
 
 class CPlayer :
     public CObj
@@ -27,6 +28,15 @@ private:
     float m_HPRegen;
     float m_MPRegen;
 
+    bool m_bInventoryOn;
+    UINT m_InventoryID;
+    CUI* m_InvenSlot;
+
+    vector<ItemInfo*> m_EquipVec;
+    vector<ItemInfo*> m_AvatarEquipVec;
+    vector<ItemInfo*> m_InvenVec[(int)ItemType::END];
+
+
 
 public:
     virtual void BeginOverlap(CCollider* _Self, CCollider* _Other) override;
@@ -43,6 +53,8 @@ public:
     vector<CAlbumPlayer*>& GetAnimationVec(PlayerState _st) { return m_Animation[(int)_st]; }
     vector<CAlbumPlayer*>& GetAvatarVec(PlayerState _st) { return m_Avatar[(int)_st]; }
 
+    void StateAnimationInit(PlayerState _state);
+
     float GetYogiGauge() { return m_YogiGauge; }
     float SetYogiGauge(float _val) { m_YogiGauge = _val; }
     void AddYogiGauge(float _val) { m_YogiGauge  = min(m_YogiGauge + _val, 110); }
@@ -56,5 +68,12 @@ public:
 
     CPlayer_Attack* GetAttackState() { return m_AttackState; }
 
+    void OpenInventory();
+    void TabBtnDelegate(DWORD_PTR _param);
+    void RenderPlayerStatue(DWORD_PTR _param);
+
+    vector<ItemInfo*>& GetEquipVec() { return m_EquipVec; }
+    vector<ItemInfo*>& GetAvatarEquipVec() { return m_AvatarEquipVec; }
+    vector<ItemInfo*>& GetInvenVec(ItemType _type) { return m_InvenVec[(int)_type]; }
 };
 

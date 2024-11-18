@@ -56,6 +56,7 @@ CPlayer_Attack::~CPlayer_Attack()
 
 void CPlayer_Attack::Enter()
 {
+	((CPlayer*)GetOwnerObj())->StateAnimationInit(PlayerState::Attack);
 	m_IdleAnimation->SetCurrentScene(0);
 	CAlbumPlayer::CreateAvatar(L"archer_skin_00_Attack_Idle", ((CPlayer*)GetOwnerObj())->GetCurAvatarCode(), m_IdleAnimationAvt);
 	GetOwnerObj()->SetState((int)PlayerState::Attack);

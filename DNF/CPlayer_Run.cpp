@@ -5,6 +5,7 @@
 #include "CRigidBody.h"
 #include "CCollider.h"
 #include "CPlayer_Attack.h"
+#include "CPlayer.h"
 
 CPlayer_Run::CPlayer_Run(wstring _name)
 	: CState(_name)
@@ -17,6 +18,7 @@ CPlayer_Run::~CPlayer_Run()
 
 void CPlayer_Run::Enter()
 {
+	((CPlayer*)GetOwnerObj())->StateAnimationInit(PlayerState::Run);
 	GetOwnerObj()->SetState((int)PlayerState::Run);
 	GetOwnerObj()->GetBodyCollider()->SetSize(Vec2D(86, 75));
 	GetOwnerObj()->GetBodyCollider()->SetOffset(Vec2D(0, 20));

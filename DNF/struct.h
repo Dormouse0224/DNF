@@ -322,3 +322,11 @@ struct StageInfoHeader
 	int vecNPCInfoCount;
 };
 #pragma pack(pop)
+
+struct ItemInfo
+{
+	ItemType Item_type;
+	int Item_secondtype;
+	wstring Texture_ani;
+	string Name;
+};

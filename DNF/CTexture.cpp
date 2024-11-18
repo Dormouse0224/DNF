@@ -4,6 +4,7 @@
 #include "CObj.h"
 #include "CTextureMgr.h"
 #include "CCameraMgr.h"
+#include "CTextMgr.h"
 
 
 CTexture::CTexture(wstring _RelativPath, CAlbum* _Owner)
@@ -53,10 +54,6 @@ int CTexture::Load()
 void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, bool bLinearDodge, bool bFlipHorizontal
 	, float _renderPercent, float _renderPercentH)
 {
-	// 비트맵 로딩이 안된 경우 렌더링 취소
-	if (!m_Bitmap)
-		return;
-
 	// 기본 해상도 기준으로 텍스처의 최종 위치를 계산
 	Vec2D Resolution = CEngine::GetInst()->GetResolution();
 	Vec2D FinalPos(m_Owner->GetOwner()->GetLocation() + m_Offset + _RenderOffset);
@@ -66,6 +63,15 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 		CameraPos = Vec2D(0, 0);
 	}
 	Vec2D ObjCenter = m_Owner->GetOwner()->GetLocation() + (m_Owner->GetOwner()->GetScale() / 2) - CameraPos;		// 오브젝트 중심점 계산
+
+	// 비트맵 로딩이 안된 경우 렌더링 취소
+	if (!m_Bitmap)
+	{
+		if (m_Size.x * m_Size.y != 1)
+			CTextMgr::GetInst()->Render(FinalPos.x, FinalPos.y, L"LOADING", Color(255, 255, 0, 0));
+		return;
+	}
+
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
 	if (CameraIntersectCheck(CameraPos, Resolution, 0.f, FinalPos, m_Size, _angle, Vec2D(0, 0), ObjCenter + CameraPos) || bCameraFallow)
 	{

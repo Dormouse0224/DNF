@@ -187,3 +187,37 @@ enum class AvatarParts
 
 	END
 };
+
+enum class EquipParts
+{
+	Weapon,
+	Top,
+	Bottom,
+	Shoulder,
+	Belt,
+	Shoes,
+	Neckless,
+	Amulet,
+	Ring,
+
+	END
+};
+
+enum class ItemType
+{
+	Equip,
+	Consumable,
+	Avatar,
+
+
+	END
+};
+
+enum class InventoryType
+{
+	Equip,
+	Slot,
+
+
+	END
+};

@@ -96,7 +96,7 @@ public:
     virtual void Tick() = 0;    // 반복적으로 할 일
     virtual void Render();      // 오브젝트를 그리기
 
-    virtual void FinalTick() final;   // 오브젝트가 소유한 Component 가 할 일
+    virtual void FinalTick();   // 오브젝트가 소유한 Component 가 할 일
 
     virtual void WriteInfo(fstream _stream) {}
 };

@@ -43,6 +43,8 @@ public:
 
 
 	static void PreloadFromFile(wstring _filepath);
+	static void PreloadFromFileT(wstring _fileName);
+	static void PreloadAvatarT(wstring _fileName);
 	static void PreloadAvatar(wstring _fileName);
 
 private:

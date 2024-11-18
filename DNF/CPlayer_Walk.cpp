@@ -4,6 +4,7 @@
 #include "CRigidBody.h"
 #include "CCollider.h"
 #include "CPlayer_Attack.h"
+#include "CPlayer.h"
 
 
 CPlayer_Walk::CPlayer_Walk(wstring _name)
@@ -17,6 +18,7 @@ CPlayer_Walk::~CPlayer_Walk()
 
 void CPlayer_Walk::Enter()
 {
+	((CPlayer*)GetOwnerObj())->StateAnimationInit(PlayerState::Walk);
 	GetOwnerObj()->SetState((int)PlayerState::Walk);
 	GetOwnerObj()->GetBodyCollider()->SetSize(Vec2D(36, 95));
 	GetOwnerObj()->GetBodyCollider()->SetOffset(Vec2D(0, 5));

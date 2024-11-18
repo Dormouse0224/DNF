@@ -18,8 +18,9 @@ public:
 	template<typename T>
 	static T Read(ifstream& _file);
 
-private:
 	void ReadImg(ifstream& _file, CAlbum* _Album, LONGLONG _Length);
+
+private:
 
 	vector<CAlbum*> ReadInfo(ifstream& _file, wstring _NpkPath);
 

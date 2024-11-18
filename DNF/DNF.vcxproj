@@ -159,6 +159,7 @@
     <ClInclude Include="CDummy.h" />
     <ClInclude Include="CDungeonMaker.h" />
     <ClInclude Include="CFSM.h" />
+    <ClInclude Include="CItemIcon.h" />
     <ClInclude Include="CLargo.h" />
     <ClInclude Include="CLargo_Attack.h" />
     <ClInclude Include="CLargo_Death.h" />
@@ -193,6 +194,7 @@
     <ClInclude Include="CSticker.h" />
     <ClInclude Include="CStickerMgr.h" />
     <ClInclude Include="CWall.h" />
+    <ClInclude Include="CWindow.h" />
     <ClInclude Include="DialogProc.h" />
     <ClInclude Include="CCameraMgr.h" />
     <ClInclude Include="CCollider.h" />
@@ -242,6 +244,7 @@
     <ClCompile Include="CDummy.cpp" />
     <ClCompile Include="CDungeonMaker.cpp" />
     <ClCompile Include="CFSM.cpp" />
+    <ClCompile Include="CItemIcon.cpp" />
     <ClCompile Include="CLargo.cpp" />
     <ClCompile Include="CLargo_Attack.cpp" />
     <ClCompile Include="CLargo_Death.cpp" />
@@ -276,6 +279,7 @@
     <ClCompile Include="CSticker.cpp" />
     <ClCompile Include="CStickerMgr.cpp" />
     <ClCompile Include="CWall.cpp" />
+    <ClCompile Include="CWindow.cpp" />
     <ClCompile Include="DialogProc.cpp" />
     <ClCompile Include="CCameraMgr.cpp" />
     <ClCompile Include="CCollider.cpp" />
