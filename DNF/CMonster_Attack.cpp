@@ -29,6 +29,9 @@ void CMonster_Attack::Enter()
 
 void CMonster_Attack::FinalTick()
 {
+	if (((CMonster*)GetOwnerObj())->GetHurt())
+		GetFSM()->ChangeState((int)MonsterState::Hurt);
+
 	GetOwnerObj()->GetRigidBody()->SetSpeed(Vec2D(0, 0));
 	CMonster* pMonster = (CMonster*)GetOwnerObj();
 	int frame = pMonster->GetCurAnimation()[0]->GetCurSceneNum();

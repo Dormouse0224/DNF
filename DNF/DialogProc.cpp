@@ -16,6 +16,7 @@
 #include "CMonster.h"
 #include "CStageMaker.h"
 #include "CCollider.h"
+#include "CNPCCallback.h"
 
 #include <Commctrl.h>
 
@@ -741,21 +742,119 @@ INT_PTR AddStageProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
                 }
             }
         }
+        else if (LOWORD(_wParam) == BTN_AddTile1)
+        {
+            WCHAR filepath[255] = {};
+            WCHAR filename[255] = {};
+            wstring Initpath = CEngine::GetInst()->GetResourcePathW();
+
+            OPENFILENAME desc = {};
+            desc.lStructSize = sizeof(OPENFILENAME);
+            desc.hwndOwner = hDlg;
+            desc.lpstrFilter = L"animation\0*.animation\0ALL\0*.*\0";
+            desc.lpstrFile = filepath;
+            desc.nMaxFile = 255;
+            desc.lpstrFileTitle = filename;
+            desc.nMaxFileTitle = 255;
+            desc.lpstrTitle = L"Tile1 추가";
+            desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+            desc.lpstrInitialDir = Initpath.c_str();
+
+            if (GetOpenFileName(&desc))
+            {
+                wstring wstr(filepath);
+                wstr = wstr.substr(wstr.rfind('.'));
+                if (wstr == L".animation")
+                {
+                    HWND hTile1Path = GetDlgItem(hDlg, STATIC_Tile1Path);
+                    SetWindowText(hTile1Path, filename);
+                }
+                else
+                {
+                    // 파일 형식이 animation 가 아닐 경우 경고창 출력
+                    MessageBox(hDlg, L"애니메이션 파일이 아닙니다.", L"파일 형식 오류", MB_ICONWARNING | MB_OK);
+                }
+            }
+        }
+        else if (LOWORD(_wParam) == BTN_AddTile2)
+        {
+            WCHAR filepath[255] = {};
+            WCHAR filename[255] = {};
+            wstring Initpath = CEngine::GetInst()->GetResourcePathW();
+
+            OPENFILENAME desc = {};
+            desc.lStructSize = sizeof(OPENFILENAME);
+            desc.hwndOwner = hDlg;
+            desc.lpstrFilter = L"animation\0*.animation\0ALL\0*.*\0";
+            desc.lpstrFile = filepath;
+            desc.nMaxFile = 255;
+            desc.lpstrFileTitle = filename;
+            desc.nMaxFileTitle = 255;
+            desc.lpstrTitle = L"Tile2 추가";
+            desc.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+            desc.lpstrInitialDir = Initpath.c_str();
+
+            if (GetOpenFileName(&desc))
+            {
+                wstring wstr(filepath);
+                wstr = wstr.substr(wstr.rfind('.'));
+                if (wstr == L".animation")
+                {
+                    HWND hTile2Path = GetDlgItem(hDlg, STATIC_Tile2Path);
+                    SetWindowText(hTile2Path, filename);
+                }
+                else
+                {
+                    // 파일 형식이 animation 가 아닐 경우 경고창 출력
+                    MessageBox(hDlg, L"애니메이션 파일이 아닙니다.", L"파일 형식 오류", MB_ICONWARNING | MB_OK);
+                }
+            }
+            }
         else if (LOWORD(_wParam) == IDOK)
         {
             WCHAR wStageName[255] = {};
             WCHAR wHorizPixel[255] = {};
             WCHAR wVertPixel[255] = {};
             WCHAR wBGMPath[255] = {};
+            WCHAR wTile1Path[255] = {};
+            WCHAR wTile1SizeX[255] = {};
+            WCHAR wTile1SizeY[255] = {};
+            WCHAR wTile1PosX[255] = {};
+            WCHAR wTile1PosY[255] = {};
+            WCHAR wTile2Path[255] = {};
+            WCHAR wTile2SizeX[255] = {};
+            WCHAR wTile2SizeY[255] = {};
+            WCHAR wTile2PosX[255] = {};
+            WCHAR wTile2PosY[255] = {};
             HWND hStageName = GetDlgItem(hDlg, EDIT_StageName);
             HWND hHorizPixel = GetDlgItem(hDlg, EDIT_HorizPixel);
             HWND hVertPixel = GetDlgItem(hDlg, EDIT_VertPixel);
             HWND hBGMPath = GetDlgItem(hDlg, STATIC_BGMPath);
             HWND hBGAList = GetDlgItem(hDlg, LBX_BGAList);
+            HWND hTile1Path     = GetDlgItem(hDlg, STATIC_Tile1Path);
+            HWND hTile1SizeX    = GetDlgItem(hDlg, EDIT_Tile1HorizPixel);
+            HWND hTile1SizeY    = GetDlgItem(hDlg, EDIT_Tile1VertPixel);
+            HWND hTile1PosX     = GetDlgItem(hDlg, EDIT_Tile1HorizPos);
+            HWND hTile1PosY     = GetDlgItem(hDlg, EDIT_Tile1VertPos);
+            HWND hTile2Path     = GetDlgItem(hDlg, STATIC_Tile2Path);
+            HWND hTile2SizeX    = GetDlgItem(hDlg, EDIT_Tile2HorizPixel);
+            HWND hTile2SizeY    = GetDlgItem(hDlg, EDIT_Tile2VertPixel);
+            HWND hTile2PosX     = GetDlgItem(hDlg, EDIT_Tile2HorizPos);
+            HWND hTile2PosY     = GetDlgItem(hDlg, EDIT_Tile2VertPos);
             GetWindowText(hStageName, wStageName, 255);
             GetWindowText(hHorizPixel, wHorizPixel, 255);
             GetWindowText(hVertPixel, wVertPixel, 255);
             GetWindowText(hBGMPath, wBGMPath, 255);
+            GetWindowText(hTile1Path , wTile1Path , 255);
+            GetWindowText(hTile1SizeX, wTile1SizeX, 255);
+            GetWindowText(hTile1SizeY, wTile1SizeY, 255);
+            GetWindowText(hTile1PosX , wTile1PosX , 255);
+            GetWindowText(hTile1PosY , wTile1PosY , 255);
+            GetWindowText(hTile2Path , wTile2Path , 255);
+            GetWindowText(hTile2SizeX, wTile2SizeX, 255);
+            GetWindowText(hTile2SizeY, wTile2SizeY, 255);
+            GetWindowText(hTile2PosX , wTile2PosX , 255);
+            GetWindowText(hTile2PosY , wTile2PosY , 255);
 
             CDungeonMaker* pDungeonMakerLv = dynamic_cast<CDungeonMaker*>(CLevelMgr::GetInst()->GetCurrentLevel());
             assert(pDungeonMakerLv);
@@ -772,12 +871,25 @@ INT_PTR AddStageProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             StageInfo* pStage = new StageInfo;
             pStage->StageName = wStageName;
             pStage->StageSize = Vec2D(std::stoi(wHorizPixel), std::stoi(wVertPixel));
-            pStage->BGMPath = wBGMPath;
+            if (!wstring(wBGMPath).empty())
+                pStage->BGMPath = wBGMPath;
             for (int i = 0; i < SendMessage(hBGAList, LB_GETCOUNT, 0, 0); ++i)
             {
                 WCHAR buffer[255] = {};
                 SendMessage(hBGAList, LB_GETTEXT, i, (LPARAM)buffer);
                 pStage->vecBGA.push_back(buffer);
+            }
+            if (!wstring(wTile1Path).empty())
+            {
+                pStage->Tile1Path = wTile1Path;
+                pStage->Tile1Size = Vec2D(std::stoi(wTile1SizeX), std::stoi(wTile1SizeY));
+                pStage->Tile1Pos = Vec2D(std::stoi(wTile1PosX), std::stoi(wTile1PosY));
+            }
+            if (!wstring(wTile2Path).empty())
+            {
+                pStage->Tile2Path = wTile2Path;
+                pStage->Tile2Size = Vec2D(std::stoi(wTile2SizeX), std::stoi(wTile2SizeY));
+                pStage->Tile2Pos = Vec2D(std::stoi(wTile2PosX), std::stoi(wTile2PosY));
             }
 
 
@@ -936,6 +1048,8 @@ INT_PTR AddMonsterProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             pMonster->AddComponent(new CSticker(L"dominatedunnaturals_Stk"));
             pMonster->SetLocation(Vec2D(wcstof(wPosX, &stopstr), wcstof(wPosY, &stopstr)));
             pMonster->SetScale(Vec2D(100, 140));
+            pMonster->SetMaxHP(1000);
+            pMonster->SetCurHP(1000);
             CCollider* pMonCollider = new CCollider(wstring(wName)+L"_Col");
             pMonCollider->SetSize(pMonster->GetScale());
             pMonster->AddComponent(pMonCollider);
@@ -975,13 +1089,51 @@ INT_PTR AddNPCProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
     switch (message)
     {
     case WM_INITDIALOG:
+    {
+        HWND hDunList = GetDlgItem(hDlg, CHECK_DungeonList);
+        HWND hTeleport = GetDlgItem(hDlg, CHECK_Teleport);
+        HWND hTelDest = GetDlgItem(hDlg, EDIT_TeleportDest);
+        EnableWindow(hTelDest, FALSE);
         return (INT_PTR)TRUE;
+    }
 
     case WM_COMMAND:
         if (LOWORD(_wParam) == IDCANCEL)
         {
             EndDialog(hDlg, LOWORD(_wParam));
             return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(_wParam) == CHECK_DungeonList)
+        {
+            HWND hDunList = GetDlgItem(hDlg, CHECK_DungeonList);
+            HWND hTeleport = GetDlgItem(hDlg, CHECK_Teleport);
+            HWND hTelDest = GetDlgItem(hDlg, EDIT_TeleportDest);
+            if (SendMessage(hDunList, BM_GETCHECK, 0, 0) == BST_CHECKED)
+            {
+                EnableWindow(hTeleport, FALSE);
+                EnableWindow(hTelDest, FALSE);
+            }
+            else
+            {
+                EnableWindow(hTeleport, TRUE);
+                EnableWindow(hTelDest, FALSE);
+            }
+        }
+        else if (LOWORD(_wParam) == CHECK_Teleport)
+        {
+            HWND hDunList = GetDlgItem(hDlg, CHECK_DungeonList);
+            HWND hTeleport = GetDlgItem(hDlg, CHECK_Teleport);
+            HWND hTelDest = GetDlgItem(hDlg, EDIT_TeleportDest);
+            if (SendMessage(hTeleport, BM_GETCHECK, 0, 0) == BST_CHECKED)
+            {
+                EnableWindow(hDunList, FALSE);
+                EnableWindow(hTelDest, TRUE);
+            }
+            else
+            {
+                EnableWindow(hDunList, TRUE);
+                EnableWindow(hTelDest, FALSE);
+            }
         }
         else if (LOWORD(_wParam) == IDOK)
         {
@@ -992,18 +1144,26 @@ INT_PTR AddNPCProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             HWND hNPCSizeX = GetDlgItem(hDlg, EDIT_NPCSizeX);
             HWND hNPCSizeY = GetDlgItem(hDlg, EDIT_NPCSizeY);
             HWND hIdleAni = GetDlgItem(hDlg, STATIC_IdleAni);
+            HWND hDunList = GetDlgItem(hDlg, CHECK_DungeonList);
+            HWND hTeleport = GetDlgItem(hDlg, CHECK_Teleport);
+            HWND hTelDest = GetDlgItem(hDlg, EDIT_TeleportDest);
             WCHAR wName[255] = {};
             WCHAR wPosX[255] = {};
             WCHAR wPosY[255] = {};
             WCHAR wNPCSizeX[255] = {};
             WCHAR wNPCSizeY[255] = {};
             WCHAR wIdleAni[255] = {};
+            WCHAR wTelDest[255] = {};
             GetWindowText(hName, wName, 255);
             GetWindowText(hPosX, wPosX, 255);
             GetWindowText(hPosY, wPosY, 255);
             GetWindowText(hNPCSizeX, wNPCSizeX, 255);
             GetWindowText(hNPCSizeY, wNPCSizeY, 255);
             GetWindowText(hIdleAni, wIdleAni, 255);
+            GetWindowText(hTelDest, wTelDest, 255);
+            //SendMessage(hLoop, BM_GETCHECK, 0, 0)
+
+
 
             // 입력값 예외처리
             if (wstring(wName).empty() || wstring(wPosX).empty() || wstring(wPosY).empty() 
@@ -1027,6 +1187,15 @@ INT_PTR AddNPCProc(HWND hDlg, UINT message, WPARAM _wParam, LPARAM _lParam)
             pNPC->AddComponent(CAlbumPlayer::CreatePlayerFromFile(wstring(wName) + L"_IdleAni"
                 , CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + wIdleAni));
             pNPC->SetIdleAni(wIdleAni);
+            if (SendMessage(hDunList, BM_GETCHECK, 0, 0) == BST_CHECKED)
+            {
+                pNPC->SetCallbackIndex(1);
+            }
+            else if (SendMessage(hTeleport, BM_GETCHECK, 0, 0) == BST_CHECKED)
+            {
+                pNPC->SetCallbackIndex(2);
+                pNPC->SetTeleportDest(wTelDest);
+            }
 
             CStageMaker* pStageMaker = dynamic_cast<CStageMaker*>(CLevelMgr::GetInst()->GetCurrentLevel());
             pStageMaker->GetNPCMap().insert(make_pair(pNPC->GetID(), pNPC));

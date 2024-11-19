@@ -303,7 +303,7 @@ Bitmap* CTextureMgr::ConvertToBitmapV4(CTexture* _pTexture)
 	char* data2 = new char[size * 4];
 	if (_pTexture->Type == ColorBits::ARGB_1555 && _pTexture->CompressMode == CompressMode::ZLIB)
 	{
-		if (size == 1)
+		if (size == 1 && _pTexture->Type != ColorBits::LINK)
 		{
 			//delete[] data;
 			delete[] data2;
@@ -676,8 +676,12 @@ vector<Color> CTextureMgr::ReadPalette(ifstream& _file, int count)
 	return Palette;
 }
 
+//std::mutex mtx;
+
 Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 {
+	//std::lock_guard<std::mutex> lock(mtx);
+
 	HRESULT err;
 	if (_DDSdataSize < sizeof(DDSHeader))
 		return nullptr;
@@ -754,7 +758,13 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	cpuTextureDesc.MiscFlags = 0;
 
 	ID3D11Texture2D* pStagingTexture = nullptr;
-	pd3dDevice->CreateTexture2D(&cpuTextureDesc, nullptr, &pStagingTexture);
+	err = pd3dDevice->CreateTexture2D(&cpuTextureDesc, nullptr, &pStagingTexture);
+	if (FAILED(err))
+	{
+		// 할당된 메모리 해제
+		delete[] textureData;
+		return nullptr;
+	}
 
 	// 원본 텍스처를 스테이징 텍스처로 복사
 	if (pStagingTexture == nullptr)
@@ -815,6 +825,12 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	textureView->Release();
 	pStagingTexture->Release();
 	DecompressedScratchImage.Release();
+
+	//pd3dDevice = nullptr;
+	//pd3dContext = nullptr;
+	//texture = nullptr;
+	//textureView = nullptr;
+	//pStagingTexture = nullptr;
 
 	// 할당된 메모리 해제
 	delete[] textureData;

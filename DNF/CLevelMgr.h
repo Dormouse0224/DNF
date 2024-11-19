@@ -10,6 +10,10 @@ private:
 	map<wstring, CLevel*> m_CLevels;
 	CLevel* m_CurrentLevel;
 
+	vector<wstring> m_DungeonVec;
+
+	PlayerInfo* m_PlayerInfo;
+
 	map<wstring, DungeonInfo*> m_DungeonMap;
 
 public:
@@ -25,6 +29,11 @@ public:
 	void ChangeLevel(CLevel* _Dest);
 
 	void ReadDungeonList();
+	vector<wstring> GetDungeonVec() { return m_DungeonVec; }
 	void LoadStage(wstring _fileName, map<Vec2D, StageInfo*>& _StageInfoMap);
+
+	PlayerInfo* GetPlayerInfo() { return m_PlayerInfo; }
+	void SetPlayerInfo(PlayerInfo* _info) { m_PlayerInfo = _info; }
+
 };
 

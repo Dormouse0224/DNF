@@ -22,6 +22,8 @@ private:
     CPlayer* m_Player;
     bool m_CameraFollowPlayer;
 
+    int m_MonsterCount;
+
     float m_Gravity = 1500.f;
 
 public:
@@ -55,6 +57,9 @@ public:
     void SetPlayer(CPlayer* _player) { m_Player = _player; }
     bool GetCameraFollowPlayer() { return m_CameraFollowPlayer; }
     void SetCameraFollowPlayer(bool _b) { m_CameraFollowPlayer = _b; }
+
+    int GetMonsterCount() { return m_MonsterCount; }
+    void SetMonsterCount(int _i) { m_MonsterCount = _i; }
 
     float GetGravity() { return m_Gravity; }
     void SetGravity(float _gravity) { m_Gravity = _gravity; }

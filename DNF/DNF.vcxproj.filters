@@ -491,6 +491,9 @@
     <ClInclude Include="CItemIcon.h">
       <Filter>main\05. Object\01.UI\03. ItemIcon</Filter>
     </ClInclude>
+    <ClInclude Include="CNPCCallback.h">
+      <Filter>main\05. Object\04. NPC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -712,6 +715,9 @@
     </ClCompile>
     <ClCompile Include="CItemIcon.cpp">
       <Filter>main\05. Object\01.UI\03. ItemIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="CNPCCallback.cpp">
+      <Filter>main\05. Object\04. NPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

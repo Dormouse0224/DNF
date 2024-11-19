@@ -49,8 +49,11 @@
 #define BTN_AddNPC                      1003
 #define STATIC_NPKDir                   1004
 #define BTN_AddWall                     1004
+#define BTN_AddTile1                    1004
 #define STATIC_OwnerAlbum               1005
 #define BTN_EditSelObj                  1005
+#define BTN_AddBGA2                     1005
+#define BTN_AddTile2                    1005
 #define PROG_NPKSave                    1006
 #define BTN_DelSelObj                   1006
 #define STATIC_AlbumImg                 1007
@@ -85,20 +88,33 @@
 #define EDIT_VertPixel                  1033
 #define STATIC_Width                    1033
 #define STATIC_Height                   1034
+#define STATIC_Tile1Path                1034
+#define STATIC_Tile2Path                1035
 #define STATIC_SelectedObj              1036
+#define EDIT_Tile1HorizPixel            1036
+#define EDIT_Tile1VertPixel             1037
+#define EDIT_Tile1HorizPos              1038
 #define EDIT_PosX                       1039
+#define EDIT_Tile1VertPos               1039
 #define EDIT_PosY                       1040
+#define EDIT_Tile2HorizPixel            1040
 #define EDIT_Name                       1041
+#define EDIT_Tile2VertPixel             1041
 #define EDIT_SizeX                      1042
 #define STATIC_IdleAni                  1042
+#define EDIT_Tile2HorizPos              1042
 #define EDIT_SizeY                      1043
 #define EDIT_NPCSizeX                   1043
+#define EDIT_Tile2VertPos               1043
 #define EDIT_NPCSizeY                   1044
 #define STATIC_EditObjName              1044
 #define SLIDE_UpperBound                1045
+#define EDIT_TeleportDest               1045
 #define STATIC_UpperBound               1046
 #define EDIT_Height                     1047
 #define EDIT_Width                      1048
+#define CHECK_DungeonList               1055
+#define CHECK_Teleport                  1056
 #define ID_32773                        32773
 #define ID_32774                        32774
 #define ID_32775                        32775
@@ -114,7 +130,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1049
+#define _APS_NEXT_CONTROL_VALUE         1056
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

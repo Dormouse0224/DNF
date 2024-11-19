@@ -9,7 +9,7 @@
 
 CPortal::CPortal(wstring _name)
 	: CObj(_name)
-	, m_bActive(true)
+	, m_bActive(false)
 	, m_Dest(nullptr)
 	, m_DeactiveAnimation{}
 {
@@ -47,7 +47,10 @@ void CPortal::Begin()
 
 void CPortal::Tick()
 {
-
+	for (int i = 0; i < m_DeactiveAnimation.size(); ++i)
+	{
+		m_DeactiveAnimation[i]->FinalTick();
+	}
 }
 
 void CPortal::Render()

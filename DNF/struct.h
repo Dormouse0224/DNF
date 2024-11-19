@@ -248,6 +248,8 @@ struct NPCInfo
 	Vec2D Pos;
 	Vec2D Size;
 	wstring IdleAnimation;
+	int CallbackIndex;
+	wstring TeleportDest;
 };
 
 struct WallInfo
@@ -285,6 +287,13 @@ struct StageInfo
 	vector<MonsterInfo*> vecMonsterInfo = {};
 	vector<WallInfo*> vecWallInfo = {};
 	vector<NPCInfo*> vecNPCInfo = {};
+	wstring Tile1Path;
+	Vec2D Tile1Size;
+	Vec2D Tile1Pos;
+	wstring Tile2Path;
+	Vec2D Tile2Size;
+	Vec2D Tile2Pos;
+
 
 	~StageInfo()
 	{
@@ -320,6 +329,10 @@ struct StageInfoHeader
 	int vecMonsterInfoCount;
 	int vecWallInfoCount;
 	int vecNPCInfoCount;
+	Vec2D Tile1Size;
+	Vec2D Tile1Pos;
+	Vec2D Tile2Size;
+	Vec2D Tile2Pos;
 };
 #pragma pack(pop)
 
@@ -329,4 +342,14 @@ struct ItemInfo
 	int Item_secondtype;
 	wstring Texture_ani;
 	string Name;
+};
+
+struct PlayerInfo
+{
+	float m_CurHP;
+	float m_CurMP;
+	vector<ItemInfo*> m_EquipVec;
+	vector<ItemInfo*> m_AvatarEquipVec;
+	vector<ItemInfo*> m_InvenVec[(int)ItemType::END];
+	string m_CurAvatarCode[(int)AvatarParts::END];
 };

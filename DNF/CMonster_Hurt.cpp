@@ -19,13 +19,15 @@ CMonster_Hurt::~CMonster_Hurt()
 
 void CMonster_Hurt::Enter()
 {
+	time = 0;
+	((CMonster*)GetOwnerObj())->SetHurt(false);
 	GetOwnerObj()->SetState((int)MonsterState::Hurt);
 }
 
 void CMonster_Hurt::FinalTick()
 {
 	time += CTimeMgr::GetInst()->GetDeltaTime();
-	if (time > 1)
+	if (time > 0.5)
 	{
 		GetFSM()->ChangeState(GetFSM()->GetPrevState());
 	}

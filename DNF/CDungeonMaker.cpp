@@ -412,6 +412,10 @@ void CDungeonMaker::SaveDungeonCallback()
 			header.StageSize = iter->second->StageSize;
 			header.GridLoc = iter->second->GridLoc;
 			header.UpperBound = iter->second->UpperBound;
+			header.Tile1Size = iter->second->Tile1Size;
+			header.Tile1Pos = iter->second->Tile1Pos;
+			header.Tile2Size = iter->second->Tile2Size;
+			header.Tile2Pos = iter->second->Tile2Pos;
 			header.vecBGACount = iter->second->vecBGA.size();
 			header.vecMonsterInfoCount = iter->second->vecMonsterInfo.size();
 			header.vecWallInfoCount = iter->second->vecWallInfo.size();
@@ -436,10 +440,18 @@ void CDungeonMaker::SaveDungeonCallback()
 			wstring stageName = iter->second->StageName;
 			int bgmPathLen = iter->second->BGMPath.size();
 			wstring bgmPath = iter->second->BGMPath;
+			int Tile1PathLen = iter->second->Tile1Path.size();
+			wstring Tile1Path = iter->second->Tile1Path;
+			int Tile2PathLen = iter->second->Tile2Path.size();
+			wstring Tile2Path = iter->second->Tile2Path;
 			DungeonFile.write((char*)&stageNameLen, sizeof(stageNameLen));
 			DungeonFile.write((char*)stageName.c_str(), stageNameLen * sizeof(wchar_t));
 			DungeonFile.write((char*)&bgmPathLen, sizeof(bgmPathLen));
 			DungeonFile.write((char*)bgmPath.c_str(), bgmPathLen * sizeof(wchar_t));
+			DungeonFile.write((char*)&Tile1PathLen, sizeof(Tile1PathLen));
+			DungeonFile.write((char*)Tile1Path.c_str(), Tile1PathLen * sizeof(wchar_t));
+			DungeonFile.write((char*)&Tile2PathLen, sizeof(Tile2PathLen));
+			DungeonFile.write((char*)Tile2Path.c_str(), Tile2PathLen * sizeof(wchar_t));
 			// BGA
 			for (int i = 0; i < iter->second->vecBGA.size(); ++i)
 			{
@@ -491,12 +503,18 @@ void CDungeonMaker::SaveDungeonCallback()
 				Vec2D vec1 = iter->second->vecNPCInfo[i]->Size;
 				int wstrLen1 = iter->second->vecNPCInfo[i]->IdleAnimation.size();
 				wstring wstr1 = iter->second->vecNPCInfo[i]->IdleAnimation;
+				int num = iter->second->vecNPCInfo[i]->CallbackIndex;
+				int wstrLen2 = iter->second->vecNPCInfo[i]->TeleportDest.size();
+				wstring wstr2 = iter->second->vecNPCInfo[i]->TeleportDest;
 				DungeonFile.write((char*)&wstrLen, sizeof(wstrLen));
 				DungeonFile.write((char*)wstr.c_str(), wstrLen * sizeof(wchar_t));
 				DungeonFile.write((char*)&vec, sizeof(vec));
 				DungeonFile.write((char*)&vec1, sizeof(vec1));
 				DungeonFile.write((char*)&wstrLen1, sizeof(wstrLen1));
 				DungeonFile.write((char*)wstr1.c_str(), wstrLen1 * sizeof(wchar_t));
+				DungeonFile.write((char*)&num, sizeof(num));
+				DungeonFile.write((char*)&wstrLen2, sizeof(wstrLen2));
+				DungeonFile.write((char*)wstr2.c_str(), wstrLen2 * sizeof(wchar_t));
 			}
 		}
 		DungeonFile.close();

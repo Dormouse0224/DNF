@@ -32,6 +32,9 @@ private:
     DELEGATE_1 m_ClickDelegate1;
     DWORD_PTR m_ClickDelegate1_param;
 
+    wstring m_Text;
+    Color m_TextColor;
+
     // 버튼쪽에서는 AddComponent_Btn 이 쓰일 것이기 때문에 함수 접근을 제한
     //virtual void AddComponent(CComponent* _Component) override { CObj::AddComponent(_Component); }
 
@@ -44,6 +47,9 @@ public:
     void SetCallback1(CALLBACK_1 _CallbackFunc, DWORD_PTR _param) { m_ClickCallback1 = _CallbackFunc; m_ClickCallback1_param = _param; }
     void SetDelegate0(CBase* _DelegObj, DELEGATE_0 _DelegFunc) { m_DelegateObj = _DelegObj; m_ClickDelegate0 = _DelegFunc; }
     void SetDelegate1(CBase* _DelegObj, DELEGATE_1 _DelegFunc, DWORD_PTR _param) { m_DelegateObj = _DelegObj; m_ClickDelegate1 = _DelegFunc; m_ClickDelegate1_param = _param; }
+
+    void SetText(wstring _text) { m_Text = _text; }
+    void SetTextColor(Color _color) { m_TextColor = _color; }
 };
 
 

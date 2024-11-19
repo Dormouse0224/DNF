@@ -22,6 +22,9 @@ void CMonster_Move::Enter()
 
 void CMonster_Move::FinalTick()
 {
+	if (((CMonster*)GetOwnerObj())->GetHurt())
+		GetFSM()->ChangeState((int)MonsterState::Hurt);
+
 	CPlayer* pPlayer = CLevelMgr::GetInst()->GetCurrentLevel()->GetPlayer();
 	CMonster* pMonster = (CMonster*)GetOwnerObj();
 	if (pPlayer)

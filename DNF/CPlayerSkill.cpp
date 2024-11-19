@@ -53,7 +53,8 @@ void CPlayerSkill::Overlap(CCollider* _Self, CCollider* _Other)
 		CLargo* pLargo = dynamic_cast<CLargo*>(_Other->GetOwner());
 		if (pMon)
 		{
-			pMon->GiveDamage(m_DotATK);
+			if (pMon->GetBodyCollider() == _Other)
+				pMon->GiveDamage(m_DotATK);
 		}
 		else if (pLargo)
 		{

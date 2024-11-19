@@ -13,6 +13,7 @@ CLevel::CLevel(wstring _Name)
 	, m_SelectedObj(nullptr)
 	, m_Player(nullptr)
 	, m_CameraFollowPlayer(false)
+	, m_MonsterCount(0)
 {
 	CLevelMgr::GetInst()->AddLevel(_Name, this);
 }

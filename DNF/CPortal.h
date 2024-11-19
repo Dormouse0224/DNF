@@ -29,5 +29,6 @@ public:
     void SetDest(CLevel* _Dest) { m_Dest = _Dest; }
     void AddDeactiveAnimation(CAlbumPlayer* _AlbumPlayer) { m_DeactiveAnimation.push_back(_AlbumPlayer); }
     void ToggleActive() { m_bActive = !m_bActive; }
+    void SetActive(bool _b) { m_bActive = _b; }
 };
 

@@ -67,7 +67,7 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 	// 비트맵 로딩이 안된 경우 렌더링 취소
 	if (!m_Bitmap)
 	{
-		if (m_Size.x * m_Size.y != 1)
+		if (m_Size.x * m_Size.y != 1 && Type != ColorBits::LINK)
 			CTextMgr::GetInst()->Render(FinalPos.x, FinalPos.y, L"LOADING", Color(255, 255, 0, 0));
 		return;
 	}
@@ -189,6 +189,15 @@ void CTexture::DirectRender(Vec2D _RenderOffset, float _angle, bool bCameraFallo
 		CameraPos = Vec2D(0, 0);
 	}
 	Vec2D AbsCenter = CameraPos * (-1);		// 죄표계 원점 계산
+
+	// 비트맵 로딩이 안된 경우 렌더링 취소
+	if (!m_Bitmap)
+	{
+		if (m_Size.x * m_Size.y != 1 && Type != ColorBits::LINK)
+			CTextMgr::GetInst()->Render(FinalPos.x, FinalPos.y, L"LOADING", Color(255, 255, 0, 0));
+		return;
+	}
+
 	// 기본 해상도를 기준으로 카메라의 범위 안에 텍스처가 포함되어 있는지 확인
 	if (CameraIntersectCheck(CameraPos, Resolution, 0.f, FinalPos, m_Size, _angle, Vec2D(0, 0), Vec2D(0, 0)) || bCameraFallow)
 	{

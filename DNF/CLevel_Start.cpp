@@ -10,6 +10,7 @@
 #include "CEngine.h"
 #include "CCameraMgr.h"
 #include "CButton.h"
+#include "CTextureMgr.h"
 
 CLevel_Start::CLevel_Start()
 	:CLevel(L"Level_Start")
@@ -72,6 +73,8 @@ void CLevel_Start::Begin()
 	DungeonMakerBtn->SetUIPos(Vec2D(610, 500));
 
 
+	// 리소스 미리 로딩
+	CTextureMgr::PreloadFromFile(L"SystemResources.txt");
 
 	// 시작 레벨 BGM 세팅
 	CSound* pStartBGM = CSoundMgr::GetInst()->GetSound(L"StartBGM", L"\\music\\character_stage.ogg");

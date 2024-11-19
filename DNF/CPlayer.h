@@ -75,5 +75,8 @@ public:
     vector<ItemInfo*>& GetEquipVec() { return m_EquipVec; }
     vector<ItemInfo*>& GetAvatarEquipVec() { return m_AvatarEquipVec; }
     vector<ItemInfo*>& GetInvenVec(ItemType _type) { return m_InvenVec[(int)_type]; }
+
+    PlayerInfo* GetPlayerInfo();
+    void SetPlayerInfo(PlayerInfo* _info);
 };
 

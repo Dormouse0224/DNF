@@ -59,14 +59,17 @@ void CArrow::BeginOverlap(CCollider* _Self, CCollider* _Other)
 	CLargo* pLargo = dynamic_cast<CLargo*>(_Other->GetOwner());
 	if (pMon)
 	{
-		pMon->GiveDamage(m_ATK);
-		m_PierceCount -= 1;
-		if (m_PierceCount < 1)
+		if (pMon->GetBodyCollider() == _Other)
 		{
-			GetRigidBody()->SetSpeed(Vec2D(0, 0));
-			GetRigidBody()->SetZeroGravity(true);
-			GetRigidBody()->SetAirborneSpeed(0);
-			m_bFin = true;
+			pMon->GiveDamage(m_ATK);
+			m_PierceCount -= 1;
+			if (m_PierceCount < 1)
+			{
+				GetRigidBody()->SetSpeed(Vec2D(0, 0));
+				GetRigidBody()->SetZeroGravity(true);
+				GetRigidBody()->SetAirborneSpeed(0);
+				m_bFin = true;
+			}
 		}
 	}
 	else if (pLargo)

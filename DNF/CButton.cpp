@@ -7,6 +7,7 @@
 CButton::CButton(wstring _Name)
 	:CUI(_Name)
 	, m_Action{ nullptr, nullptr, nullptr }
+	, m_Text()
 {
 }
 
@@ -37,6 +38,11 @@ void CButton::Render_UI()
 		// 버튼 기본 애니메이션
 		if (m_Action[(int)BtnState::IDLE] != nullptr)
 			m_Action[(int)BtnState::IDLE]->Render(this);
+	}
+
+	if (!m_Text.empty())
+	{
+		CTextMgr::GetInst()->Render(GetLocation().x + 5, GetLocation().y + 1, m_Text, m_TextColor);
 	}
 }
 

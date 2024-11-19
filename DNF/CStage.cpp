@@ -19,6 +19,10 @@
 #include "CMonster_Hurt.h"
 #include "CMonster_Move.h"
 #include "CDbgRender.h"
+#include "CNPCCallback.h"
+#include "CTimeMgr.h"
+#include "CDummy.h"
+#include "CCameraMgr.h"
 
 
 CStage::CStage(wstring _name)
@@ -26,6 +30,11 @@ CStage::CStage(wstring _name)
 	, m_StageInfo(nullptr)
 	, m_BGM(nullptr)
 	, m_UpperBound(0)
+	, m_bStageClear(false)
+	, m_ClearTimer(10)
+	, m_Effect(nullptr)
+	, m_EffectOwner(nullptr)
+	, m_PortalVec{}
 {
 }
 
@@ -48,6 +57,31 @@ void CStage::Begin()
 		pBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"BGA_" + std::to_wstring(i)
 			, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + m_StageInfo->vecBGA[i]));
 	}
+	// 타일 추가
+	if (!m_StageInfo->Tile1Path.empty())
+	{
+		for (int i = 0; i < (m_StageInfo->StageSize.x - m_StageInfo->Tile1Pos.x) / m_StageInfo->Tile1Size.x; ++i)
+		{
+			CAlbumPlayer* pAP = CAlbumPlayer::CreatePlayerFromFile(L"Tile1_" + std::to_wstring(i), CEngine::GetInst()->GetResourcePathW()
+				+ L"\\animation\\" + m_StageInfo->Tile1Path, m_StageInfo->Tile1Pos + Vec2D(m_StageInfo->Tile1Size.x * i, 0.f));
+			pAP->SetCurrentScene(i % (pAP->GetFinal() + 1));
+			pBackground->AddComponent(pAP);
+		}
+	}
+	if (!m_StageInfo->Tile2Path.empty())
+	{
+		for (int j = 0; j < (m_StageInfo->StageSize.y - m_StageInfo->Tile2Pos.y) / m_StageInfo->Tile2Size.y; ++j)
+		{
+			for (int i = 0; i < (m_StageInfo->StageSize.x - m_StageInfo->Tile2Pos.x) / m_StageInfo->Tile2Size.x; ++i)
+			{
+				CAlbumPlayer* pAP = CAlbumPlayer::CreatePlayerFromFile(L"Tile2_" + std::to_wstring(j) + L"_" + std::to_wstring(i), CEngine::GetInst()->GetResourcePathW()
+					+ L"\\animation\\" + m_StageInfo->Tile2Path, m_StageInfo->Tile2Pos + Vec2D(m_StageInfo->Tile2Size.x * i, m_StageInfo->Tile2Size.y * j));
+				pAP->SetCurrentScene(i % (pAP->GetFinal() + 1));
+				pBackground->AddComponent(pAP);
+			}
+		}
+	}
+
 
 	// 플레이어 영역 upperbound 세팅
 	m_UpperBound = m_StageInfo->UpperBound;
@@ -85,6 +119,7 @@ void CStage::Begin()
 				, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\gateup_n.animation"));
 			pPortal->AddDeactiveAnimation(CAlbumPlayer::CreatePlayerFromFile(L"Portal_AP_" + std::to_wstring(i)
 				, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\gateup_d_red.animation"));
+			m_PortalVec.push_back(pPortal);
 		}
 	}
 
@@ -104,6 +139,8 @@ void CStage::Begin()
 			AddObject(pMonster, LayerType::Object);
 			pMonster->SetLocation(pMonsterInfo->pos);
 			pMonster->SetScale(Vec2D(100, 140));
+			pMonster->SetMaxHP(1000);
+			pMonster->SetCurHP(1000);
 			CCollider* pMonCollider = new CCollider(pMonsterInfo->Name + L"_Col");
 			pMonCollider->SetSize(pMonster->GetScale());
 			pMonster->AddComponent(pMonCollider);
@@ -137,6 +174,8 @@ void CStage::Begin()
 		}
 		}
 	}
+	SetMonsterCount(m_StageInfo->vecMonsterInfo.size());
+	
 
 	// 벽 오브젝트 추가
 	for (WallInfo* pWallInfo : m_StageInfo->vecWallInfo)
@@ -163,15 +202,28 @@ void CStage::Begin()
 		pNPC->AddComponent(pNPCCollider);
 		pNPC->RegisterBodyCollider(pNPCCollider);
 		AddObject(pNPC, LayerType::Object);
-		pNPC->AddComponent(CAlbumPlayer::CreatePlayerFromFile(pNPCInfo->Name + L"_IdleAni"
-			, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + pNPCInfo->IdleAnimation));
+		CAlbumPlayer* pAP = CAlbumPlayer::CreatePlayerFromFile(pNPCInfo->Name + L"_IdleAni"
+			, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + pNPCInfo->IdleAnimation);
+		pNPC->AddComponent(pAP);
+		pNPC->SetIdlePlayer(pAP);
 		pNPC->SetIdleAni(pNPCInfo->IdleAnimation);
+		pNPC->SetCallbackIndex(pNPCInfo->CallbackIndex);
+		if (pNPCInfo->CallbackIndex == 1)
+		{
+			pNPC->SetreactCallback(&SelectDungeonCallback);
+		}
+		else if (pNPCInfo->CallbackIndex == 2)
+		{
+			pNPC->SetreactCallback(&TeleportCallback);
+			pNPC->SetTeleportDest(pNPCInfo->TeleportDest);
+		}
 	}
 
 	// 플레이어 추가
 	CPlayer* pPlayer = new CPlayer();
 	AddObject(pPlayer, LayerType::Object);
 	SetPlayer(pPlayer);
+	pPlayer->SetGroundPos(Vec2D(m_StageInfo->StageSize.x / 2, m_StageInfo->StageSize.y - (m_StageInfo->UpperBound / 2)));
 
 
 	// BGM이 있으면 재생
@@ -184,10 +236,50 @@ void CStage::Begin()
 
 void CStage::Tick()
 {
-	if (GetPlayer()->GetGroundPos().x < 0 || GetPlayer()->GetGroundPos().x > m_StageInfo->StageSize.x)
-		GetPlayer()->SetGroundPos(Vec2D(min(max(GetPlayer()->GetGroundPos().x, 0), m_StageInfo->StageSize.x), GetPlayer()->GetGroundPos().y));
-	if (GetPlayer()->GetGroundPos().y < m_StageInfo->StageSize.y - m_UpperBound || GetPlayer()->GetGroundPos().y > m_StageInfo->StageSize.y)
-		GetPlayer()->SetGroundPos(Vec2D(GetPlayer()->GetGroundPos().x, min(max(GetPlayer()->GetGroundPos().y, m_StageInfo->StageSize.y - m_UpperBound), m_StageInfo->StageSize.y)));
+	if (GetPlayer())
+	{
+		if (GetPlayer()->GetGroundPos().x < 0 || GetPlayer()->GetGroundPos().x > m_StageInfo->StageSize.x)
+			GetPlayer()->SetGroundPos(Vec2D(min(max(GetPlayer()->GetGroundPos().x, 0), m_StageInfo->StageSize.x), GetPlayer()->GetGroundPos().y));
+		if (GetPlayer()->GetGroundPos().y < m_StageInfo->StageSize.y - m_UpperBound || GetPlayer()->GetGroundPos().y > m_StageInfo->StageSize.y)
+			GetPlayer()->SetGroundPos(Vec2D(GetPlayer()->GetGroundPos().x, min(max(GetPlayer()->GetGroundPos().y, m_StageInfo->StageSize.y - m_UpperBound), m_StageInfo->StageSize.y)));
+	}
+
+	// 스테이지 클리어
+	if (GetMonsterCount() < 1)
+	{
+		for (int i = 0; i < m_PortalVec.size(); ++i)
+		{
+			m_PortalVec[i]->SetActive(true);
+		}
+		if (m_StageInfo->StageType == StageType::FINAL && m_bStageClear == false)
+		{
+			m_bStageClear = true;
+			CDummy* pEff0 = new CDummy(L"Epicbeam");
+			AddObject(pEff0, LayerType::Far);
+			pEff0->SetLocation(GetPlayer()->GetLocation());
+			m_Effect = CAlbumPlayer::CreatePlayerFromFile(L"ui_effect_epicbeam"
+				, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\ui_effect_epicbeam.animation");
+			m_EffectOwner = pEff0;
+			pEff0->AddComponent(m_Effect);
+
+			CDummy* pEff1 = new CDummy(L"Reward");
+			AddObject(pEff1, LayerType::Far);
+			pEff1->SetLocation(CCameraMgr::GetInst()->GetCameraPos() + Vec2D(533, 150));
+			CAlbumPlayer* pAP = CAlbumPlayer::CreatePlayerFromFile(L"ui_effect_reward"
+				, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\ui_effect_reward.animation");
+			pEff1->SetFallowCam(true);
+			pEff1->AddComponent(pAP);
+		}
+	}
+	if (m_bStageClear)
+		m_ClearTimer -= CTimeMgr::GetInst()->GetDeltaTime();
+	if (m_ClearTimer < 0)
+		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"SeriaRoom"));
+	if (m_Effect)
+	{
+		if (m_Effect->GetCurSceneNum() == m_Effect->GetFinal())
+			CLevelMgr::GetInst()->GetCurrentLevel()->DeleteObject(LayerType::Far, m_EffectOwner->GetID());
+	}
 
 	CCollisionMgr::GetInst()->AddCollisionLayer(LayerType::Object, LayerType::Object);
 
@@ -212,5 +304,9 @@ void CStage::Render()
 void CStage::End()
 {
 	ClearAll();
+	m_bStageClear = false;
+	m_ClearTimer = 10;
+	m_Effect = nullptr;
+	m_EffectOwner = nullptr;
 }
 

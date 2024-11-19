@@ -90,12 +90,12 @@ CUI* CUIMgr::GetPriorityUI(CUI* _ParentUI, bool _getSecondary, bool _getThird)
 	// Queue 가 비어있지 않다면 반복문 실행
 	while (!queue.empty())
 	{
-		CUI* pUI = queue.front();
-		queue.pop_front();
+		CUI* pUI = queue.back();
+		queue.pop_back();
 
-		for (size_t i = 0; i < pUI->m_ChildVec.size(); ++i)
+		for (size_t i = pUI->m_ChildVec.size(); i > 0; --i)
 		{
-			queue.push_back(pUI->m_ChildVec[i]);
+			queue.push_back(pUI->m_ChildVec[i - 1]);
 		}
 
 		if (pUI->IsCursorOn())

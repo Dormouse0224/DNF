@@ -24,6 +24,9 @@ void CMonster_Idle::Enter()
 
 void CMonster_Idle::FinalTick()
 {
+	if (((CMonster*)GetOwnerObj())->GetHurt())
+		GetFSM()->ChangeState((int)MonsterState::Hurt);
+
 	m_Timer += CTimeMgr::GetInst()->GetDeltaTime();
 	if (m_Timer > 2.f)
 	{

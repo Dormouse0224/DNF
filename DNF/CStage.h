@@ -6,6 +6,8 @@ class CMonster;
 class CNPC;
 class CSound;
 class CObj;
+class CAlbumPlayer;
+class CPortal;
 
 class CStage :
     public CLevel
@@ -18,6 +20,14 @@ protected:
     StageInfo* m_StageInfo;
     CSound* m_BGM;
     int m_UpperBound;
+
+    bool m_bStageClear;
+    float m_ClearTimer;
+
+    CAlbumPlayer* m_Effect;
+    CObj* m_EffectOwner;
+
+    vector<CPortal*> m_PortalVec;
 
 
 public:

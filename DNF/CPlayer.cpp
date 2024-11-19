@@ -44,20 +44,6 @@ CPlayer::CPlayer()
 	, m_EquipVec((int)EquipParts::END, nullptr)
 	, m_AvatarEquipVec((int)AvatarParts::END, nullptr)
 {
-	m_MaxHP = 1000;
-	m_CurHP = 1000;
-	m_MaxMP = 1000;
-	m_CurMP = 1000;
-
-	m_HPRegen = m_MaxHP * 0.01f;
-	m_MPRegen = m_MaxMP * 0.1f;
-
-	// 인벤토리 목록 비우기 (초기화)
-	for (int i = 0; i < (int)ItemType::END; ++i)
-	{
-		m_InvenVec[i].resize(64, nullptr);
-	}
-
 	// 스킬 리소스 미리 로드
 	CTextureMgr::PreloadFromFile(L"PlayerResources.txt");
 	CTextureMgr::PreloadAvatar(L"AvatarResources.txt");
@@ -120,22 +106,78 @@ CPlayer::CPlayer()
 	m_HUD->AddComponent(m_MPTex);
 	CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(m_HUD, LayerType::Near);
 
+	m_MaxHP = 1000;
+	m_MaxMP = 1000;
+
+	PlayerInfo* info = CLevelMgr::GetInst()->GetPlayerInfo();
+	if (info)
+	{
+		SetPlayerInfo(info);
+	}
+	else
+	{
+		m_CurHP = 1000;
+		m_CurMP = 1000;
+
+		m_HPRegen = m_MaxHP * 0.01f;
+		m_MPRegen = m_MaxMP * 0.1f;
+
+		// 인벤토리 목록 비우기 (초기화)
+		for (int i = 0; i < (int)ItemType::END; ++i)
+		{
+			m_InvenVec[i].resize(64, nullptr);
+		}
+
+		ItemInfo* avatar_lbow = new ItemInfo();
+		avatar_lbow->Name = "5400";
+		avatar_lbow->Item_type = ItemType::Avatar;
+		avatar_lbow->Item_secondtype = (int)AvatarParts::LBow;
+		avatar_lbow->Texture_ani = L"icon_avatar_lbow";
+		m_InvenVec[(int)ItemType::Avatar][0] = avatar_lbow;
+
+		ItemInfo* avatar_cap = new ItemInfo();
+		avatar_cap->Name = "0100";
+		avatar_cap->Item_type = ItemType::Avatar;
+		avatar_cap->Item_secondtype = (int)AvatarParts::Cap;
+		avatar_cap->Texture_ani = L"icon_avatar_cap";
+		m_InvenVec[(int)ItemType::Avatar][1] = avatar_cap;
+
+		ItemInfo* avatar_coat = new ItemInfo();
+		avatar_coat->Name = "0100";
+		avatar_coat->Item_type = ItemType::Avatar;
+		avatar_coat->Item_secondtype = (int)AvatarParts::Coat;
+		avatar_coat->Texture_ani = L"icon_avatar_coat";
+		m_InvenVec[(int)ItemType::Avatar][2] = avatar_coat;
+
+		ItemInfo* avatar_hair = new ItemInfo();
+		avatar_hair->Name = "0301";
+		avatar_hair->Item_type = ItemType::Avatar;
+		avatar_hair->Item_secondtype = (int)AvatarParts::Hair;
+		avatar_hair->Texture_ani = L"icon_avatar_hair";
+		m_InvenVec[(int)ItemType::Avatar][3] = avatar_hair;
+
+		ItemInfo* avatar_pants = new ItemInfo();
+		avatar_pants->Name = "0101";
+		avatar_pants->Item_type = ItemType::Avatar;
+		avatar_pants->Item_secondtype = (int)AvatarParts::Pants;
+		avatar_pants->Texture_ani = L"icon_avatar_pants";
+		m_InvenVec[(int)ItemType::Avatar][4] = avatar_pants;
+
+		ItemInfo* avatar_shoes = new ItemInfo();
+		avatar_shoes->Name = "0300";
+		avatar_shoes->Item_type = ItemType::Avatar;
+		avatar_shoes->Item_secondtype = (int)AvatarParts::Shoes;
+		avatar_shoes->Texture_ani = L"icon_avatar_shoes";
+		m_InvenVec[(int)ItemType::Avatar][5] = avatar_shoes;
 
 
-	ItemInfo* test = new ItemInfo();
-	test->Name = "5400";
-	test->Item_type = ItemType::Avatar;
-	test->Item_secondtype = (int)AvatarParts::LBow;
-	test->Texture_ani = L"icontest";
-	m_InvenVec[(int)ItemType::Avatar][0] = test;
-
-
-	ItemInfo* test1 = new ItemInfo();
-	test1->Name = "5000";
-	test1->Item_type = ItemType::Avatar;
-	test1->Item_secondtype = (int)AvatarParts::LBow;
-	test1->Texture_ani = L"icontest1";
-	m_InvenVec[(int)ItemType::Avatar][1] = test1;
+		ItemInfo* equip_weapon = new ItemInfo();
+		equip_weapon->Name = "icon_equip_lbow";
+		equip_weapon->Item_type = ItemType::Equip;
+		equip_weapon->Item_secondtype = (int)EquipParts::Weapon;
+		equip_weapon->Texture_ani = L"icon_equip_lbow";
+		m_InvenVec[(int)ItemType::Equip][0] = equip_weapon;
+	}
 }
 
 CPlayer::~CPlayer()
@@ -152,21 +194,6 @@ CPlayer::~CPlayer()
 		}
 	}
 
-	for (int i = 0; i < m_EquipVec.size(); ++i)
-	{
-		delete m_EquipVec[i];
-	}
-	for (int i = 0; i < m_AvatarEquipVec.size(); ++i)
-	{
-		delete m_AvatarEquipVec[i];
-	}
-	for (int i = 0; i < (int)ItemType::END; ++i)
-	{
-		for (int j = 0; j < m_InvenVec[i].size(); ++j)
-		{
-			delete m_InvenVec[i][j];
-		}
-	}
 }
 
 void CPlayer::BeginOverlap(CCollider* _Self, CCollider* _Other)
@@ -354,6 +381,7 @@ void CPlayer::OpenInventory()
 	m_InventoryID = pInventoryWindow->GetID();
 	CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pInventoryWindow, LayerType::UI);
 	pInventoryWindow->SetWindowColor(Color(255, 0, 0, 0));
+	pInventoryWindow->SetBorderColor(Color(255, 255, 255, 255));
 	pInventoryWindow->SetUIPos(Vec2D(700, 100));
 	pInventoryWindow->SetScale(Vec2D(254, 475));
 	pInventoryWindow->SetMovalbe(true);
@@ -491,9 +519,9 @@ void CPlayer::OpenInventory()
 	pConsumableSlot->SetScale(Vec2D(240, 240));
 	pConsumableSlot->SetUIItemType(ItemType::Consumable);
 	pConsumableSlot->SetUIInventoryType(InventoryType::Slot);
-	for (int row = 0; row < 7; ++row)
+	for (int row = 0; row < 8; ++row)
 	{
-		for (int col = 0; col < 7; ++col)
+		for (int col = 0; col < 8; ++col)
 		{
 			pConsumableSlot->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"ui_window_inventory_slot"
 				, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\ui_window_inventory_slot.animation", Vec2D(row, col) * 30));
@@ -507,9 +535,9 @@ void CPlayer::OpenInventory()
 	pAvatarSlot->SetScale(Vec2D(240, 240));
 	pAvatarSlot->SetUIItemType(ItemType::Avatar);
 	pAvatarSlot->SetUIInventoryType(InventoryType::Slot);
-	for (int row = 0; row < 6; ++row)
+	for (int row = 0; row < 8; ++row)
 	{
-		for (int col = 0; col < 6; ++col)
+		for (int col = 0; col < 8; ++col)
 		{
 			pAvatarSlot->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"ui_window_inventory_slot"
 				, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\ui_window_inventory_slot.animation", Vec2D(row, col) * 30));
@@ -531,7 +559,18 @@ void CPlayer::OpenInventory()
 				CItemIcon* pItem = new CItemIcon(wstring(m_InvenVec[j][i]->Name.begin(), m_InvenVec[j][i]->Name.end()), i);
 				pItem->SetUIPos(Vec2D((i % 8) * 30, (i / 8) * 30));
 				pItem->SetItemInfo(m_InvenVec[j][i]);
-				pAvatarSlot->AddChild(pItem, pItem->GetName());
+				switch ((ItemType)j)
+				{
+				case ItemType::Equip:
+					pEquipSlot->AddChild(pItem, pItem->GetName());
+					break;
+				case ItemType::Consumable:
+					pConsumableSlot->AddChild(pItem, pItem->GetName());
+					break;
+				case ItemType::Avatar:
+					pAvatarSlot->AddChild(pItem, pItem->GetName());
+					break;
+				}
 			}
 		}
 	}
@@ -578,6 +617,36 @@ void CPlayer::RenderPlayerStatue(DWORD_PTR _param)
 		if (m_Avatar[(int)PlayerState::Idle][i])
 			m_Avatar[(int)PlayerState::Idle][i]->Render((CObj*)_param);
 	}
+}
+
+PlayerInfo* CPlayer::GetPlayerInfo()
+{
+	PlayerInfo* info = new PlayerInfo();
+	info->m_CurHP = m_CurHP;
+	info->m_CurMP = m_CurMP;
+	info->m_EquipVec = m_EquipVec;
+	info->m_AvatarEquipVec = m_AvatarEquipVec;
+	for (int i = 0; i < (int)ItemType::END; ++i)
+		info->m_InvenVec[i] = m_InvenVec[i];
+	for (int i = 0; i < (int)AvatarParts::END; ++i)
+		info->m_CurAvatarCode[i] = m_CurAvatarCode[i];
+
+	return info;
+}
+
+void CPlayer::SetPlayerInfo(PlayerInfo* _info)
+{
+	if (_info == nullptr)
+		return;
+
+	m_CurHP = _info->m_CurHP;
+	m_CurMP = _info->m_CurMP;
+	m_EquipVec = _info->m_EquipVec;
+	m_AvatarEquipVec = _info->m_AvatarEquipVec;
+	for (int i = 0; i < (int)ItemType::END; ++i)
+		m_InvenVec[i] = _info->m_InvenVec[i];
+	for (int i = 0; i < (int)AvatarParts::END; ++i)
+		m_CurAvatarCode[i] = _info->m_CurAvatarCode[i];
 }
 
 

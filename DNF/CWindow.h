@@ -9,12 +9,15 @@ public:
 
 private:
     Color m_WindowColor;
+    Color m_BorderColor;
     Vec2D m_PrevCursorPos;
     bool m_bMovalbe;
 
     Vec2D m_BeginCursorPos;
     Vec2D m_EndCursorPos;
 
+    wstring m_Text;
+    Color m_TextColor;
 
     CBase* m_DelegateObj;
     DELEGATE_1 m_RenderDelegate1;
@@ -35,7 +38,12 @@ public:
 
 
     void SetMovalbe(bool _b) { m_bMovalbe = _b; }
+    void SetBorderColor(Color _c) { m_BorderColor = _c; }
     void SetWindowColor(Color _c) { m_WindowColor = _c; }
     void SetRenderDelegate1(CBase* _DelegObj, DELEGATE_1 _DelegFunc, DWORD_PTR _param) { m_DelegateObj = _DelegObj; m_RenderDelegate1 = _DelegFunc; m_RenderDelegate1_param = _param; }
+
+    void SetText(wstring _text) { m_Text = _text; }
+    void SetTextColor(Color _color) { m_TextColor = _color; }
+
 };
 

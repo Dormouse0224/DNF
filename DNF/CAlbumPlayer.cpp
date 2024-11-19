@@ -226,6 +226,11 @@ void CAlbumPlayer::CreateAvatar(wstring _fileName, string _code, AvatarParts _pa
 				_avatarArr[1 + (int)_parts + (layerIdx * 6)] = new CAlbumPlayer(_fileName, temp, wstrNPKDir);
 				_avatarArr[1 + (int)_parts + (layerIdx * 6)]->SetPlayInfo(desc.IndexBegin, desc.IndexEnd, desc.bLoop, desc.FPS, desc.Offset, desc.angle, desc.bDodge);
 			}
+			else
+			{
+				delete _avatarArr[1 + (int)_parts + (layerIdx * 6)];
+				_avatarArr[1 + (int)_parts + (layerIdx * 6)] = nullptr;
+			}
 		}
 	}
 	else

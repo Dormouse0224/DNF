@@ -19,6 +19,8 @@
 #include "CDbgRender.h"
 #include "DialogProc.h"
 #include "resource.h"
+#include "CCollisionMgr.h"
+#include "CPlayer.h"
 
 #include <Commctrl.h>
 
@@ -53,6 +55,33 @@ void CStageMaker::Begin()
 		pBackground->AddComponent(CAlbumPlayer::CreatePlayerFromFile(L"BGA_" + std::to_wstring(i)
 			, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + m_StageInfo->vecBGA[i]));
 	}
+	// 타일 추가
+	if (!m_StageInfo->Tile1Path.empty())
+	{
+		for (int i = 0; i < (m_StageInfo->StageSize.x - m_StageInfo->Tile1Pos.x) / m_StageInfo->Tile1Size.x; ++i)
+		{
+			CAlbumPlayer* pAP = CAlbumPlayer::CreatePlayerFromFile(L"Tile1_" + std::to_wstring(i), CEngine::GetInst()->GetResourcePathW()
+				+ L"\\animation\\" + m_StageInfo->Tile1Path, m_StageInfo->Tile1Pos + Vec2D(m_StageInfo->Tile1Size.x * i, 0.f));
+			pAP->SetCurrentScene(i % (pAP->GetFinal() + 1));
+			pBackground->AddComponent(pAP);
+		}
+	}
+	if (!m_StageInfo->Tile2Path.empty())
+	{
+		for (int j = 0; j < (m_StageInfo->StageSize.y - m_StageInfo->Tile2Pos.y) / m_StageInfo->Tile2Size.y; ++j)
+		{
+			for (int i = 0; i < (m_StageInfo->StageSize.x - m_StageInfo->Tile2Pos.x) / m_StageInfo->Tile2Size.x; ++i)
+			{
+				CAlbumPlayer* pAP = CAlbumPlayer::CreatePlayerFromFile(L"Tile2_" + std::to_wstring(j) + L"_" + std::to_wstring(i), CEngine::GetInst()->GetResourcePathW()
+					+ L"\\animation\\" + m_StageInfo->Tile2Path, m_StageInfo->Tile2Pos + Vec2D(m_StageInfo->Tile2Size.x * i, m_StageInfo->Tile2Size.y * j));
+				pAP->SetCurrentScene(i % (pAP->GetFinal() + 1));
+				pBackground->AddComponent(pAP);
+			}
+		}
+	}
+	
+
+
 
 	// 플레이어 영역 upperbound 세팅
 	m_UpperBound = m_StageInfo->UpperBound;
@@ -138,6 +167,8 @@ void CStageMaker::Begin()
 			pMonster->AddComponent(new CSticker(L"dominatedunnaturals_Stk"));
 			pMonster->SetLocation(pMonsterInfo->pos);
 			pMonster->SetScale(Vec2D(100, 140));
+			pMonster->SetMaxHP(1000);
+			pMonster->SetCurHP(1000);
 			CCollider* pMonCollider = new CCollider(pMonsterInfo->Name + L"_Col");
 			pMonCollider->SetSize(pMonster->GetScale());
 			pMonster->AddComponent(pMonCollider);
@@ -197,9 +228,16 @@ void CStageMaker::Begin()
 		pNPC->RegisterBodyCollider(pNPCCollider);
 		CLevelMgr::GetInst()->GetCurrentLevel()->AddObject(pNPC, LayerType::Object);
 		pNPC->AddComponent(new CSticker(pNPCInfo->Name));
-		pNPC->AddComponent(CAlbumPlayer::CreatePlayerFromFile(pNPCInfo->Name + L"_IdleAni"
-			, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + pNPCInfo->IdleAnimation));
+		CAlbumPlayer* pAP = CAlbumPlayer::CreatePlayerFromFile(pNPCInfo->Name + L"_IdleAni"
+			, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\" + pNPCInfo->IdleAnimation);
+		pNPC->AddComponent(pAP);
+		pNPC->SetIdlePlayer(pAP);
 		pNPC->SetIdleAni(pNPCInfo->IdleAnimation);
+		pNPC->SetCallbackIndex(pNPCInfo->CallbackIndex);
+		if (pNPCInfo->CallbackIndex == 2)
+		{
+			pNPC->SetTeleportDest(pNPCInfo->TeleportDest);
+		}
 
 		m_NPCMap.insert(make_pair(pNPC->GetID(), pNPC));
 	}
@@ -229,7 +267,19 @@ void CStageMaker::Begin()
 
 void CStageMaker::Tick()
 {
-	CStage::Tick();
+	if (GetPlayer())
+	{
+		if (GetPlayer()->GetGroundPos().x < 0 || GetPlayer()->GetGroundPos().x > m_StageInfo->StageSize.x)
+			GetPlayer()->SetGroundPos(Vec2D(min(max(GetPlayer()->GetGroundPos().x, 0), m_StageInfo->StageSize.x), GetPlayer()->GetGroundPos().y));
+		if (GetPlayer()->GetGroundPos().y < m_StageInfo->StageSize.y - m_UpperBound || GetPlayer()->GetGroundPos().y > m_StageInfo->StageSize.y)
+			GetPlayer()->SetGroundPos(Vec2D(GetPlayer()->GetGroundPos().x, min(max(GetPlayer()->GetGroundPos().y, m_StageInfo->StageSize.y - m_UpperBound), m_StageInfo->StageSize.y)));
+	}
+
+	CCollisionMgr::GetInst()->AddCollisionLayer(LayerType::Object, LayerType::Object);
+
+	CLevel::Tick();
+
+
 	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::ESC) == Key_state::TAP)
 	{
 		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"DungeonMaker"));
@@ -302,6 +352,8 @@ void CStageMaker::End()
 		desc->Pos = iter->second->GetLocation();
 		desc->Size = iter->second->GetScale();
 		desc->IdleAnimation = iter->second->GetIdleAni();
+		desc->CallbackIndex = iter->second->GetCallbackIndex();
+		desc->TeleportDest = iter->second->GetTeleportDest();
 
 		m_StageInfo->vecNPCInfo.push_back(desc);
 	}

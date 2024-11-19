@@ -8,6 +8,11 @@
 #include "CSound.h"
 #include "CCameraMgr.h"
 #include "CTextureMgr.h"
+#include "CNPC.h"
+#include "CCollider.h"
+#include "CLevelMgr.h"
+#include "CNPCCallback.h"
+#include "CKeyMgr.h"
 
 CSeriaRoom::CSeriaRoom()
 	: CStage(L"SeriaRoom")
@@ -42,6 +47,23 @@ void CSeriaRoom::Begin()
 	SetPlayer(pPlayer);
 	pPlayer->SetLocation(Vec2D(600, 450));
 
+	// NPC 추가
+	CNPC* pNPC = new CNPC(L"Seria");
+	AddObject(pNPC, LayerType::Object);
+	pNPC->SetLocation(Vec2D(536, 300));
+	pNPC->SetScale(Vec2D(47, 111));
+	CCollider* pNPCCollider = new CCollider(L"Seria_Col");
+	pNPCCollider->SetSize(pNPC->GetScale());
+	pNPC->AddComponent(pNPCCollider);
+	pNPC->RegisterBodyCollider(pNPCCollider);
+	CAlbumPlayer* pAP = CAlbumPlayer::CreatePlayerFromFile(L"Seria_IdleAni"
+		, CEngine::GetInst()->GetResourcePathW() + L"\\animation\\npc_seria.animation");
+	pNPC->AddComponent(pAP);
+	pNPC->SetIdlePlayer(pAP);
+	pNPC->SetIdleAni(L"npc_seria");
+	pNPC->SetreactCallback(&SelectDungeonCallback);
+
+
 	// BGM이 있으면 재생
 	if (!m_StageInfo->BGMPath.empty())
 	{
@@ -55,6 +77,12 @@ void CSeriaRoom::Begin()
 
 void CSeriaRoom::Tick()
 {
+	// F5 누르면 시작레벨로
+	if (CKeyMgr::GetInst()->GetKeyState(Keyboard::F5) == Key_state::TAP)
+	{
+		CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"Level_Start"));
+	}
+
 	CStage::Tick();
 }
 
