@@ -23,6 +23,8 @@ CLevel_Start::~CLevel_Start()
 
 void CLevel_Start::Begin()
 {
+	AddReadQueue(L"AvatarResources.txt");
+
 	// 카메라 위치 초기화
 	CCameraMgr::GetInst()->InitCameraPos();
 

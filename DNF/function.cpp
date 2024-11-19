@@ -29,11 +29,20 @@ bool ObjectSort(const CObj* a, const CObj* b)
 }
 
 list<CAlbum*> LoadQueue = {};
+list<wstring> ReadQueue = {};
 std::mutex queueMutex;
+std::mutex queueMutex1;
 
 void AddLoadQueue(CAlbum* _queue)
 {
 	std::unique_lock<std::mutex> lock(queueMutex);
 	LoadQueue.push_back(_queue);
 	lock.unlock();
+}
+
+void AddReadQueue(wstring _queue)
+{
+	std::unique_lock<std::mutex> lock1(queueMutex1);
+	ReadQueue.push_back(_queue);
+	lock1.unlock();
 }

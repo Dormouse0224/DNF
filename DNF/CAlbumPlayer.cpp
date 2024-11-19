@@ -242,6 +242,7 @@ void CAlbumPlayer::CreateAvatar(wstring _fileName, string _code, AvatarParts _pa
 
 void CAlbumPlayer::CreateAvatar(wstring _fileName, string _code[6], vector<CAlbumPlayer*>& _avatarArr)
 {
+	std::unique_lock<std::mutex> lock(queueMutex1);
 	for (int i = 0; i < (int)AvatarParts::END; ++i)
 	{
 		CreateAvatar(_fileName, _code[i], (AvatarParts)i, _avatarArr);

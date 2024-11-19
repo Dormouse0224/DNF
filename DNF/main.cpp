@@ -17,6 +17,7 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 void MainProgress(HACCEL hAccelTable);
 void BackgroundLoad();
+void BackgroundReadFile();
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -52,10 +53,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_DNF));
 
     // 백그라운드 로딩 스레드와 프로그레스 표시 스레드 시작
+    std::thread readfileThread(BackgroundReadFile);
     std::thread loadingThread(BackgroundLoad);
     std::thread progressThread(MainProgress, hAccelTable);
 
     // 스레드 종료 대기
+    if (readfileThread.joinable()) {
+        readfileThread.join();
+    }
     if (loadingThread.joinable()) {
         loadingThread.join();
     }
@@ -118,9 +123,9 @@ void BackgroundLoad()
         if (IsProgressFin)
             break;
 
+        std::unique_lock<std::mutex> lock(queueMutex);
         if (!LoadQueue.empty())
         {
-            std::unique_lock<std::mutex> lock(queueMutex);
             CAlbum* Data = LoadQueue.front();
             lock.unlock();
             
@@ -169,6 +174,29 @@ void BackgroundLoad()
     }
 }
 
+void BackgroundReadFile()
+{
+    while (true)
+    {
+        if (IsProgressFin)
+            break;
+
+        std::unique_lock<std::mutex> lock(queueMutex1);
+        if (!ReadQueue.empty())
+        {
+            wstring Data = ReadQueue.front();
+
+            CTextureMgr::PreloadAvatar(Data);
+
+            ReadQueue.pop_front();
+            lock.unlock();
+        }
+        else
+        {
+            int a = 0;
+        }
+    }
+}
 
 //
 //  함수: WndProc(HWND, UINT, WPARAM, LPARAM)

@@ -1425,8 +1425,18 @@ void CTextureMgr::PreloadAvatar(wstring _fileName)
 	string line;
 	while (std::getline(PreloadList, line))
 	{
+		int idx = -1;
+		if (line.find('_') != string::npos)
+		{
+			idx = std::stoi(line.substr(line.find('_') + 1));
+			line = line.substr(0, line.find('_'));
+		}
+		
 		for (int i = 0; i < (int)AvatarParts::END; ++i)
 		{
+			if (idx != -1 && idx != i)
+				continue;
+
 			AvatarParts _parts = (AvatarParts)i;
 			wstring wstrNPKDir = CEngine::GetInst()->GetResourcePathW() + L"\\texture\\player\\sprite_character_archer_equipment_avatar_skin.NPK";
 			string strAlbumPath = "sprite/character/archer/equipment/avatar/skin/ac_body0000.img";

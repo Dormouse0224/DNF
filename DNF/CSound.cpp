@@ -18,10 +18,14 @@ CSound::~CSound()
 
 int CSound::Load()
 {
-	assert(CSoundMgr::GetInst()->m_SoundMap.insert(make_pair(GetName(), this)).second);
+	CSoundMgr::GetInst()->m_SoundMap.insert(make_pair(GetName(), this));
+	assert(this);
 
 	if (nullptr == CSoundMgr::GetInst()->GetSoundDevice())
+	{
+		return false;
 		assert(nullptr);
+	}
 
 	wstring strContent = CEngine::GetInst()->GetResourcePathW();
 	strContent += m_FilePath;
@@ -87,6 +91,9 @@ bool CSound::LoadWaveSound(const wstring& _strPath)
 	m_tBuffInfo.dwSize = sizeof(DSBUFFERDESC);
 	m_tBuffInfo.dwFlags = DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE | DSBCAPS_CTRLVOLUME;
 	m_tBuffInfo.lpwfxFormat = &wft;
+
+	if (CSoundMgr::GetInst()->GetSoundDevice() == nullptr)
+		int a = 0;
 
 	if (FAILED(CSoundMgr::GetInst()->GetSoundDevice()->CreateSoundBuffer(&m_tBuffInfo, &m_pSoundBuffer, NULL)))
 	{
@@ -204,6 +211,9 @@ bool CSound::LoadOGGSound(const wstring& _strPath)
 	m_tBuffInfo.dwFlags = DSBCAPS_CTRLVOLUME;
 	m_tBuffInfo.dwBufferBytes = (DWORD)pcmData.size();
 	m_tBuffInfo.lpwfxFormat = &waveFormat;
+
+	if (CSoundMgr::GetInst()->GetSoundDevice() == nullptr)
+		int a = 0;
 
 	HRESULT hr = CSoundMgr::GetInst()->GetSoundDevice()->CreateSoundBuffer(&m_tBuffInfo, &m_pSoundBuffer, NULL);
 	if (FAILED(hr)) return false;

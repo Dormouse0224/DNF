@@ -46,7 +46,7 @@ CPlayer::CPlayer()
 {
 	// 스킬 리소스 미리 로드
 	CTextureMgr::PreloadFromFile(L"PlayerResources.txt");
-	CTextureMgr::PreloadAvatar(L"AvatarResources.txt");
+	//CTextureMgr::PreloadAvatar(L"AvatarResources.txt");
 
 	// 상태별 모션 애니메이션
 	for (int i = 0; i < (int)PlayerState::END; ++i) {
@@ -109,6 +109,9 @@ CPlayer::CPlayer()
 	m_MaxHP = 1000;
 	m_MaxMP = 1000;
 
+	m_HPRegen = m_MaxHP * 0.02f;
+	m_MPRegen = m_MaxMP * 0.1f;
+
 	PlayerInfo* info = CLevelMgr::GetInst()->GetPlayerInfo();
 	if (info)
 	{
@@ -118,9 +121,6 @@ CPlayer::CPlayer()
 	{
 		m_CurHP = 1000;
 		m_CurMP = 1000;
-
-		m_HPRegen = m_MaxHP * 0.01f;
-		m_MPRegen = m_MaxMP * 0.1f;
 
 		// 인벤토리 목록 비우기 (초기화)
 		for (int i = 0; i < (int)ItemType::END; ++i)
@@ -177,6 +177,8 @@ CPlayer::CPlayer()
 		equip_weapon->Item_secondtype = (int)EquipParts::Weapon;
 		equip_weapon->Texture_ani = L"icon_equip_lbow";
 		m_InvenVec[(int)ItemType::Equip][0] = equip_weapon;
+
+		CLevelMgr::GetInst()->SetPlayerInfo(GetPlayerInfo());
 	}
 }
 

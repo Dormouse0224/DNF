@@ -83,9 +83,9 @@ void CLevel_Edit::Begin()
 	EditAni->SetUIPos(Vec2D(833, 120));
 
 
-	// 에디터 레벨 BGM 세팅
-	CSound* pStartBGM = CSoundMgr::GetInst()->GetSound(L"EditBGM", L"\\music\\herring_archipelago.ogg");
-	pStartBGM->PlayToBGM(true);
+	//// 에디터 레벨 BGM 세팅
+	//CSound* pStartBGM = CSoundMgr::GetInst()->GetSound(L"EditBGM", L"\\music\\herring_archipelago.ogg");
+	//pStartBGM->PlayToBGM(true);
 
 	CLevel::Begin();
 }
