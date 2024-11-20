@@ -3,6 +3,7 @@
 
 class CAlbumPlayer;
 class CLargo_Attack;
+class CLargo_Pattern;
 class CDummy;
 
 class CLargo :
@@ -16,6 +17,7 @@ private:
     vector<CAlbumPlayer*> m_Animation[(int)LargoState::END];
     bool m_bIncomeFin;
     CLargo_Attack* m_AttackState;
+    CLargo_Pattern* m_PatternState;
 
     CDummy* m_HUD;
     CAlbumPlayer* m_HPTex;

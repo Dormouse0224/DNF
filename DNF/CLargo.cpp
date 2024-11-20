@@ -39,7 +39,8 @@ CLargo::CLargo()
 	m_AttackState = new CLargo_Attack;
 	pFSM->AddState((int)LargoState::Attack, m_AttackState);
 	pFSM->AddState((int)LargoState::Death, new CLargo_Death);
-	pFSM->AddState((int)LargoState::Pattern, new CLargo_Pattern);
+	m_PatternState = new CLargo_Pattern;
+	pFSM->AddState((int)LargoState::Pattern, m_PatternState);
 	AddComponent(pFSM);
 
 	SetRigidBody(new CRigidBody(L"Largo_RB"));
@@ -109,6 +110,10 @@ void CLargo::Render()
 	if (GetState() == (int)LargoState::Attack)
 	{
 		m_AttackState->Render();
+	}
+	else if (GetState() == (int)LargoState::Pattern)
+	{
+		m_PatternState->Render();
 	}
 	else
 	{

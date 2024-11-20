@@ -8,7 +8,8 @@ public:
     ~CDummy();
 
 private:
-
+    float m_SuicideTimer;
+    bool m_bTimerOn;
 
 public:
     virtual void BeginOverlap(CCollider* _Self, CCollider* _Other);
@@ -20,5 +21,6 @@ public:
     virtual void Tick();    // 반복적으로 할 일
     virtual void Render();      // 오브젝트를 그리기
 
+    void SetSuicideTimer(float _f) { m_SuicideTimer = _f; }
 };
 

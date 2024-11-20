@@ -131,14 +131,18 @@ void CS03::Tick()
 		}
 	}
 
-	// 바다 위치 갱신
-	m_Sea[0]->SetLocation(Vec2D(0.f, m_Largo->GetGroundPos().y - m_SeaGap));
-	m_Sea[1]->SetLocation(Vec2D(0.f, m_Largo->GetGroundPos().y + m_SeaGap));
+	if (m_Largo)
+	{
+		// 바다 위치 갱신
+		m_Sea[0]->SetLocation(Vec2D(0.f, m_Largo->GetGroundPos().y - m_SeaGap));
+		m_Sea[1]->SetLocation(Vec2D(0.f, m_Largo->GetGroundPos().y + m_SeaGap));
 
-	// 바다에 플레이가 있으면 플레이어 요기 게이지 증가
-	if ((GetPlayer()->GetGroundPos().y > m_Sea[1]->GetGroundPos().y || GetPlayer()->GetGroundPos().y < m_Sea[0]->GetGroundPos().y) && !(GetPlayer()->GetRigidBody()->GetAirborne()))
-		GetPlayer()->AddYogiGauge(CTimeMgr::GetInst()->GetDeltaTime() * 40.f);
-	m_PlayerYogi->SetRenderPercent(min(GetPlayer()->GetYogiGauge() / 100.f, 1.f));
+		// 바다에 플레이가 있으면 플레이어 요기 게이지 증가
+		if ((GetPlayer()->GetGroundPos().y > m_Sea[1]->GetGroundPos().y || GetPlayer()->GetGroundPos().y < m_Sea[0]->GetGroundPos().y) && !(GetPlayer()->GetRigidBody()->GetAirborne()))
+			GetPlayer()->AddYogiGauge(CTimeMgr::GetInst()->GetDeltaTime() * 40.f);
+		m_PlayerYogi->SetRenderPercent(min(GetPlayer()->GetYogiGauge() / 100.f, 1.f));
+	}
+
 
 	// 요기 게이지 포지션 갱신
 	m_PlayerYogiGauge->SetLocation(GetPlayer()->GetLocation() + Vec2D(70, -20));
