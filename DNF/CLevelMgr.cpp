@@ -81,6 +81,11 @@ void CLevelMgr::Init()
 	m_CurrentLevel->Begin();
 }
 
+void CLevelMgr::AddLevel(wstring _LevelName, CLevel* _CLevel)
+{
+	m_CLevels.insert(make_pair(_LevelName, _CLevel));
+}
+
 CLevel* CLevelMgr::FindLevel(wstring _LevelName)
 {
 	map<wstring, CLevel*>::iterator iter = m_CLevels.find(_LevelName);

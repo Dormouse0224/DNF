@@ -18,7 +18,7 @@ private:
 
 public:
 	void Init();
-	void AddLevel(wstring _LevelName, CLevel* _CLevel) { assert(m_CLevels.insert(make_pair(_LevelName, _CLevel)).second); }
+	void AddLevel(wstring _LevelName, CLevel* _CLevel);
 	CLevel* FindLevel(wstring _LevelName);
 	DungeonInfo* FindDungeon(wstring _DungeonName);
 	void Progress();

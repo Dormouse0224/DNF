@@ -49,7 +49,7 @@ void CTaskMgr::Tick()
 		case TaskType::ChangeLevel:
 		{
 			CLevelMgr::GetInst()->GetCurrentLevel()->End();
-			CLevelMgr::GetInst()->SetCurrentLevel((CLevel*)m_TaskQueue[i].m_param0);
+			CLevelMgr::GetInst()->SetCurrentLevel((CLevel*)(m_TaskQueue[i].m_param0));
 			CLevelMgr::GetInst()->GetCurrentLevel()->Begin();
 		}
 			break;
