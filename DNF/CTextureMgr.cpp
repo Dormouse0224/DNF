@@ -615,39 +615,6 @@ void CTextureMgr::LoadAll(wstring _NpkPath)
 
 			AddLoadQueue(_album);
 
-			//// 스레드 풀 생성
-			//PTP_POOL pool = CreateThreadpool(nullptr);
-			//if (!pool)
-			//	return;
-
-			//// 스레드 풀 환경 설정
-			//TP_CALLBACK_ENVIRON callbackEnv;
-			//InitializeThreadpoolEnvironment(&callbackEnv);
-			//SetThreadpoolCallbackPool(&callbackEnv, pool);
-
-			//// 각 씬에 대해 작업을 큐에 추가
-			//std::vector<PTP_WORK> workItems;
-			//for (int i = 0; i < _album->GetSceneCount(); ++i) {
-			//	auto* data = new std::pair<CAlbum*, int>(_album, i);
-			//	PTP_WORK work = CreateThreadpoolWork(LoadSceneThread, data, &callbackEnv);
-			//	if (work) {
-			//		workItems.push_back(work);
-			//		SubmitThreadpoolWork(work);
-			//	}
-			//	else {
-			//		delete data;
-			//	}
-			//}
-
-			//// 모든 작업이 완료될 때까지 대기
-			//for (PTP_WORK work : workItems) {
-			//	WaitForThreadpoolWorkCallbacks(work, FALSE);
-			//	CloseThreadpoolWork(work);
-			//}
-
-			//// 스레드 풀 및 환경 정리
-			//DestroyThreadpoolEnvironment(&callbackEnv);
-			//CloseThreadpool(pool);
 		}
 		if (!bLoaded)
 			m_NPKs.insert(make_pair(_NpkPath, AlbumList));
@@ -676,11 +643,9 @@ vector<Color> CTextureMgr::ReadPalette(ifstream& _file, int count)
 	return Palette;
 }
 
-//std::mutex mtx;
 
 Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 {
-	//std::lock_guard<std::mutex> lock(mtx);
 
 	HRESULT err;
 	if (_DDSdataSize < sizeof(DDSHeader))
@@ -739,13 +704,15 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	ID3D11ShaderResourceView* textureView = nullptr;
 	
 	// 디바이스 초기화
-	err = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, (D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_SINGLETHREADED)
+	err = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, (D3D11_CREATE_DEVICE_DEBUG/* | D3D11_CREATE_DEVICE_SINGLETHREADED*/)
 		, nullptr, 0, D3D11_SDK_VERSION, &pd3dDevice, nullptr, &pd3dContext);
 	assert(err == S_OK);
 	
 	// DDS 메모리로부터 텍스처 로드
 	err = DirectX::CreateDDSTextureFromMemory(pd3dDevice, (const uint8_t*)_DDSdata, (size_t)_DDSdataSize, (ID3D11Resource**)&texture, &textureView);
 	assert(err == S_OK);
+
+	textureView->Release();
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	texture->GetDesc(&textureDesc);
@@ -771,10 +738,14 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 		return nullptr;
 	pd3dContext->CopyResource(pStagingTexture, texture);
 
+	texture->Release();
+
 	// 텍스처 맵핑
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	err = pd3dContext->Map(pStagingTexture, 0, D3D11_MAP_READ, 0, &mappedResource);
 	assert(err == S_OK);
+
+	pStagingTexture->Release();
 
 	// DXT 포맷으로 압축된 텍스처를 압축해제
 	DirectX::Image BCtex;
@@ -791,6 +762,9 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 
 	const DirectX::Image* DecompImg;
 	DecompImg = DecompressedScratchImage.GetImage(0, 0, 0);
+
+	pd3dContext->Release();
+	pd3dDevice->Release();
 
 	// 텍스처 데이터를 GDI+ Bitmap으로 변환
 	UINT width = (UINT)DecompImg->width;
@@ -819,11 +793,6 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	pBitmap->UnlockBits(&bmpData);
 
 	// D3D11 객체 해제
-	pd3dDevice->Release();
-	pd3dContext->Release();
-	texture->Release();
-	textureView->Release();
-	pStagingTexture->Release();
 	DecompressedScratchImage.Release();
 
 	//pd3dDevice = nullptr;
