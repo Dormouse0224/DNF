@@ -56,6 +56,11 @@ void CLargo_Attack::FinalTick()
 		GetFSM()->ChangeState((int)LargoState::Death);
 	}
 
+	if (CLevelMgr::GetInst()->GetCurrentLevel()->GetPlayer()->GetYogiGauge() > 100)
+	{
+		GetFSM()->ChangeState((int)LargoState::Pattern);
+	}
+
 	std::random_device rd;
 	std::mt19937 gen(rd());
 

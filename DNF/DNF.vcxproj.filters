@@ -481,7 +481,6 @@
     <ClInclude Include="CPlayerAoE.h">
       <Filter>main\05. Object\09. PlayerObj\AoE</Filter>
     </ClInclude>
-    <ClInclude Include="CPlayer_Death.h" />
     <ClInclude Include="CLargo_Death.h">
       <Filter>main\08. State\Boss\Death</Filter>
     </ClInclude>
@@ -493,6 +492,12 @@
     </ClInclude>
     <ClInclude Include="CNPCCallback.h">
       <Filter>main\05. Object\04. NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="CLargo_Pattern.h">
+      <Filter>main\08. State\Boss\Pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayer_Death.h">
+      <Filter>main\08. State\Player\Death</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -718,6 +723,9 @@
     </ClCompile>
     <ClCompile Include="CNPCCallback.cpp">
       <Filter>main\05. Object\04. NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="CLargo_Pattern.cpp">
+      <Filter>main\08. State\Boss\Pattern</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

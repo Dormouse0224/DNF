@@ -87,4 +87,5 @@ void CPlayer_Death::Exit()
 	CLevelMgr::GetInst()->GetCurrentLevel()->DeleteObject(LayerType::Near, m_CountdownObj->GetID());
 	GetOwnerObj()->SetCurHP(GetOwnerObj()->GetMaxHP());
 	GetOwnerObj()->SetCurMP(GetOwnerObj()->GetMaxMP());
+	((CPlayer*)GetOwnerObj())->SetYogiGauge(0);
 }

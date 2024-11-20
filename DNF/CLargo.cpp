@@ -12,6 +12,7 @@
 #include "CCameraMgr.h"
 #include "CLevelMgr.h"
 #include "CLargo_Death.h"
+#include "CLargo_Pattern.h"
 
 CLargo::CLargo()
 	: CObj(L"Largo")
@@ -38,6 +39,7 @@ CLargo::CLargo()
 	m_AttackState = new CLargo_Attack;
 	pFSM->AddState((int)LargoState::Attack, m_AttackState);
 	pFSM->AddState((int)LargoState::Death, new CLargo_Death);
+	pFSM->AddState((int)LargoState::Pattern, new CLargo_Pattern);
 	AddComponent(pFSM);
 
 	SetRigidBody(new CRigidBody(L"Largo_RB"));

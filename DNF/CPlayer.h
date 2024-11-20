@@ -56,7 +56,7 @@ public:
     void StateAnimationInit(PlayerState _state);
 
     float GetYogiGauge() { return m_YogiGauge; }
-    float SetYogiGauge(float _val) { m_YogiGauge = _val; }
+    void SetYogiGauge(float _val) { m_YogiGauge = _val; }
     void AddYogiGauge(float _val) { m_YogiGauge  = min(m_YogiGauge + _val, 110); }
 
     bool GetSetup() { return m_Setup; }

@@ -165,6 +165,7 @@
     <ClInclude Include="CLargo_Attack.h" />
     <ClInclude Include="CLargo_Death.h" />
     <ClInclude Include="CLargo_Income.h" />
+    <ClInclude Include="CLargo_Pattern.h" />
     <ClInclude Include="CMonster_Attack.h" />
     <ClInclude Include="CMonster_Hurt.h" />
     <ClInclude Include="CMonster_Idle.h" />
@@ -251,6 +252,7 @@
     <ClCompile Include="CLargo_Attack.cpp" />
     <ClCompile Include="CLargo_Death.cpp" />
     <ClCompile Include="CLargo_Income.cpp" />
+    <ClCompile Include="CLargo_Pattern.cpp" />
     <ClCompile Include="CMonster_Attack.cpp" />
     <ClCompile Include="CMonster_Hurt.cpp" />
     <ClCompile Include="CMonster_Idle.cpp" />
