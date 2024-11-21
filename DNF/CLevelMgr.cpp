@@ -76,7 +76,7 @@ void CLevelMgr::Init()
 	CS01* pS01 = new CS01;
 	CS03* pS03 = new CS03;
 	CSeriaRoom* pSeriaRoom = new CSeriaRoom;
-	ReadDungeonList();
+	//ReadDungeonList();
 	m_CurrentLevel = pStartLevel;
 	m_CurrentLevel->Begin();
 }
