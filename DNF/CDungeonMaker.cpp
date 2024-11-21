@@ -189,7 +189,7 @@ void CDungeonMaker::End()
 
 void CDungeonMaker::AddStageInfo(Vec2D _GridLocation, StageInfo* _stageinfo)
 {
-	assert(m_StageInfoMap.insert(make_pair(_GridLocation, _stageinfo)).second);
+	m_StageInfoMap.insert(make_pair(_GridLocation, _stageinfo));
 	_stageinfo->GridLoc = _GridLocation;
 }
 

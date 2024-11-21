@@ -763,8 +763,6 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	const DirectX::Image* DecompImg;
 	DecompImg = DecompressedScratchImage.GetImage(0, 0, 0);
 
-	pd3dContext->Release();
-	pd3dDevice->Release();
 
 	// 텍스처 데이터를 GDI+ Bitmap으로 변환
 	UINT width = (UINT)DecompImg->width;
@@ -793,6 +791,8 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	pBitmap->UnlockBits(&bmpData);
 
 	// D3D11 객체 해제
+	pd3dContext->Release();
+	pd3dDevice->Release();
 	DecompressedScratchImage.Release();
 
 	//pd3dDevice = nullptr;
