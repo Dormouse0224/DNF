@@ -15,6 +15,8 @@
 CTextureMgr::CTextureMgr()
 	: m_TempAlbum(nullptr)
 	, m_SysReservedAlbum(nullptr)
+	, m_pd3dDevice(nullptr)
+	, m_pd3dContext(nullptr)
 {
 
 }
@@ -30,6 +32,9 @@ CTextureMgr::~CTextureMgr()
 		}
 	}
 	m_Albums.clear();
+
+	m_pd3dDevice->Release();
+	m_pd3dContext->Release();
 }
 
 void CTextureMgr::Init()
@@ -44,6 +49,16 @@ void CTextureMgr::Init()
 	pAlbum2->Path = "__SysReservedAlbum__";
 	m_SysReservedAlbum = pAlbum2;
 	m_Albums.insert(make_pair("__SysReservedAlbum__", pAlbum2));
+
+	UINT Flag = 0;
+#ifdef _DEBUG
+	Flag = D3D11_CREATE_DEVICE_DEBUG;
+#endif
+	D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_11_0;
+
+	// 디바이스 초기화
+	D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, Flag
+		, 0, 0, D3D11_SDK_VERSION, &m_pd3dDevice, &level, &m_pd3dContext);
 }
 
 void CTextureMgr::ClearTempAlbum()
@@ -643,9 +658,10 @@ vector<Color> CTextureMgr::ReadPalette(ifstream& _file, int count)
 	return Palette;
 }
 
-
+std::mutex textureMutex;
 Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 {
+	std::lock_guard<std::mutex> lock(textureMutex);
 
 	HRESULT err;
 	if (_DDSdataSize < sizeof(DDSHeader))
@@ -698,21 +714,16 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	initData.SysMemSlicePitch = 0;
 
 
-	ID3D11Device* pd3dDevice = nullptr;
-	ID3D11DeviceContext* pd3dContext = nullptr;
+	
 	ID3D11Texture2D* texture = nullptr;
 	ID3D11ShaderResourceView* textureView = nullptr;
 	
-	// 디바이스 초기화
-	err = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, (D3D11_CREATE_DEVICE_DEBUG/* | D3D11_CREATE_DEVICE_SINGLETHREADED*/)
-		, nullptr, 0, D3D11_SDK_VERSION, &pd3dDevice, nullptr, &pd3dContext);
-	assert(err == S_OK);
+	
 	
 	// DDS 메모리로부터 텍스처 로드
-	err = DirectX::CreateDDSTextureFromMemory(pd3dDevice, (const uint8_t*)_DDSdata, (size_t)_DDSdataSize, (ID3D11Resource**)&texture, &textureView);
+	err = DirectX::CreateDDSTextureFromMemory(m_pd3dDevice, (const uint8_t*)_DDSdata, (size_t)_DDSdataSize, (ID3D11Resource**)&texture, &textureView);
 	assert(err == S_OK);
 
-	textureView->Release();
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	texture->GetDesc(&textureDesc);
@@ -724,8 +735,9 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	cpuTextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 	cpuTextureDesc.MiscFlags = 0;
 
+
 	ID3D11Texture2D* pStagingTexture = nullptr;
-	err = pd3dDevice->CreateTexture2D(&cpuTextureDesc, nullptr, &pStagingTexture);
+	err = m_pd3dDevice->CreateTexture2D(&cpuTextureDesc, nullptr, &pStagingTexture);
 	if (FAILED(err))
 	{
 		// 할당된 메모리 해제
@@ -736,16 +748,14 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	// 원본 텍스처를 스테이징 텍스처로 복사
 	if (pStagingTexture == nullptr)
 		return nullptr;
-	pd3dContext->CopyResource(pStagingTexture, texture);
+	m_pd3dContext->CopyResource(pStagingTexture, texture);
 
-	texture->Release();
 
 	// 텍스처 맵핑
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	err = pd3dContext->Map(pStagingTexture, 0, D3D11_MAP_READ, 0, &mappedResource);
+	err = m_pd3dContext->Map(pStagingTexture, 0, D3D11_MAP_READ, 0, &mappedResource);
 	assert(err == S_OK);
 
-	pStagingTexture->Release();
 
 	// DXT 포맷으로 압축된 텍스처를 압축해제
 	DirectX::Image BCtex;
@@ -756,12 +766,14 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	BCtex.slicePitch = mappedResource.DepthPitch;
 	BCtex.pixels = (uint8_t*)mappedResource.pData;
 
-	DirectX::ScratchImage DecompressedScratchImage;
+	//DirectX::ScratchImage DecompressedScratchImage;
+	DirectX::ScratchImage* DecompressedScratchImage = new DirectX::ScratchImage;
 
-	err = DirectX::Decompress(BCtex, DXGI_FORMAT_R8G8B8A8_UNORM, DecompressedScratchImage);
+	err = DirectX::Decompress(BCtex, DXGI_FORMAT_R8G8B8A8_UNORM, *DecompressedScratchImage);
 
 	const DirectX::Image* DecompImg;
-	DecompImg = DecompressedScratchImage.GetImage(0, 0, 0);
+	DecompImg = DecompressedScratchImage->GetImage(0, 0, 0);
+
 
 
 	// 텍스처 데이터를 GDI+ Bitmap으로 변환
@@ -791,15 +803,12 @@ Bitmap* CTextureMgr::ReadDDSFromArray(const char* _DDSdata, int _DDSdataSize)
 	pBitmap->UnlockBits(&bmpData);
 
 	// D3D11 객체 해제
-	pd3dContext->Release();
-	pd3dDevice->Release();
-	DecompressedScratchImage.Release();
+	textureView->Release();
+	texture->Release();
+	pStagingTexture->Release();
+	//DecompressedScratchImage->Release();
+	delete DecompressedScratchImage;
 
-	//pd3dDevice = nullptr;
-	//pd3dContext = nullptr;
-	//texture = nullptr;
-	//textureView = nullptr;
-	//pStagingTexture = nullptr;
 
 	// 할당된 메모리 해제
 	delete[] textureData;

@@ -11,6 +11,9 @@ private:
 	CAlbum* m_TempAlbum;			// 기본 임시 앨범
 	CAlbum* m_SysReservedAlbum;		// 프로그램에서 사용되는 텍스처를 저장해두는 앨범
 
+	ID3D11Device* m_pd3dDevice;
+	ID3D11DeviceContext* m_pd3dContext;
+
 public:
 	void Init();
 

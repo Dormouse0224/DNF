@@ -33,6 +33,7 @@ private:
     TextureVersion  Version;
     int             FullLength;
 
+    bool m_bLoading;
 
 public:
     Vec2D GetSize() { return m_Size; }
@@ -47,6 +48,8 @@ public:
     void DirectRender(Vec2D _RenderOffset = Vec2D(0, 0), float _angle = 0.f, bool bCameraFallow = false, bool bLinearDodge = false);
     int GetLength() { return Length; }
     Bitmap* GetBitmap() { return m_Bitmap; }
+    bool GetLoading() { return m_bLoading; }
+    void SetLoading(bool _b) { m_bLoading = _b; }
 
 private:
     bool CameraIntersectCheck(Vec2D& _locationA, Vec2D& _SizeA, float _AngleA, Vec2D& _locationB, Vec2D& _SizeB, float _AngleB, Vec2D _rotationPivotA, Vec2D _rotationPivotB);
