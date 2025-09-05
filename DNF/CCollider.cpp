@@ -10,7 +10,7 @@ CCollider::CCollider(wstring _Name)
 	, m_Offset(Vec2D(0.f, 0.f))
 	, m_OverlapCount(0)
 	, m_Size(Vec2D(1.f, 1.f))
-	, m_IsActive(false)
+	, m_IsActive(true)
 	, m_LayerType(LayerType::END)
 {
 

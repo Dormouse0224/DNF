@@ -32,11 +32,13 @@ list<CAlbum*> LoadQueue = {};
 list<wstring> ReadQueue = {};
 std::mutex queueMutex;
 std::mutex queueMutex1;
+std::condition_variable loadCV;
 
 void AddLoadQueue(CAlbum* _queue)
 {
 	std::unique_lock<std::mutex> lock(queueMutex);
 	LoadQueue.push_back(_queue);
+	loadCV.notify_one();
 	lock.unlock();
 }
 

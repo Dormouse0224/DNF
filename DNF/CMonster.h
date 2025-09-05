@@ -23,6 +23,7 @@ private:
     MonsterTemplate m_MonsterTemplate;
 
     bool m_Hurt;
+    bool m_Attack;
 
 public:
     // 충돌 함수
@@ -53,5 +54,7 @@ public:
 
     bool GetHurt() { return m_Hurt; }
     void SetHurt(bool _b) { m_Hurt = _b; }
+    bool GetAttack() { return m_Attack; }
+    void SetAttack(bool _b) { m_Attack = _b; }
 };
 

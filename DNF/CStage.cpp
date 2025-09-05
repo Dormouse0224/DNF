@@ -148,6 +148,7 @@ void CStage::Begin()
 			CCollider* pAttCollider = new CCollider(pMonsterInfo->Name + L"_AttCol");
 			pAttCollider->SetSize(Vec2D(240, 120));
 			pAttCollider->SetOffset(Vec2D(-40, 15));
+			pAttCollider->SetActiveState(false);
 			pMonster->AddComponent(pAttCollider);
 			pMonster->SetAttackCol(pAttCollider);
 			pMonster->SetMonsterTemplate(MonsterTemplate::dominatedunnaturals);

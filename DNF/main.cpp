@@ -68,8 +68,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         progressThread.join();
     }
    
-
-    //return (int) msg.wParam;
     return 0;
 }
 
@@ -92,6 +90,7 @@ void MainProgress(HACCEL hAccelTable)
             if (msg.message == WM_QUIT)
             {
                 IsProgressFin = true;
+                loadCV.notify_all();
                 break;
             }
 
@@ -116,28 +115,57 @@ void CALLBACK LoadSceneThread(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP
     delete data; // 할당된 메모리 해제
 }
 
+int GetPhysicalCoreCount() {
+    DWORD bufferSize = 0;
+    GetLogicalProcessorInformationEx(RelationProcessorCore, nullptr, &bufferSize);
+
+    std::vector<uint8_t> buffer(bufferSize);
+    if (!GetLogicalProcessorInformationEx(RelationProcessorCore,
+        reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(buffer.data()),
+        &bufferSize)) {
+        return -1; // 오류 발생
+    }
+
+    int coreCount = 0;
+    auto ptr = buffer.data();
+    while (ptr < buffer.data() + bufferSize) {
+        PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX info =
+            reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(ptr);
+        if (info->Relationship == RelationProcessorCore) {
+            coreCount++;
+        }
+        ptr += info->Size;
+    }
+    return coreCount;
+}
+
+std::mutex loadMutex;
 void BackgroundLoad()
 {
-    while (true)
+    // 스레드 풀 생성
+    PTP_POOL pool = CreateThreadpool(nullptr);
+    if (!pool)
+        return;
+
+    // 스레드 풀 환경 설정
+    TP_CALLBACK_ENVIRON callbackEnv;
+    InitializeThreadpoolEnvironment(&callbackEnv);
+    SetThreadpoolThreadMaximum(pool, GetPhysicalCoreCount() + 1);
+    SetThreadpoolCallbackPool(&callbackEnv, pool);
+
+    while (!IsProgressFin)
     {
-        if (IsProgressFin)
-            break;
+        {
+            // 작업이 없는 경우 대기상태로 전환
+            std::unique_lock<std::mutex> lock(loadMutex);
+            loadCV.wait(lock, [] {return !LoadQueue.empty() || IsProgressFin; });
+        }
 
         std::unique_lock<std::mutex> lock(queueMutex);
         if (!LoadQueue.empty())
         {
             CAlbum* Data = LoadQueue.front();
             lock.unlock();
-            
-            // 스레드 풀 생성
-            PTP_POOL pool = CreateThreadpool(nullptr);
-            if (!pool)
-                return;
-
-            // 스레드 풀 환경 설정
-            TP_CALLBACK_ENVIRON callbackEnv;
-            InitializeThreadpoolEnvironment(&callbackEnv);
-            SetThreadpoolCallbackPool(&callbackEnv, pool);
 
             // 각 씬에 대해 작업을 큐에 추가
             std::vector<PTP_WORK> workItems;
@@ -159,19 +187,17 @@ void BackgroundLoad()
                 CloseThreadpoolWork(work);
             }
 
-            // 스레드 풀 및 환경 정리
-            DestroyThreadpoolEnvironment(&callbackEnv);
-            CloseThreadpool(pool);
+            
 
             std::unique_lock<std::mutex> lock1(queueMutex);
             LoadQueue.pop_front();
             lock1.unlock();
         }
-        else
-        {
-            int a = 0;
-        }
     }
+
+    // 스레드 풀 및 환경 정리
+    DestroyThreadpoolEnvironment(&callbackEnv);
+    CloseThreadpool(pool);
 }
 
 void BackgroundReadFile()
@@ -190,10 +216,6 @@ void BackgroundReadFile()
 
             ReadQueue.pop_front();
             lock.unlock();
-        }
-        else
-        {
-            int a = 0;
         }
     }
 }

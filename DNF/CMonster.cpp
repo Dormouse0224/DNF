@@ -4,6 +4,8 @@
 #include "CDbgRender.h"
 #include "CRigidBody.h"
 #include "CLevelMgr.h"
+#include "CCollider.h"
+#include "CPlayer.h"
 
 CMonster::CMonster(wstring _name)
 	: CObj(_name)
@@ -14,6 +16,7 @@ CMonster::CMonster(wstring _name)
 	, m_AttackCol(nullptr)
 	, m_MonsterTemplate(MonsterTemplate::NONE)
 	, m_Hurt(false)
+	, m_Attack(true)
 {
 	SetLayerType(LayerType::Object);
 	SetRigidBody(new CRigidBody(L"Monster_RB"));
@@ -26,10 +29,20 @@ CMonster::~CMonster()
 
 void CMonster::BeginOverlap(CCollider* _Self, CCollider* _Other)
 {
+	
 }
 
 void CMonster::Overlap(CCollider* _Self, CCollider* _Other)
 {
+	CPlayer* pPlayer = dynamic_cast<CPlayer*>(_Other->GetOwner());
+	if (_Self == m_AttackCol && pPlayer && m_Attack)
+	{
+		if (pPlayer->GetBodyCollider() == _Other)
+		{
+			pPlayer->GiveDamage(pPlayer->GetMaxHP() * 0.05f);
+			m_Attack = false;
+		}
+	}
 }
 
 void CMonster::EndOverlap(CCollider* _Self, CCollider* _Other)

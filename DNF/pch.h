@@ -56,13 +56,13 @@ using namespace Gdiplus;
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 #include <vorbis/vorbisenc.h>
-#ifdef _DEBUG
+//#ifdef _DEBUG
 #pragma comment(lib, "libvorbis_static.lib")
 #pragma comment(lib, "libvorbisfile_static.lib")
-#else
-#pragma comment(lib, "libvorbis_staticR.lib")
-#pragma comment(lib, "libvorbisfile_staticR.lib")
-#endif
+//#else
+//#pragma comment(lib, "libvorbis_staticR.lib")
+//#pragma comment(lib, "libvorbisfile_staticR.lib")
+//#endif
 
 
 

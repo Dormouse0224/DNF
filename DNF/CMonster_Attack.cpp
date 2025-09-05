@@ -47,6 +47,7 @@ void CMonster_Attack::FinalTick()
 	if (frame == pMonster->GetCurAnimation()[0]->GetFinal())
 	{
 		GetFSM()->ChangeState((int)MonsterState::Idle);
+		pMonster->SetAttack(true);
 	}
 
 }

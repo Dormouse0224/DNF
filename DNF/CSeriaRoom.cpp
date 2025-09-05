@@ -30,7 +30,7 @@ CSeriaRoom::~CSeriaRoom()
 
 void CSeriaRoom::Begin()
 {
-	CLevelMgr::GetInst()->ReadDungeonList();
+	//CLevelMgr::GetInst()->ReadDungeonList();
 
 	SetCameraFollowPlayer(true);
 	CCameraMgr::GetInst()->SetEffect(CameraEffect::FadeIn);

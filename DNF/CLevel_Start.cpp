@@ -109,6 +109,7 @@ void CLevel_Start::End()
 
 void CLevel_Start::GameStartBtnCallback()
 {
+	CLevelMgr::GetInst()->ReadDungeonList();
 	CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"SeriaRoom"));
 }
 

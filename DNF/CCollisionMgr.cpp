@@ -106,7 +106,8 @@ void CCollisionMgr::ColliderCollision(CCollider* _first, CCollider* _second)
 	}
 
 	// 충돌체를 소유한 오브젝트가 삭제 예정인 경우 충돌 검사를 수행하지 않음
-	if (!(_first->GetOwner()->GetDead() || _second->GetOwner()->GetDead()))
+	// 비활성 상태인 경우도 검사 수행하지 않음
+	if (!(_first->GetOwner()->GetDead() || _second->GetOwner()->GetDead()) && (_first->GetActiveState() && _second->GetActiveState()))
 	{
 		// 두 충돌체가 현재 충돌중
 		if (IsCollision(_first, _second))
