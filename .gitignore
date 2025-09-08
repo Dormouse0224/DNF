@@ -32,7 +32,6 @@
 *.app
 *.pdb
 /.vs/DNF
-/Output/resource
 /DNF/x64/
 /.vs
 /etc

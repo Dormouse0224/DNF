@@ -53,14 +53,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_DNF));
 
     // 백그라운드 로딩 스레드와 프로그레스 표시 스레드 시작
-    //std::thread readfileThread(BackgroundReadFile);
     std::thread loadingThread(BackgroundLoad);
     std::thread progressThread(MainProgress, hAccelTable);
 
     // 스레드 종료 대기
-    //if (readfileThread.joinable()) {
-    //    readfileThread.join();
-    //}
     if (loadingThread.joinable()) {
         loadingThread.join();
     }
