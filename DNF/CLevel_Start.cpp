@@ -11,6 +11,7 @@
 #include "CCameraMgr.h"
 #include "CButton.h"
 #include "CTextureMgr.h"
+#include "CTimeMgr.h"
 
 CLevel_Start::CLevel_Start()
 	:CLevel(L"Level_Start")
@@ -23,7 +24,7 @@ CLevel_Start::~CLevel_Start()
 
 void CLevel_Start::Begin()
 {
-	AddReadQueue(L"AvatarResources.txt");
+	//AddReadQueue(L"AvatarResources.txt");
 
 	// 카메라 위치 초기화
 	CCameraMgr::GetInst()->InitCameraPos();
@@ -82,6 +83,7 @@ void CLevel_Start::Begin()
 	CSound* pStartBGM = CSoundMgr::GetInst()->GetSound(L"StartBGM", L"\\music\\character_stage.ogg");
 	pStartBGM->PlayToBGM(true);
 
+	DebugOutput(L"Start Level Loaded");
 	CLevel::Begin();
 }
 
@@ -109,6 +111,7 @@ void CLevel_Start::End()
 
 void CLevel_Start::GameStartBtnCallback()
 {
+	DebugOutput(L"Start Button Pressed");
 	CLevelMgr::GetInst()->ReadDungeonList();
 	CLevelMgr::GetInst()->ChangeLevel(CLevelMgr::GetInst()->FindLevel(L"SeriaRoom"));
 }

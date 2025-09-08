@@ -46,7 +46,6 @@ CPlayer::CPlayer()
 {
 	// 스킬 리소스 미리 로드
 	CTextureMgr::PreloadFromFile(L"PlayerResources.txt");
-	//CTextureMgr::PreloadAvatar(L"AvatarResources.txt");
 
 	// 상태별 모션 애니메이션
 	for (int i = 0; i < (int)PlayerState::END; ++i) {

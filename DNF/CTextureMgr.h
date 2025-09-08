@@ -14,6 +14,8 @@ private:
 	ID3D11Device* m_pd3dDevice;
 	ID3D11DeviceContext* m_pd3dContext;
 
+	bool m_MultithreadLoad = true;
+
 public:
 	void Init();
 

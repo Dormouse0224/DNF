@@ -25,6 +25,8 @@ void CTimeMgr::Init()
 {
 	QueryPerformanceFrequency(&m_Frequency);	// 초당 카운팅 횟수
 	QueryPerformanceCounter(&m_PrevCount);
+	QueryPerformanceCounter(&m_CurCount);
+	m_BeginTime = (float)m_CurCount.QuadPart / (float)m_Frequency.QuadPart;
 }
 
 void CTimeMgr::Tick()
@@ -55,5 +57,12 @@ void CTimeMgr::Tick()
 			pPlayer->GetAttackState()->m_Cooltime[i] -= m_DT;
 		}
 	}
+}
+
+float CTimeMgr::GetNow()
+{
+	LARGE_INTEGER time;
+	QueryPerformanceCounter(&time);
+	return (float)time.QuadPart / (float)m_Frequency.QuadPart - m_BeginTime;
 }
 

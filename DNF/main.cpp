@@ -53,14 +53,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_DNF));
 
     // 백그라운드 로딩 스레드와 프로그레스 표시 스레드 시작
-    std::thread readfileThread(BackgroundReadFile);
+    //std::thread readfileThread(BackgroundReadFile);
     std::thread loadingThread(BackgroundLoad);
     std::thread progressThread(MainProgress, hAccelTable);
 
     // 스레드 종료 대기
-    if (readfileThread.joinable()) {
-        readfileThread.join();
-    }
+    //if (readfileThread.joinable()) {
+    //    readfileThread.join();
+    //}
     if (loadingThread.joinable()) {
         loadingThread.join();
     }
@@ -108,13 +108,6 @@ void MainProgress(HACCEL hAccelTable)
     }
 }
 
-void CALLBACK LoadSceneThread(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WORK work)
-{
-    std::pair<CAlbum*, int>* data = static_cast<std::pair<CAlbum*, int>*>(context);
-    data->first->GetScene(data->second)->Load();
-    delete data; // 할당된 메모리 해제
-}
-
 int GetPhysicalCoreCount() {
     DWORD bufferSize = 0;
     GetLogicalProcessorInformationEx(RelationProcessorCore, nullptr, &bufferSize);
@@ -139,7 +132,20 @@ int GetPhysicalCoreCount() {
     return coreCount;
 }
 
-std::mutex loadMutex;
+void CALLBACK LoadSceneThread(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WORK work)
+{
+    std::pair<CAlbum*, int>* data = static_cast<std::pair<CAlbum*, int>*>(context);
+    data->first->GetScene(data->second)->Load();
+    delete data; // 할당된 메모리 해제
+
+    {
+        std::unique_lock<std::mutex> lock(loadMutex);
+        LoadCleanupQueue.push_back(work);
+        loadCV.notify_one();
+    }
+}
+
+bool prevLoad = false;
 void BackgroundLoad()
 {
     // 스레드 풀 생성
@@ -150,48 +156,68 @@ void BackgroundLoad()
     // 스레드 풀 환경 설정
     TP_CALLBACK_ENVIRON callbackEnv;
     InitializeThreadpoolEnvironment(&callbackEnv);
-    SetThreadpoolThreadMaximum(pool, GetPhysicalCoreCount() + 1);
     SetThreadpoolCallbackPool(&callbackEnv, pool);
+
+    
 
     while (!IsProgressFin)
     {
+        //CAlbum* Data = nullptr;
+        list<CAlbum*> LoadList;
+        list<PTP_WORK> CleanupList;
         {
             // 작업이 없는 경우 대기상태로 전환
             std::unique_lock<std::mutex> lock(loadMutex);
-            loadCV.wait(lock, [] {return !LoadQueue.empty() || IsProgressFin; });
+
+            if (prevLoad && LoadQueue.empty() && LoadCleanupQueue.empty())
+            {
+                prevLoad = false;
+                DebugOutput(L"Background Load Finished");
+            }
+
+            loadCV.wait(lock, [] {return !LoadQueue.empty() || !LoadCleanupQueue.empty() || IsProgressFin; });
+
+            if (!prevLoad && !LoadQueue.empty())
+            {
+                prevLoad = true;
+                DebugOutput(L"Background Load Started");
+            }
+            
+            if (!LoadQueue.empty())
+            {
+                LoadList.swap(LoadQueue);
+            }
+            if (!LoadCleanupQueue.empty())
+            {
+                CleanupList.swap(LoadCleanupQueue);
+            }
         }
 
-        std::unique_lock<std::mutex> lock(queueMutex);
-        if (!LoadQueue.empty())
+        if (!LoadList.empty())
         {
-            CAlbum* Data = LoadQueue.front();
-            lock.unlock();
-
-            // 각 씬에 대해 작업을 큐에 추가
-            std::vector<PTP_WORK> workItems;
-            for (int i = 0; i < Data->GetSceneCount(); ++i) {
-                auto* data = new std::pair<CAlbum*, int>(Data, i);
-                PTP_WORK work = CreateThreadpoolWork(LoadSceneThread, data, &callbackEnv);
-                if (work) {
-                    workItems.push_back(work);
-                    SubmitThreadpoolWork(work);
-                }
-                else {
-                    delete data;
+            for (CAlbum* Data : LoadList)
+            {
+                // 각 씬에 대해 작업을 큐에 추가
+                for (int i = 0; i < Data->GetSceneCount(); ++i) {
+                    auto* data = new std::pair<CAlbum*, int>(Data, i);
+                    PTP_WORK work = CreateThreadpoolWork(LoadSceneThread, data, &callbackEnv);
+                    if (work) {
+                        SubmitThreadpoolWork(work);
+                    }
+                    else {
+                        delete data;
+                    }
                 }
             }
+        }
 
-            // 모든 작업이 완료될 때까지 대기
-            for (PTP_WORK work : workItems) {
-                WaitForThreadpoolWorkCallbacks(work, FALSE);
+        if (!CleanupList.empty())
+        {
+            for (PTP_WORK work : CleanupList)
+            {
+                WaitForThreadpoolWorkCallbacks(work, TRUE);
                 CloseThreadpoolWork(work);
             }
-
-            
-
-            std::unique_lock<std::mutex> lock1(queueMutex);
-            LoadQueue.pop_front();
-            lock1.unlock();
         }
     }
 
@@ -211,11 +237,10 @@ void BackgroundReadFile()
         if (!ReadQueue.empty())
         {
             wstring Data = ReadQueue.front();
-
-            CTextureMgr::PreloadAvatar(Data);
-
             ReadQueue.pop_front();
             lock.unlock();
+
+            CTextureMgr::PreloadAvatar(Data);
         }
     }
 }

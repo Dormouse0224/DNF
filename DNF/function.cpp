@@ -2,6 +2,7 @@
 #include "function.h"
 #include "CObj.h"
 #include "CTaskMgr.h"
+#include "CTimeMgr.h"
 
 void ObjectCreate(CObj* _obj, LayerType _layer)
 {
@@ -29,14 +30,16 @@ bool ObjectSort(const CObj* a, const CObj* b)
 }
 
 list<CAlbum*> LoadQueue = {};
+list<PTP_WORK> LoadCleanupQueue = {};
 list<wstring> ReadQueue = {};
-std::mutex queueMutex;
+std::mutex loadMutex;
+std::mutex loadCleanupMutex;
 std::mutex queueMutex1;
 std::condition_variable loadCV;
 
 void AddLoadQueue(CAlbum* _queue)
 {
-	std::unique_lock<std::mutex> lock(queueMutex);
+	std::unique_lock<std::mutex> lock(loadMutex);
 	LoadQueue.push_back(_queue);
 	loadCV.notify_one();
 	lock.unlock();
@@ -47,4 +50,14 @@ void AddReadQueue(wstring _queue)
 	std::unique_lock<std::mutex> lock1(queueMutex1);
 	ReadQueue.push_back(_queue);
 	lock1.unlock();
+}
+
+void DebugOutput(wstring text)
+{
+	wstring str = L"=========== Time : ";
+	str += std::to_wstring(CTimeMgr::GetInst()->GetNow());
+	str += L" ===========\n";
+	str += text;
+	str += L"\n=======================================\n";
+	OutputDebugStringW(str.c_str());
 }

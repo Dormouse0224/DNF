@@ -37,10 +37,10 @@ using namespace Gdiplus;
 #endif
 
 // Visual Leak Detector (디버그에서만 적용)
-#ifdef _DEBUG
-#include "vld.h"
-#pragma comment (lib, "vld.lib")
-#endif
+//#ifdef _DEBUG
+//#include "vld.h"
+//#pragma comment (lib, "vld.lib")
+//#endif
 
 // 사운드
 #define DIRECTINPUT_VERSION 0x0800 // DirectInput 8.0 버전 사용

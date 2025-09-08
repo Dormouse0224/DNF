@@ -13,6 +13,7 @@
 #include "CLevelMgr.h"
 #include "CNPCCallback.h"
 #include "CKeyMgr.h"
+#include "CTimeMgr.h"
 
 CSeriaRoom::CSeriaRoom()
 	: CStage(L"SeriaRoom")
@@ -75,6 +76,8 @@ void CSeriaRoom::Begin()
 
 	// 리소스 미리 로딩
 	CTextureMgr::PreloadFromFile(L"BossResources.txt");
+
+	DebugOutput(L"Seria Room Loaded");
 }
 
 void CSeriaRoom::Tick()

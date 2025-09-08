@@ -14,6 +14,7 @@ private:
 	float			m_DT;
 	UINT			m_FPS;
 	float			m_Time;
+	float			m_BeginTime;
 
 
 	std::chrono::steady_clock::time_point m_CheckTimer;
@@ -23,6 +24,6 @@ public:
 	void Init();
 	void Tick();
 	float GetDeltaTime() { return m_DT; }
-	float GetNow() { return m_CurCount.QuadPart / m_Frequency.QuadPart; }
+	float GetNow();
 };
 

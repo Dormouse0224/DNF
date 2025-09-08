@@ -583,7 +583,16 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 				m_Albums.insert(make_pair(_album->GetPath(), _album));
 				if (_album->GetPath() == _AlbumPath)
 				{
-					AddLoadQueue(_album);
+					if (m_MultithreadLoad)
+						AddLoadQueue(_album);
+					else
+					{
+						for (int i = 0; i < _album->GetSceneCount(); ++i)
+						{
+							_album->GetScene(i)->Load();
+						}
+					}
+
 
 					result = _album;
 				}
@@ -593,11 +602,15 @@ CAlbum* CTextureMgr::LoadAlbum(string _AlbumPath, wstring _NpkPath)
 		// 앨범을 가져온 적이 있으면 엘범 정보를 바탕으로 메모리에 로드 (Texture 로드 호출 시 이미 메모리에 로드된 경우 다시 로드하지 않고 무시됨)
 		else
 		{
-			// 해당 앨범의 텍스쳐가 로드된 적이 있으면 중단
-			if (iter->second->GetScene(0)->GetBitmap() != nullptr)
-				return iter->second;
-
-			AddLoadQueue(iter->second);
+			if (m_MultithreadLoad)
+				AddLoadQueue(iter->second);
+			else
+			{
+				for (int i = 0; i < iter->second->GetSceneCount(); ++i)
+				{
+					iter->second->GetScene(i)->Load();
+				}
+			}
 
 			result = iter->second;
 		}
@@ -628,7 +641,11 @@ void CTextureMgr::LoadAll(wstring _NpkPath)
 			if (!bLoaded)
 				m_Albums.insert(make_pair(_album->GetPath(), _album));
 
-			AddLoadQueue(_album);
+			//AddLoadQueue(_album);
+			for (int i = 0; i < _album->GetSceneCount(); ++i)
+			{
+				_album->GetScene(i)->Load();
+			}
 
 		}
 		if (!bLoaded)

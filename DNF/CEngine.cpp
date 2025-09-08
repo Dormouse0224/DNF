@@ -87,8 +87,8 @@ int CEngine::Init(HINSTANCE _hInst)
 	CTextureMgr::GetInst()->Init();
 	CreateBackBuffer();		// 백버퍼 생성
 	CSoundMgr::GetInst()->Init();
-	CLevelMgr::GetInst()->Init();
 	CTimeMgr::GetInst()->Init();
+	CLevelMgr::GetInst()->Init();
 	CTextMgr::GetInst()->Init();
 	CCameraMgr::GetInst()->Init();
 
