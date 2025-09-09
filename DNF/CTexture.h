@@ -16,7 +16,7 @@ public:
 private:
     CAlbum*         m_Owner;
 
-    Bitmap*         m_Bitmap;
+    std::atomic<Bitmap*>         m_Bitmap;
     Vec2D           m_Size;
     Vec2D           m_Offset;
 

@@ -145,8 +145,9 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 			}
 			else
 			{
+				Bitmap* pBitmap = m_Bitmap.load();
 				if (bFlipHorizontal)
-					m_Bitmap->RotateFlip(RotateFlipType::RotateNoneFlipX);
+					pBitmap->RotateFlip(RotateFlipType::RotateNoneFlipX);
 				Vec2D RenderCenterDiff = (FinalPos + m_Size / 2) - (ObjCenter + CameraPos);
 				Vec2D FinalPosLT = ObjCenter + Vec2D(bFlipHorizontal ? -RenderCenterDiff.x : RenderCenterDiff.x, RenderCenterDiff.y) - (m_Size / 2) + Vec2D(0, (int)(m_Size.y * (1.f - _renderPercent)));
 				Vec2D FinalPosRB = FinalPosLT + Vec2D((int)(m_Size.x * _renderPercentH), (int)(m_Size.y * _renderPercent));
@@ -162,14 +163,15 @@ void CTexture::Render(Vec2D _RenderOffset, float _angle, bool bCameraFallow, boo
 					, min(FinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(FinalPosLT.x, 0)
 					, min(FinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(max(FinalPosLT.y, 0), (int)(m_Size.y * (1.f - _renderPercent))));
 				backbuffer->LockBits(&BufferRect, ImageLockModeWrite, PixelFormat32bppARGB, &BufferBitmapdata);
-				m_Bitmap->LockBits(&RenderRect, ImageLockModeRead, PixelFormat32bppARGB, &RenderBitmapdata);
+				pBitmap->LockBits(&RenderRect, ImageLockModeRead, PixelFormat32bppARGB, &RenderBitmapdata);
 				AlphaBlend(&BufferBitmapdata, &RenderBitmapdata
 					, min(FinalPosRB.x, CEngine::GetInst()->GetResolution().x) - max(FinalPosLT.x, 0)
 					, min(FinalPosRB.y, CEngine::GetInst()->GetResolution().y) - max(FinalPosLT.y, 0));
-				m_Bitmap->UnlockBits(&RenderBitmapdata);
+				pBitmap->UnlockBits(&RenderBitmapdata);
 				backbuffer->UnlockBits(&BufferBitmapdata);
 				if (bFlipHorizontal)
-					m_Bitmap->RotateFlip(RotateFlipType::RotateNoneFlipX);
+					pBitmap->RotateFlip(RotateFlipType::RotateNoneFlipX);
+				m_Bitmap.store(pBitmap);
 			}
 		}
 	}

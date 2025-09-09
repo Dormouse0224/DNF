@@ -434,9 +434,11 @@ void CTextureMgr::BitmapToArray(CTexture* _Texture)
 	char* temp = new char[pixelCount * 4];
 	BitmapData bitmapdata;
 	Rect rect = Rect((INT)0, (INT)0, (INT)_Texture->m_Size.x, (INT)_Texture->m_Size.y);
-	_Texture->m_Bitmap->LockBits(&rect, ImageLockModeWrite, PixelFormat32bppARGB, &bitmapdata);
+	Bitmap* pBitmap = _Texture->m_Bitmap.load();
+	pBitmap->LockBits(&rect, ImageLockModeWrite, PixelFormat32bppARGB, &bitmapdata);
 	memcpy(temp, bitmapdata.Scan0, (size_t)(pixelCount * 4));
-	_Texture->m_Bitmap->UnlockBits(&bitmapdata);
+	pBitmap->UnlockBits(&bitmapdata);
+	_Texture->m_Bitmap.store(pBitmap);
 
 	uLongf compLen = pixelCount * 4;
 	char* comp = new char[compLen];
@@ -870,7 +872,7 @@ CTexture* CTextureMgr::LoadFromFile(wstring _filepath)
 	++m_TempAlbum->Count;
 
 	newTex->m_Bitmap = Bitmap::FromFile(_filepath.c_str());
-	newTex->m_Size = Vec2D(newTex->m_Bitmap->GetWidth(), newTex->m_Bitmap->GetHeight());
+	newTex->m_Size = Vec2D(newTex->m_Bitmap.load()->GetWidth(), newTex->m_Bitmap.load()->GetHeight());
 	newTex->m_Offset = Vec2D(0, 0);
 	return newTex;
 }
